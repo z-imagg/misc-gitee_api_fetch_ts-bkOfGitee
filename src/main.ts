@@ -93,10 +93,12 @@ async function interept( ) {
     await DOM.enable();
     await Page.enable();
 
-    //访问 gitee账户页面url
+    //打开gitee账户页面
+    console.log(`打开gitee账户页面 ${accInfoPgUrl}`)
     await Page.navigate( {url:accInfoPgUrl});
 
     //打开gitee登录页面
+    console.log(`打开gitee登录页面 ${giteeLoginPageUrl}`)
     await Page.navigate( {url:giteeLoginPageUrl});
     // types/chrome-remote-interface 说 没有此方法 loadEventFired，但是 官方例子 中有此方法， https://github.com/cyrus-and/chrome-remote-interface/wiki/Async-await-example
     await Page.loadEventFired()
@@ -108,6 +110,7 @@ async function interept( ) {
     const _trash=readlineSync.question("此时在gitee登录页面，填写各字段、点击'登录'按钮、填写可能的验证码 后，在此nodejs控制台按任意键继续")
 
     //打开gitee导入页面
+    console.log(`打开gitee导入页面 ${giteeImportPageUrl}`)
     await Page.navigate({url:giteeImportPageUrl})
     await Page.loadEventFired()
     await DOM.getDocument();
