@@ -52,15 +52,15 @@ async function interept( ) {
 
       const headerText=req.headers.toString();
       if(headerText.includes(markupPrjName)){
-        console.log(`【在请求头】【发现标记请求地址】【${url}】【${headerText}】`)
+        console.log(`【在请求头,发现标记请求地址】【${url}】【${headerText}】`)
       }
       if(url.includes(markupPrjName)){
-        console.log(`【在url】【发现标记请求地址】【${url}】`)
+        console.log(`【在url,发现标记请求地址】【${url}】`)
       }
       if(req.hasPostData){
         const postData:string = req.postData;
         if(postData && postData.includes(markupPrjName)){
-          console.log(`【在请求体】【发现标记请求地址】【${url}】【${postData}】`)
+          console.log(`【在请求体,发现标记请求地址】【${url}】【${postData}】`)
         }
       }
       /**
