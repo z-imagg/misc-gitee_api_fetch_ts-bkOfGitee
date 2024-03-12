@@ -41,6 +41,34 @@ async function interept( ) {
     const client:CDP.Client = await CDP();
     const {Network, Page,DOM,Runtime, Fetch} = client;
 
+    //请求过滤
+    Network.on("requestWillBeSent", (params: Protocol.Network.RequestWillBeSentEvent) => {
+      const req:Protocol.Network.Request=params.request;
+      const url:string = params.request.url;
+      if(!url.startsWith("https://gitee.com")){
+        return;
+      }
+      console.log(`【请求地址】${url}`)
+
+      const headerText=req.headers.toString();
+      if(headerText.includes(markupPrjName)){
+        console.log(`【在请求头】【发现标记请求地址】【${url}】【${headerText}】`)
+      }
+      if(url.includes(markupPrjName)){
+        console.log(`【在url】【发现标记请求地址】【${url}】`)
+      }
+      if(req.hasPostData){
+        const postData:string = req.postData;
+        if(postData && postData.includes(markupPrjName)){
+          console.log(`【在请求体】【发现标记请求地址】【${url}】【${postData}】`)
+        }
+      }
+      /**
+       【在请求体】【发现标记请求地址】【https://gitee.com/tmpOrg/projects】【utf8=%E2%9C%93&authenticity_token=xUuuL7czpeKrHp3QoLju7yfE67WTOa5xnSQk7C%2FOaNAqAUO7fXTpgQUJqsXW4aiSOxIUoOHqvkwKr3yaLxaZ4g%3D%3D&project%5Bimport_url%5D=https%3A%2F%2Fgithub.com%2Fintel%2FARM_NEON_2_x86_SSE.git&user_sync_code=&password_sync_code=&project%5Bname%5D=intel--ARM_NEON_2_x86_SSE&project%5Bnamespace_path%5D=tmpOrg&project%5Bpath%5D=xxxxxx&project%5Bdescription%5D=zzzzz&project%5Bpublic%5D=1&language=0】
+       */
+
+    })
+
     await Network.enable();
     await Runtime.enable();
     await DOM.enable();
@@ -66,34 +94,6 @@ async function interept( ) {
       expression:js_fillMarkupGoalRepo
     })
     readlineSync.question("此时在gitee导入URL页面，填写各字段、点击'导入'按钮 后，【注意'仓库名称' 'project_name'字段是标记字段，其他各字段不要与标记字段取值相同】, 在此nodejs控制台按任意键继续")
-
-    //请求过滤
-    Network.on("requestWillBeSent", (params: Protocol.Network.RequestWillBeSentEvent) => {
-      const req:Protocol.Network.Request=params.request;
-      const url:string = params.request.url;
-      if(!url.startsWith("https://gitee.com")){
-        return;
-      }
-      console.log(`【请求地址】${url}`)
-
-      const headerText=req.headers.toString();
-      if(headerText.includes(markupPrjName)){
-        console.log(`【在请求头】【发现标记请求地址】【${url}】【${headerText}】`)
-      }
-      if(url.includes(markupPrjName)){
-        console.log(`【在url】【发现标记请求地址】【${url}】`)
-      }
-      if(req.hasPostData){
-        const postData:string = req.postData;
-        if(postData && postData.includes(markupPrjName)){
-          console.log(`【在请求体】【发现标记请求地址】【${url}】【${postData}】`)
-        }
-      }
-      /**
-【在请求体】【发现标记请求地址】【https://gitee.com/tmpOrg/projects】【utf8=%E2%9C%93&authenticity_token=xUuuL7czpeKrHp3QoLju7yfE67WTOa5xnSQk7C%2FOaNAqAUO7fXTpgQUJqsXW4aiSOxIUoOHqvkwKr3yaLxaZ4g%3D%3D&project%5Bimport_url%5D=https%3A%2F%2Fgithub.com%2Fintel%2FARM_NEON_2_x86_SSE.git&user_sync_code=&password_sync_code=&project%5Bname%5D=intel--ARM_NEON_2_x86_SSE&project%5Bnamespace_path%5D=tmpOrg&project%5Bpath%5D=xxxxxx&project%5Bdescription%5D=zzzzz&project%5Bpublic%5D=1&language=0】
-       */
-
-    })
 
   }catch(err){
     console.error(err);
