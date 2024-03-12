@@ -36,6 +36,7 @@
   "author": "Jakub Synowiec <jsynowiec@users.noreply.github.com>",
   "license": "Apache-2.0",
   "dependencies": {
+    "@types/chrome-remote-interface": "^0.31.14",
     "chrome-remote-interface": "^0.33.0",
     "tslib": "~2.6"
   },

@@ -13,6 +13,7 @@ npm run start
 ```shell
 npm init
 npm install   chrome-remote-interface
+npm install   @types/chrome-remote-interface
 
 /app/chrome-linux/chrome --remote-debugging-port=9222
 node ./main.js
