@@ -3,8 +3,9 @@ import CDP from 'chrome-remote-interface';
 import Protocol from "devtools-protocol";
 import {Runtime} from "inspector";
 import readlineSync from 'readline-sync'
-
 import * as fs from "fs";
+import * as nodeFetch from 'node-fetch'
+import fetch, {Response} from "node-fetch";
 
 const urlList:string[]=[
   "https://gitee.com/tmpOrg/projects"
@@ -36,6 +37,8 @@ document.getElementById("project_import_url").value="${project_import_url}";
 document.getElementById("project_name").value="${markupPrjName}";
 document.title="${importPageMsg}"+document.title;
 `
+//gitee账户页面url
+const accInfoPgUrl="https://gitee.com/profile/account_information";
 async function interept( ) {
   try{
     const client:CDP.Client = await CDP();
@@ -46,6 +49,12 @@ async function interept( ) {
     await DOM.enable();
     await Page.enable();
 
+    //访问 gitee账户页面url
+    const resp:nodeFetch.Response = await nodeFetch.default(accInfoPgUrl)
+    if(nodeFetch.isRedirect(resp.status)){
+      //这样写不对，因为nodeFetch这是在nodejs进程，而不是在浏览器chrome进程，
+      // 这个nodeFetch发出的请求没有携带任何身份信息在请求中，肯定会受到重定向
+    }
     //打开gitee登录页面
     await Page.navigate( {url:giteeLoginPageUrl});
     // types/chrome-remote-interface 说 没有此方法 loadEventFired，但是 官方例子 中有此方法， https://github.com/cyrus-and/chrome-remote-interface/wiki/Async-await-example
@@ -56,7 +65,6 @@ async function interept( ) {
       expression:js_fillUserPass
     })
     const _trash=readlineSync.question("此时在gitee登录页面，填写各字段、点击'登录'按钮、填写可能的验证码 后，在此nodejs控制台按任意键继续")
-
     //打开gitee导入页面
     await Page.navigate({url:giteeImportPageUrl})
     await Page.loadEventFired()
