@@ -1,5 +1,5 @@
 打开gitee账户页面 https://gitee.com/profile/account_information
-【发现直接进入账户页】【undefined--->账户页】【此即已登录】undefined ----> https://gitee.com/profile/account_information
+【发现直接进入账户页】【undefined--->账户页】【此即已登录】undefined ----> (右边此请求的响应状态代码将是200)https://gitee.com/profile/account_information
 给浏览器以足够时间，看她是否重定向
 已登录 不用打开gitee登录页面
 打开gitee导入页面 https://gitee.com/projects/import/url
