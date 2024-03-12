@@ -4,25 +4,25 @@ import Protocol from "devtools-protocol";
 
 async function interept(urlStr:string) {
   try{
-    let client:CDP.Client = await CDP();
+    const client:CDP.Client = await CDP();
     const {Network, Page, Fetch} = client;
-    Network.on("requestWillBeSent", (params: Protocol.Network.RequestWillBeSentEvent) => {
-      console.log(`【请求地址】${params.request.url}`)
-    })
 
-    await Fetch.enable(<Protocol.Fetch.EnableRequest>{
+    await Fetch.enable( {
       patterns:[
         <Protocol.Fetch.RequestPattern>{
-          urlPattern:"*",
+          urlPattern:"^http[s]?://gitee.com/*", //chrome-remote-interface 的 正则表达式太简陋了 不好用， 比如 开头符号^无效
           resourceType:"XHR"
         }
       ]
     })
 
+    Network.on("requestWillBeSent", (params: Protocol.Network.RequestWillBeSentEvent) => {
+      console.log(`【请求地址】${params.request.url}`)
+    })
     await Network.enable();
     await Page.enable();
-    await Page.navigate(<Protocol.Page.NavigateRequest>{url:urlStr});
-    // await Page.loadEventFired()
+    await Page.navigate( {url:urlStr});
+    await Page.loadEventFired()
 
   }catch(err){
     console.error(err);
