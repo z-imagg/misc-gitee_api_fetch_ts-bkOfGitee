@@ -19,7 +19,7 @@ async function interept(urlStr:string) {
       }
       console.log(`【请求地址】${params.request.url}`)
 
-      if(urlList.indexOf(params.request.url)>0){
+      if(urlList.indexOf(params.request.url)>=0){
         console.log(`【postData】【${params.request.url}】${params.request.postData}`)
       }
 
