@@ -15,6 +15,8 @@ async function interept( ) {
     await DOM.enable();
     await Page.enable();
     await Page.navigate( {url:"https://gitee.com/projects/import/url"});
+
+    // types/chrome-remote-interface 说 没有此方法 loadEventFired，但是 官方例子 中有此方法， https://github.com/cyrus-and/chrome-remote-interface/wiki/Async-await-example
     await Page.loadEventFired()
 
     Network.on("requestWillBeSent", (params: Protocol.Network.RequestWillBeSentEvent) => {

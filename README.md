@@ -16,10 +16,15 @@ npm run start
 
 ```
 
+https://www.npmjs.com/package/@types/chrome-remote-interface/v/0.31.14  ,  Wed, 22 Nov 2023 00:24:48 GMT
+
+https://www.npmjs.com/package/chrome-remote-interface/v/0.32.2 , https://github.com/cyrus-and/chrome-remote-interface/releases/tag/v0.32.2 ,  Apr 13, 2023
+
+
 ```shell
 npm init
-npm install   chrome-remote-interface
-npm install -D  @types/chrome-remote-interface
+npm install   chrome-remote-interface@0.32.2
+npm install -D  @types/chrome-remote-interface@0.31.14
 
 /app/chrome-linux/chrome --remote-debugging-port=9222
 node ./main.js
