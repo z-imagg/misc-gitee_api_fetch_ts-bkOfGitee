@@ -5,7 +5,6 @@ import {Runtime} from "inspector";
 import readlineSync from 'readline-sync'
 
 import * as fs from "fs";
-import {sync} from "rimraf";
 
 const urlList:string[]=[
   "https://gitee.com/tmpOrg/projects"
@@ -37,7 +36,6 @@ document.getElementById("project_import_url").value="${project_import_url}";
 document.getElementById("project_name").value="${markupPrjName}";
 document.title="${importPageMsg}"+document.title;
 `
-//gitee登录页面中填写用户名、填写密码的js语句，  firefox开发者工具   人工获得
 async function interept( ) {
   try{
     const client:CDP.Client = await CDP();
@@ -47,21 +45,19 @@ async function interept( ) {
     await Runtime.enable();
     await DOM.enable();
     await Page.enable();
+
     //打开gitee登录页面
     await Page.navigate( {url:giteeLoginPageUrl});
-
     // types/chrome-remote-interface 说 没有此方法 loadEventFired，但是 官方例子 中有此方法， https://github.com/cyrus-and/chrome-remote-interface/wiki/Async-await-example
     await Page.loadEventFired()
-
     await DOM.getDocument();
     //填写用户名、密码
     await Runtime.evaluate(<Protocol.Runtime.EvaluateRequest>{
       expression:js_fillUserPass
     })
-
-    // 参考 https://www.npmjs.com/package/readline-sync , https://developer.aliyun.com/article/1254945
     const _trash=readlineSync.question("此时在gitee登录页面，填写各字段、点击'登录'按钮、填写可能的验证码 后，在此nodejs控制台按任意键继续")
 
+    //打开gitee导入页面
     await Page.navigate({url:giteeImportPageUrl})
     await Page.loadEventFired()
     await DOM.getDocument();
