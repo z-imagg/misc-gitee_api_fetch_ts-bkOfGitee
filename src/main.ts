@@ -121,10 +121,6 @@ async function interept( ) {
 
     })
 
-    // 暂时不打印 任意 重定向日志
-    // Network.on("requestWillBeSent",(params: Protocol.Network.RequestWillBeSentEvent)=>{
-    //   console.log(`]]]]] ${(params.redirectResponse||{}).url} ----> ${params.request.url}`)
-    // })
 
     await Network.enable();
     await Runtime.enable();
