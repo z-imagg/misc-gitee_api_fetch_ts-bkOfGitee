@@ -26,6 +26,9 @@ document.getElementById("user_password").value="${giteePwd}";
 alert("已填充用户名、密码");
 `
 
+//gitee导入页面url
+const giteeImportPageUrl="https://gitee.com/projects/import/url";
+//gitee登录页面中填写用户名、填写密码的js语句，  firefox开发者工具   人工获得
 async function interept( ) {
   try{
     const client:CDP.Client = await CDP();
@@ -48,7 +51,10 @@ async function interept( ) {
     })
 
     // 参考 https://www.npmjs.com/package/readline-sync , https://developer.aliyun.com/article/1254945
-    const _trash=readlineSync.question("点击登录按钮后，填写可能的验证码后，在此nodejs控制台按任意键继续")
+    const _trash=readlineSync.question("此时在gitee登录页面，填写各字段、点击'登录'按钮、填写可能的验证码 后，在此nodejs控制台按任意键继续")
+
+    await Page.navigate({url:giteeImportPageUrl})
+    readlineSync.question("此时在gitee导入URL页面，填写各字段、点击'导入'按钮 后，在此nodejs控制台按任意键继续")
 
     //请求过滤
     Network.on("requestWillBeSent", (params: Protocol.Network.RequestWillBeSentEvent) => {
