@@ -6,12 +6,16 @@ const urlList:string[]=[
   "https://gitee.com/tmpOrg/projects"
 ];
 
-async function interept(urlStr:string) {
+async function interept( ) {
   try{
     const client:CDP.Client = await CDP();
-    const {Network, Page, Fetch} = client;
+    const {Network, Page,DOM, Fetch} = client;
 
-    // await Fetch.enable(  )
+    await Network.enable();
+    await DOM.enable();
+    await Page.enable();
+    await Page.navigate( {url:"https://gitee.com/projects/import/url"});
+    await Page.loadEventFired()
 
     Network.on("requestWillBeSent", (params: Protocol.Network.RequestWillBeSentEvent) => {
       if(!params.request.url.startsWith("https://gitee.com")){
@@ -24,14 +28,10 @@ async function interept(urlStr:string) {
       }
 
     })
-    await Network.enable();
-    await Page.enable();
-    await Page.navigate( {url:urlStr});
-    await Page.loadEventFired()
 
   }catch(err){
     console.error(err);
   }
 }
 
-interept("https://gitee.com/projects/import/url")
+interept()
