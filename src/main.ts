@@ -36,6 +36,8 @@ document.getElementById("project_import_url").value="${project_import_url}";
 document.getElementById("project_name").value="${markupPrjName}";
 document.title="${importPageMsg}"+document.title;
 `
+//gitee账户页面url
+const accInfoPgUrl="https://gitee.com/profile/account_information";
 async function interept( ) {
   try{
     const client:CDP.Client = await CDP();
@@ -69,10 +71,30 @@ async function interept( ) {
 
     })
 
+    //请求过滤，寻找重定向
+    Network.on("requestWillBeSent",(params: Protocol.Network.RequestWillBeSentEvent)=>{
+      const req:Protocol.Network.Request=params.request;
+      const reqUrl:string=req.url;
+      const redirectResp:Protocol.Network.Response=params.redirectResponse;
+      if(reqUrl && redirectResp){
+        const redirectRespUrl:string=redirectResp.url;
+        if(redirectRespUrl){
+          console.log(`【发现重定向】${redirectRespUrl} ----> ${reqUrl}`)
+        }
+
+        // if(accInfoPgUrl==redirectRespUrl){
+        // }
+      }
+
+    })
+
     await Network.enable();
     await Runtime.enable();
     await DOM.enable();
     await Page.enable();
+
+    //访问 gitee账户页面url
+    await Page.navigate( {url:accInfoPgUrl});
 
     //打开gitee登录页面
     await Page.navigate( {url:giteeLoginPageUrl});
