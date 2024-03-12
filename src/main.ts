@@ -19,15 +19,24 @@ const giteePwd=giteeAccount["pass"];
 const giteeLoginPageUrl="https://gitee.com/login";
 //gitee登录页面中"登录"按钮的css选择器，  firefox开发者工具   人工获得
 const loginBtnCssSelector="div.field:nth-child(4) > input:nth-child(1)";
+const loginPageMsg="【gitee登录页面】已填充用户名、密码， "
 //gitee登录页面中填写用户名、填写密码的js语句，  firefox开发者工具   人工获得
 const js_fillUserPass=`
 document.getElementById("user_login").value="${giteeUserName}";
 document.getElementById("user_password").value="${giteePwd}";
-alert("已填充用户名、密码");
+document.title="${loginPageMsg}"+document.title;
 `
 
 //gitee导入页面url
 const giteeImportPageUrl="https://gitee.com/projects/import/url";
+const project_import_url = "https://github.com/intel/ARM_NEON_2_x86_SSE.git"
+const markupPrjName = "markupField----intel--ARM_NEON_2_x86_SSE"
+const importPageMsg="【gitee导入页面】已填充标记字段，"
+const js_fillMarkupGoalRepo=`
+document.getElementById("project_import_url").value="${project_import_url}";
+document.getElementById("project_name").value="${markupPrjName}";
+document.title="${importPageMsg}"+document.title;
+`
 //gitee登录页面中填写用户名、填写密码的js语句，  firefox开发者工具   人工获得
 async function interept( ) {
   try{
@@ -54,7 +63,13 @@ async function interept( ) {
     const _trash=readlineSync.question("此时在gitee登录页面，填写各字段、点击'登录'按钮、填写可能的验证码 后，在此nodejs控制台按任意键继续")
 
     await Page.navigate({url:giteeImportPageUrl})
-    readlineSync.question("此时在gitee导入URL页面，填写各字段、点击'导入'按钮 后，在此nodejs控制台按任意键继续")
+    await Page.loadEventFired()
+    await DOM.getDocument();
+    //填写标记仓库
+    await Runtime.evaluate(<Protocol.Runtime.EvaluateRequest>{
+      expression:js_fillMarkupGoalRepo
+    })
+    readlineSync.question("此时在gitee导入URL页面，填写各字段、点击'导入'按钮 后，【注意'仓库名称' 'project_name'字段是标记字段，其他各字段不要与标记字段取值相同】, 在此nodejs控制台按任意键继续")
 
     //请求过滤
     Network.on("requestWillBeSent", (params: Protocol.Network.RequestWillBeSentEvent) => {
@@ -65,9 +80,22 @@ async function interept( ) {
       }
       console.log(`【请求地址】${url}`)
 
-      if(urlList.indexOf(url)>=0){
-        console.log(`【postData】【${url}】${req.postData}`)
+      const headerText=req.headers.toString();
+      if(headerText.includes(markupPrjName)){
+        console.log(`【在请求头】【发现标记请求地址】【${url}】【${headerText}】`)
       }
+      if(url.includes(markupPrjName)){
+        console.log(`【在url】【发现标记请求地址】【${url}】`)
+      }
+      if(req.hasPostData){
+        const postData:string = req.postData;
+        if(postData && postData.includes(markupPrjName)){
+          console.log(`【在请求体】【发现标记请求地址】【${url}】【${postData}】`)
+        }
+      }
+      /**
+【在请求体】【发现标记请求地址】【https://gitee.com/tmpOrg/projects】【utf8=%E2%9C%93&authenticity_token=xUuuL7czpeKrHp3QoLju7yfE67WTOa5xnSQk7C%2FOaNAqAUO7fXTpgQUJqsXW4aiSOxIUoOHqvkwKr3yaLxaZ4g%3D%3D&project%5Bimport_url%5D=https%3A%2F%2Fgithub.com%2Fintel%2FARM_NEON_2_x86_SSE.git&user_sync_code=&password_sync_code=&project%5Bname%5D=intel--ARM_NEON_2_x86_SSE&project%5Bnamespace_path%5D=tmpOrg&project%5Bpath%5D=xxxxxx&project%5Bdescription%5D=zzzzz&project%5Bpublic%5D=1&language=0】
+       */
 
     })
 
