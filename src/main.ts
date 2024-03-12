@@ -7,16 +7,12 @@ async function interept(urlStr:string) {
     const client:CDP.Client = await CDP();
     const {Network, Page, Fetch} = client;
 
-    await Fetch.enable( {
-      patterns:[
-        <Protocol.Fetch.RequestPattern>{
-          urlPattern:"^http[s]?://gitee.com/*", //chrome-remote-interface 的 正则表达式太简陋了 不好用， 比如 开头符号^无效
-          resourceType:"XHR"
-        }
-      ]
-    })
+    await Fetch.enable(  )
 
     Network.on("requestWillBeSent", (params: Protocol.Network.RequestWillBeSentEvent) => {
+      if(!params.request.url.startsWith("https://gitee.com")){
+        return;
+      }
       console.log(`【请求地址】${params.request.url}`)
     })
     await Network.enable();
