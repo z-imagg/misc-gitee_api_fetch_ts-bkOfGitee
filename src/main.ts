@@ -2,8 +2,10 @@
 import CDP from 'chrome-remote-interface';
 import Protocol from "devtools-protocol";
 import {Runtime} from "inspector";
+import readlineSync from 'readline-sync'
 
 import * as fs from "fs";
+import {sync} from "rimraf";
 
 const urlList:string[]=[
   "https://gitee.com/tmpOrg/projects"
@@ -44,6 +46,9 @@ async function interept( ) {
     await Runtime.evaluate(<Protocol.Runtime.EvaluateRequest>{
       expression:js_fillUserPass
     })
+
+    // 参考 https://www.npmjs.com/package/readline-sync , https://developer.aliyun.com/article/1254945
+    const _trash=readlineSync.question("点击登录按钮后，填写可能的验证码后，在此nodejs控制台按任意键继续")
 
     //请求过滤
     Network.on("requestWillBeSent", (params: Protocol.Network.RequestWillBeSentEvent) => {
