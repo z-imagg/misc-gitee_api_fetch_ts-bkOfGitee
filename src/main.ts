@@ -46,8 +46,8 @@ document.getElementById("project_import_url").value="${project_import_url}";
 document.getElementById("project_name").value="${markupPrjName}";
 document.title="${importPageMsg}"+document.title;
 `
-//gitee账户页面url
-const accInfoPgUrl="https://gitee.com/profile/account_information";
+//gitee账户页面url .  作为 登录判定依据 的 账户页面   的 url 故意且必须 和  正常进入 账户页面 不同 以 区分
+const accInfoPgUrl="https://gitee.com/profile/account_information?different_to_normal=AvoidNoise";
 
 const Unknown=0; const TRUE=1; const FALSE=2;
 //是否已登录
@@ -94,7 +94,13 @@ async function interept( ) {
 
       if(redirectResp==null && reqUrl==accInfoPgUrl){
         console.log(`【发现直接进入账户页】【undefined--->账户页】【此即已登录】undefined ----> ${reqUrl}`)
-        //已登录
+        /*
+        若 params.request获得的响应的状态码是302 ，则 未登录；  后续 会发生期望的重定向
+        若 params.request获得的响应的状态码是200 ，则 已登录；  后续 不会发生期望的重定向
+        因此 不用判定 响应的状态码，只需要看后续的重定向
+        即 这里可以等效的认为： 暂时 在这里 判定为 已登录  是 不会导致结果错误的
+         */
+        //已登录:
         loginFlag=TRUE;
       }
 
@@ -125,6 +131,7 @@ async function interept( ) {
     await DOM.enable();
     await Page.enable();
 
+    readlineSync.question("回调Network.on已经执行， 此时 正常打开 账户页面 （能出发回调）（即制造干扰），后  按回车继续  ，理论上 不会干扰到此程序 https://gitee.com/profile/account_information   ")
     //打开gitee账户页面
     console.log(`打开gitee账户页面 ${accInfoPgUrl}`)
     await Page.navigate( {url:accInfoPgUrl});
