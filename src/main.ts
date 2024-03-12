@@ -92,28 +92,33 @@ async function interept( ) {
       const reqUrl:string=req.url;
       const redirectResp:Protocol.Network.Response=params.redirectResponse;
 
+      if(redirectResp==null && reqUrl==accInfoPgUrl){
+        console.log(`【发现直接进入账户页】【undefined--->账户页】【此即已登录】undefined ----> ${reqUrl}`)
+        //已登录
+        loginFlag=TRUE;
+      }
 
-      if(reqUrl && redirectResp){
+      if(redirectResp && reqUrl){
         const redirectRespUrl:string=redirectResp.url;
-        if(undefined==redirectRespUrl && reqUrl==accInfoPgUrl){
-          console.log(`【发现直接进入账户页】【undefined--->账户页】【此即已登录】undefined ----> ${reqUrl}`)
-          //已登录
-          loginFlag=TRUE;
-        }
-
-        // 暂时不打印 普通 重定向日志
-        // if(redirectRespUrl){
-        //   console.log(`【发现重定向】${redirectRespUrl} ----> ${reqUrl}`)
-        // }
+        console.assert(redirectRespUrl!=null)
 
         if(accInfoPgUrl==redirectRespUrl && reqUrl==giteeLoginPageUrl){
           console.log(`【发现故意制造的重定向】【账户页--->登录页】【此即未登录】${redirectRespUrl} ----> ${reqUrl}`)
           //未登录
           loginFlag=FALSE;
         }
+
+        // 暂时不打印 普通 重定向日志
+        console.log(`【发现重定向】${redirectRespUrl} ----> ${reqUrl}`)
+
       }
 
     })
+
+    // 暂时不打印 任意 重定向日志
+    // Network.on("requestWillBeSent",(params: Protocol.Network.RequestWillBeSentEvent)=>{
+    //   console.log(`]]]]] ${(params.redirectResponse||{}).url} ----> ${params.request.url}`)
+    // })
 
     await Network.enable();
     await Runtime.enable();
