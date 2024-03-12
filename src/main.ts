@@ -5,6 +5,16 @@ import {Runtime} from "inspector";
 import readlineSync from 'readline-sync'
 
 import * as fs from "fs";
+import assert from "assert";
+
+// nodejs版本>=9.3时， 阻塞式sleep实现如下，参考  https://www.npmjs.com/package/sleep
+function msleep(ms) {
+  Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, ms);
+}
+function sleep(seconds) {
+  msleep(seconds*1000);
+}
+
 
 const urlList:string[]=[
   "https://gitee.com/tmpOrg/projects"
@@ -36,8 +46,12 @@ document.getElementById("project_import_url").value="${project_import_url}";
 document.getElementById("project_name").value="${markupPrjName}";
 document.title="${importPageMsg}"+document.title;
 `
-//gitee账户页面url
-const accInfoPgUrl="https://gitee.com/profile/account_information";
+//gitee账户页面url .  作为 登录判定依据 的 账户页面   的 url 故意且必须 和  正常进入 账户页面 不同 以 区分
+const accInfoPgUrl="https://gitee.com/profile/account_information?different_to_normal=AvoidNoise";
+
+const Unknown=0; const TRUE=1; const FALSE=2;
+//是否已登录
+let loginFlag:number=Unknown;
 async function interept( ) {
   try{
     const client:CDP.Client = await CDP();
@@ -50,7 +64,8 @@ async function interept( ) {
       if(!url.startsWith("https://gitee.com")){
         return;
       }
-      console.log(`【请求地址】${url}`)
+      // 暂时不打印 普通 请求日志
+      // console.log(`【请求地址】${url}`)
 
       const headerText=req.headers.toString();
       if(headerText.includes(markupPrjName)){
@@ -76,27 +91,55 @@ async function interept( ) {
       const req:Protocol.Network.Request=params.request;
       const reqUrl:string=req.url;
       const redirectResp:Protocol.Network.Response=params.redirectResponse;
-      if(reqUrl && redirectResp){
+
+      if(redirectResp==null && reqUrl==accInfoPgUrl){
+        console.log(`【发现直接进入账户页】【undefined--->账户页】【此即已登录】undefined ----> ${reqUrl}`)
+        /*
+        若 params.request获得的响应的状态码是302 ，则 未登录；  后续 会发生期望的重定向
+        若 params.request获得的响应的状态码是200 ，则 已登录；  后续 不会发生期望的重定向
+        因此 不用判定 响应的状态码，只需要看后续的重定向
+        即 这里可以等效的认为： 暂时 在这里 判定为 已登录  是 不会导致结果错误的
+         */
+        //已登录:
+        loginFlag=TRUE;
+      }
+
+      if(redirectResp && reqUrl){
         const redirectRespUrl:string=redirectResp.url;
-        if(redirectRespUrl){
-          console.log(`【发现重定向】${redirectRespUrl} ----> ${reqUrl}`)
+        console.assert(redirectRespUrl!=null)
+
+        if(accInfoPgUrl==redirectRespUrl && reqUrl==giteeLoginPageUrl){
+          console.log(`【发现故意制造的重定向】【账户页--->登录页】【此即未登录】${redirectRespUrl} ----> ${reqUrl}`)
+          //未登录
+          loginFlag=FALSE;
         }
 
-        // if(accInfoPgUrl==redirectRespUrl){
-        // }
+        // 暂时不打印 普通 重定向日志
+        console.log(`【发现重定向】${redirectRespUrl} ----> ${reqUrl}`)
+
       }
 
     })
+
 
     await Network.enable();
     await Runtime.enable();
     await DOM.enable();
     await Page.enable();
 
+    readlineSync.question("回调Network.on已经执行， 按回车继续   ")
     //打开gitee账户页面
     console.log(`打开gitee账户页面 ${accInfoPgUrl}`)
     await Page.navigate( {url:accInfoPgUrl});
+    //给浏览器以足够时间，看她是否重定向
+    console.log(`给浏览器以足够时间，看她是否重定向`)
+    sleep(8);
 
+    //断言 此时登录状态不应该是未知
+    assert(loginFlag != Unknown)
+
+    //未登录
+    if ( loginFlag==FALSE){
     //打开gitee登录页面
     console.log(`打开gitee登录页面 ${giteeLoginPageUrl}`)
     await Page.navigate( {url:giteeLoginPageUrl});
@@ -108,6 +151,12 @@ async function interept( ) {
       expression:js_fillUserPass
     })
     const _trash=readlineSync.question("此时在gitee登录页面，填写各字段、点击'登录'按钮、填写可能的验证码 后，在此nodejs控制台按任意键继续")
+    }
+    //已登录
+    if ( loginFlag==TRUE){
+      //不用打开gitee登录页面
+      console.log(`已登录 不用打开gitee登录页面 `)
+    }
 
     //打开gitee导入页面
     console.log(`打开gitee导入页面 ${giteeImportPageUrl}`)

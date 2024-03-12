@@ -1,4 +1,12 @@
 ```shell
+node  --version #v18.19.1
+npm --version #10.5.0
+yarn --version #1.22.21
+pnpm --version #8.15.4
+yrm --version #1.0.6
+```
+
+```shell
 npm install
 
 #rm -fr build
