@@ -127,7 +127,7 @@ async function interept( ) {
     await DOM.enable();
     await Page.enable();
 
-    readlineSync.question("回调Network.on已经执行， 此时 正常打开 账户页面 （能出发回调）（即制造干扰），后  按回车继续  ，理论上 不会干扰到此程序 https://gitee.com/profile/account_information   ")
+    readlineSync.question("回调Network.on已经执行， 按回车继续   ")
     //打开gitee账户页面
     console.log(`打开gitee账户页面 ${accInfoPgUrl}`)
     await Page.navigate( {url:accInfoPgUrl});
