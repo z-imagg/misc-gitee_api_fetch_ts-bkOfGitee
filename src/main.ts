@@ -15,6 +15,8 @@ const giteePwd=giteeAccount["pass"];
 
 //gitee登录页面url
 const giteeLoginPageUrl="https://gitee.com/login";
+//gitee登录页面中"登录"按钮的css选择器，  firefox开发者工具   人工获得
+const loginBtnCssSelector="div.field:nth-child(4) > input:nth-child(1)";
 //gitee登录页面中填写用户名、填写密码的js语句，  firefox开发者工具   人工获得
 const js_fillUserPass=`
 document.getElementById("user_login").value="${giteeUserName}";
