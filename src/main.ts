@@ -58,13 +58,15 @@ async function interept( ) {
 
     //请求过滤
     Network.on("requestWillBeSent", (params: Protocol.Network.RequestWillBeSentEvent) => {
-      if(!params.request.url.startsWith("https://gitee.com")){
+      const req:Protocol.Network.Request=params.request;
+      const url:string = params.request.url;
+      if(!url.startsWith("https://gitee.com")){
         return;
       }
-      console.log(`【请求地址】${params.request.url}`)
+      console.log(`【请求地址】${url}`)
 
-      if(urlList.indexOf(params.request.url)>=0){
-        console.log(`【postData】【${params.request.url}】${params.request.postData}`)
+      if(urlList.indexOf(url)>=0){
+        console.log(`【postData】【${url}】${req.postData}`)
       }
 
     })
