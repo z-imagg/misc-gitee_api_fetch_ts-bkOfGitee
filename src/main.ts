@@ -6,6 +6,15 @@ import readlineSync from 'readline-sync'
 
 import * as fs from "fs";
 
+// nodejs版本>=9.3时， 阻塞式sleep实现如下，参考  https://www.npmjs.com/package/sleep
+function msleep(ms) {
+  Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, ms);
+}
+function sleep(seconds) {
+  msleep(seconds*1000);
+}
+
+
 const urlList:string[]=[
   "https://gitee.com/tmpOrg/projects"
 ];
@@ -82,8 +91,9 @@ async function interept( ) {
           console.log(`【发现重定向】${redirectRespUrl} ----> ${reqUrl}`)
         }
 
-        // if(accInfoPgUrl==redirectRespUrl){
-        // }
+        if(accInfoPgUrl==redirectRespUrl && reqUrl==giteeLoginPageUrl){
+          console.log(`【发现故意制造的重定向】【账户页--->登录页】【此即未登录】${redirectRespUrl} ----> ${reqUrl}`)
+        }
       }
 
     })
@@ -96,6 +106,9 @@ async function interept( ) {
     //打开gitee账户页面
     console.log(`打开gitee账户页面 ${accInfoPgUrl}`)
     await Page.navigate( {url:accInfoPgUrl});
+    //给浏览器以足够时间，看她是否重定向
+    console.log(`给浏览器以足够时间，看她是否重定向`)
+    sleep(8);
 
     //打开gitee登录页面
     console.log(`打开gitee登录页面 ${giteeLoginPageUrl}`)
