@@ -148,18 +148,19 @@ function findLogin(reqChain:ReqWrapT[], respStatus:number, resp:null|DP.Protocol
 
   if( reqWp1.req. url == accInfoPgUrl ){
     const reqWp2:ReqWrapT=reqLs_req2(reqChain);
+    if(reqWp2==null){ // && respStatus==200
+      console.log(`【发现直接进入账户页】【undefined--->账户页】【此即已登录】${urlEnd}`)
+      //已登录:
+      loginFlag=TRUE;
+    } else
     if( reqWp2.req. url == giteeLoginPageUrl){ //&& respStatus==302
       assert(resp!=null, "断言失败, 重定向的第二个请求的响应一定是正常的200")
       const targetUrl:string=resp.headers["Location"]
       console.log(`【发现故意制造的重定向】【账户页--->登录页】【此即未登录】${urlEnd} ----> ${targetUrl}`)
       //未登录
       loginFlag=FALSE;
-    }else
-    if(reqWp2==null){ // && respStatus==200
-      console.log(`【发现直接进入账户页】【undefined--->账户页】【此即已登录】${urlEnd}`)
-      //已登录:
-      loginFlag=TRUE;
-    }else{
+    }
+    else{
       throw new Error(`断言失败 ， 请求 ${urlEnd} 的响应状态码不应该是${resp.status}` )
     }
   }
