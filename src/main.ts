@@ -156,7 +156,7 @@ enum  MarkupHasEnum{
 }
 function reqWpHasMarkup( ){
 
-  const reqIdLs:string[]=reqLs.keys()
+  const reqIdLs:string[]= Array.from(reqLs.keys())
   const _reqWpHasMarkup:ReqWrapT[]=reqIdLs.map(reqId=>{ //隐含了同一种消息是严格有序的，且 forEach 严格遵守数组下标顺序
     const reqChain:ReqWrapT[]=reqLs.get(reqId)
     const reqWpEnd:ReqWrapT=reqLs_endReq(reqChain);
@@ -200,7 +200,7 @@ enum  LoginEnum{
 function calcLoginFlag( ){
 
   let _LoginFlag:LoginEnum=LoginEnum.Other;
-  const reqIdLs:string[]=reqLs.keys()
+  const reqIdLs:string[]=Array.from(reqLs.keys())
   reqIdLs.forEach(reqId=>{ //隐含了同一种消息是严格有序的，且 forEach 严格遵守数组下标顺序
     const reqChain:ReqWrapT[]=reqLs.get(reqId)
     const respChain:RespHdWrapT[]=respHdLs.get(reqId)
@@ -221,6 +221,7 @@ function calcLoginEnumIn1Chain(reqChain:ReqWrapT[],  respChain:RespHdWrapT[]){
   // if( reqWp1  == null ){return;}
   const respWp1:RespHdWrapT=respLs_1(respChain);
 
+  const urlFirst:string=reqWp1.req.url;
 
   const reqWpEnd:ReqWrapT=reqLs_endReq(reqChain);
   const urlEnd:string=reqWpEnd.req.url;
@@ -238,7 +239,7 @@ function calcLoginEnumIn1Chain(reqChain:ReqWrapT[],  respChain:RespHdWrapT[]){
     if( reqWp2.req. url == giteeLoginPageUrl){ //&& respWp2.statusCode==302
       assert(respWp2!=null, "断言失败, 重定向的第二个请求的响应一定是正常的200")
       const targetUrl:string=respWp1.respHd["Location"]
-      console.log(`【发现故意制造的重定向】【账户页--->登录页】【此即未登录】${urlEnd} ----> ${targetUrl}`)
+      console.log(`【发现故意制造的重定向】【账户页--->登录页】【此即未登录】${urlFirst} ----> ${targetUrl}`)
       //未登录
       _loginFlag=LoginEnum.NotLogin;
     }
