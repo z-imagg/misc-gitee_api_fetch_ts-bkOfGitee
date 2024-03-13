@@ -155,7 +155,7 @@ enum  MarkupHasEnum{
   No=2
 }
 function reqWpHasMarkup( ){
-
+  // Array.from(reqLs.values()).map(k=>k[0].reqK.req.url)
   const reqIdLs:string[]= Array.from(reqLs.keys())
   const _reqWpHasMarkup:ReqWrapT[]=reqIdLs.map(reqId=>{ //隐含了同一种消息是严格有序的，且 forEach 严格遵守数组下标顺序
     const reqChain:ReqWrapT[]=reqLs.get(reqId)
@@ -281,6 +281,11 @@ async function interept( ) {
 
     //记录请求
     Network.on("requestWillBeSent", (params: DP.Protocol.Network.RequestWillBeSentEvent) => {
+      if(params.request.url.startsWith("https://gitee.com")){//https://gitee.com/tmpOrg/projects
+        // 暂时不打印 普通 请求日志
+        // console.log(`【请求】【reqId=${params.requestId}】 【${ (params.redirectResponse||{}).url } ----> ${params.request.url} 】`)
+        pushReq(params.redirectResponse, params.requestId,params.request )
+      }
       if(params.request.url.endsWith(".css")
         || params.request.url.indexOf(".js")>0
         || params.request.url.indexOf("cn-assets.gitee.com") > 0
@@ -292,11 +297,7 @@ async function interept( ) {
         //调试用，暂时忽略可能的资源文件
         return;
       }
-      if(params.request.url.startsWith("https://gitee.com")){
-        // 暂时不打印 普通 请求日志
-        // console.log(`【请求】【reqId=${params.requestId}】 【${ (params.redirectResponse||{}).url } ----> ${params.request.url} 】`)
-      }
-      pushReq(params.redirectResponse, params.requestId,params.request )
+
     })
 
     await Network.enable();
@@ -348,7 +349,11 @@ async function interept( ) {
     await Runtime.evaluate(<DP.Protocol.Runtime.EvaluateRequest>{
       expression:js_fillMarkupGoalRepo
     })
-    readlineSync.question("此时在gitee导入URL页面，填写各字段、点击'导入'按钮 后，【注意'仓库名称' 'project_name'字段是标记字段，其他各字段不要与标记字段取值相同】, 在此nodejs控制台按任意键继续")
+    // sleep(2)
+    await Page.loadEventFired()
+    await DOM.getDocument();
+    console.log("此时在gitee导入URL页面，填写各字段、点击'导入'按钮 后，【注意'仓库名称' 'project_name'字段是标记字段，其他各字段不要与标记字段取值相同】")
+    // sleep(5)
     reqWpHasMarkup()
 
   }catch(err){
