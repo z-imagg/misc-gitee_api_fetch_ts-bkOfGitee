@@ -53,11 +53,6 @@ const Unknown=0; const TRUE=1; const FALSE=2;
 //是否已登录
 let loginFlag:number=Unknown;
 
-enum MarkupPlace{
-  InHeader=0,
-  InUrl=1,
-  InBody=2
-}
 class ReqWrapT {
 
   redirectResp:DP.Protocol.Network.Response;
