@@ -72,15 +72,15 @@ class MarkupReqT {
     this.place=place
   }
 
-  req_equal(reqId:Protocol.Network.RequestId, reqUrl:string):boolean{
-    return this.reqId == reqId && this.reqUrl == reqUrl
+  req_equal(reqId:Protocol.Network.RequestId):boolean{
+    return this.reqId == reqId
   }
 }
 
 let markupReqLs:MarkupReqT[]=[];
 
-function isMarkupReq(requestId:Protocol.Network.RequestId, reqUrl:string):boolean{
-  const left:MarkupReqT[]=markupReqLs.filter(markupReqK=>markupReqK.req_equal(requestId,reqUrl))
+function isMarkupReq(requestId:Protocol.Network.RequestId):boolean{
+  const left:MarkupReqT[]=markupReqLs.filter(markupReqK=>markupReqK.req_equal(requestId))
   return left.length>0
 }
 
@@ -94,8 +94,8 @@ async function interept( ) {
     Network.on("responseReceived",(params: Protocol.Network.ResponseReceivedEvent) =>{
       const requestId:Protocol.Network.RequestId = params.requestId
       const respUrl:string = params.response.url;
-      if(isMarkupReq(requestId,respUrl)){
-        console.log(`【发现标记请求的响应】【${respUrl}】【${requestId}】`)
+      if(isMarkupReq(requestId)){
+        console.log(`【发现标记请求的响应】【${requestId}【${respUrl}】】`)
       }
 
     })
