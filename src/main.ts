@@ -5,14 +5,9 @@ import readlineSync from 'readline-sync'
 
 import * as fs from "fs";
 import assert from "assert";
+import * as CL from 'chrome-launcher'
+import {existsSync, mkdir, mkdirSync, writeFileSync} from "fs";
 
-// nodejs版本>=9.3时， 阻塞式sleep实现如下，参考  https://www.npmjs.com/package/sleep
-function msleep(ms) {
-  Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, ms);
-}
-function sleep(seconds) {
-  msleep(seconds*1000);
-}
 
 
 const urlList:string[]=[
@@ -35,15 +30,36 @@ document.getElementById("user_password").value="${giteePwd}";
 document.title="${loginPageMsg}"+document.title;
 `
 
+interface MarkupField{
+  fldNm:string,
+  fldVal:string
+}
+
 //gitee导入页面url
 const giteeImportPageUrl="https://gitee.com/projects/import/url";
 const project_import_url = "https://github.com/intel/ARM_NEON_2_x86_SSE.git"
-const markupPrjName = "markupField----intel--ARM_NEON_2_x86_SSE"
-const importPageMsg="【gitee导入页面】已填充标记字段，"
+const nowMs:number = Date.now();
+const markupPrjName = `markupPrjName----intel--ARM_NEON_2_x86_SSE__${nowMs}`
+const markupOrgName = "markup-organization-9473" ; //mirrr
+const markupPrjPath = `markupPrjPath----intel--ARM_NEON_2_x86_SSE__${nowMs}`
+const markupPrjDesc = `markupPrjDesc----intel--ARM_NEON_2_x86_SSE__${nowMs}`
+
+const markupFieldLs:MarkupField[]=[]
+markupFieldLs.push(<MarkupField>{fldNm:"project_import_url",fldVal:project_import_url})
+markupFieldLs.push(<MarkupField>{fldNm:"markupPrjName",fldVal:markupPrjName})
+markupFieldLs.push(<MarkupField>{fldNm:"markupOrgName",fldVal:markupOrgName})
+markupFieldLs.push(<MarkupField>{fldNm:"markupPrjPath",fldVal:markupPrjPath})
+markupFieldLs.push(<MarkupField>{fldNm:"markupPrjDesc",fldVal:markupPrjDesc})
+
+const importPageMsg="【已填充标记字段】"
 const js_fillMarkupGoalRepo=`
+document.title="${importPageMsg}"+document.title;
 document.getElementById("project_import_url").value="${project_import_url}";
 document.getElementById("project_name").value="${markupPrjName}";
-document.title="${importPageMsg}"+document.title;
+document.querySelector('.scrolling > div[data-value="${markupOrgName}"]').click() //点击下拉列表中具有给定组织名的元素
+document.getElementById("project_path").value="${markupPrjPath}";
+document.getElementById("project_description").value="${markupPrjDesc}";
+document.getElementById("submit-project-new").click();
 `
 //gitee账户页面url .  作为 登录判定依据 的 账户页面   的 url 故意且必须 和  正常进入 账户页面 不同 以 区分
 const accInfoPgUrl="https://gitee.com/profile/account_information?different_to_normal=AvoidNoise";
@@ -178,21 +194,56 @@ function hasMarkupFieldIn1Req(reqWpEnd:ReqWrapT){
   const urlEnd:string=reqWpEnd.req.url;
   if(headerText.includes(markupPrjName)){
     console.log(`【在请求头,发现标记请求地址】【${urlEnd}】【${headerText}】`)
+    writeReqExampleAsTemplate(reqWpEnd.reqId, req,TemplPlace.ReqHeader)
     _markup=MarkupHasEnum.Yes
   }
   if(urlEnd.includes(markupPrjName)){
     console.log(`【在url,发现标记请求地址】【${urlEnd}】`)
     _markup=MarkupHasEnum.Yes
+    writeReqExampleAsTemplate(reqWpEnd.reqId, req,TemplPlace.Url)
   }
   if(req.hasPostData){
     const postData:string = req.postData;
     if(postData && postData.includes(markupPrjName)){
       console.log(`【在请求体,发现标记请求地址】【${urlEnd}】【${postData}】`)
       _markup=MarkupHasEnum.Yes
+      writeReqExampleAsTemplate(reqWpEnd.reqId, req,TemplPlace.Body)
     }
   }
 
   return _markup;
+}
+
+enum TemplPlace{
+  ReqHeader=0,
+  Url=1,
+  Body=2
+}
+
+interface ReqTemplate{
+  //当前毫秒数
+  nowMs:number,
+  //请求id
+  reqId:DP.Protocol.Network.RequestId
+  //请求
+  req:DP.Protocol.Network.Request
+  //模板位置（标记字段在请求中的部位）
+  templatePlace:TemplPlace
+  //标记字段们
+  markupFieldLs:MarkupField[]
+}
+const reqTemplDir:string="./reqTemplate"
+// 写请求例子作为请求模板
+function writeReqExampleAsTemplate(reqId:DP.Protocol.Network.RequestId, req:DP.Protocol.Network.Request,templatePlace:TemplPlace){
+  const reqTemplText:string=JSON.stringify(<ReqTemplate>{
+    nowMs,reqId,req,templatePlace,markupFieldLs
+  })
+  if(!existsSync(reqTemplDir)){
+    mkdirSync(reqTemplDir)
+  }
+  const reqTmplFp:string=`${reqTemplDir}/${reqId}`
+  writeFileSync(reqTmplFp,reqTemplText)
+  console.log(`已写入请求例子（作为请求模板）文件 【${reqTmplFp}】`)
 }
 
 enum  LoginEnum{
@@ -254,9 +305,15 @@ function calcLoginEnumIn1Chain(reqChain:ReqWrapT[],  respChain:RespHdWrapT[]){
   return _loginFlag;
 
 }
-async function interept( ) {
+async function mainFunc( ) {
   try{
-    const client:CDP.Client = await CDP();
+    const chrome:CL.LaunchedChrome= await CL.launch(<CL.Options>{
+      chromePath:"/app/chrome-linux/chrome",
+      chromeFlags:["--no-first-run","--disable-gpu"]
+    });
+    const client:CDP.Client = await CDP(<CDP.Options>{
+      port:chrome.port
+    });
     const {Network, Page,DOM,Runtime, Fetch} = client;
 
     // 记录精简响应（全部响应都有，但全部都只有响应头、无响应体）
@@ -305,15 +362,13 @@ async function interept( ) {
     await DOM.enable();
     await Page.enable();
 
-    readlineSync.question("回调Network.on已经执行， 按回车继续   ")
+    readlineSync.question("回调Network.on已经执行。 若测试已登录情形，请现在在此浏览器人工登录gitee，后回车继续。否则直接回车继续。")
     //打开gitee账户页面
     console.log(`打开gitee账户页面 ${accInfoPgUrl}`)
-    await Page.navigate( {url:accInfoPgUrl});
+    await Page.navigate( {url:accInfoPgUrl});//nav1 引起页面新加载
     //给浏览器以足够时间，看她是否重定向
-    console.log(`给浏览器以足够时间，看她是否重定向`)
     await Page.loadEventFired()
-    await DOM.getDocument();
-    sleep(8);
+    await DOM.getDocument();//阻塞的DOMget1 被 nav1 吃掉
     //是否已登录
     const LoginFlag:LoginEnum=calcLoginFlag()
     reqLs.clear()
@@ -326,15 +381,18 @@ async function interept( ) {
     if ( LoginFlag==LoginEnum.NotLogin){
     //打开gitee登录页面
     console.log(`打开gitee登录页面 ${giteeLoginPageUrl}`)
-    await Page.navigate( {url:giteeLoginPageUrl});
+    await Page.navigate( {url:giteeLoginPageUrl});//nav2 引起页面新加载
     // types/chrome-remote-interface 说 没有此方法 loadEventFired，但是 官方例子 中有此方法， https://github.com/cyrus-and/chrome-remote-interface/wiki/Async-await-example
     await Page.loadEventFired()
-    await DOM.getDocument();
+    await DOM.getDocument();//阻塞的DOMget2 被 nav2 吃掉
     //填写用户名、密码
     await Runtime.evaluate(<DP.Protocol.Runtime.EvaluateRequest>{
       expression:js_fillUserPass
     })
-    const _trash=readlineSync.question("此时在gitee登录页面，填写各字段、点击'登录'按钮、填写可能的验证码 后，在此nodejs控制台按任意键继续")
+    console.log("在gitee登录页面，请填写各字段、填写可能的验证码, 点击'登录'按钮 。")
+    await Page.loadEventFired()
+    //用户在chroome浏览器进程上点击 '登录'按钮 , 引起页面新加载，将吃掉 nodejs进程中 阻塞的DOMget3
+    await DOM.getDocument();//阻塞的DOMget3
     }
     //已登录
     else if ( LoginFlag==LoginEnum.AlreadLogin){
@@ -344,23 +402,32 @@ async function interept( ) {
 
     //打开gitee导入页面
     console.log(`打开gitee导入页面 ${giteeImportPageUrl}`)
-    await Page.navigate({url:giteeImportPageUrl})
+    await Page.navigate({url:giteeImportPageUrl})//nav4 引起页面新加载
     await Page.loadEventFired()
-    await DOM.getDocument();
+    await DOM.getDocument();//阻塞的DOMget4 被 nav4 吃掉
     //填写标记仓库
     await Runtime.evaluate(<DP.Protocol.Runtime.EvaluateRequest>{
-      expression:js_fillMarkupGoalRepo
+      expression:js_fillMarkupGoalRepo  //此js脚本  点击了 '导入'按钮 , 引起页面新加载，将吃掉 nodejs进程中 阻塞的DOMget5
     })
-    // sleep(2)
+    console.log("gitee导入URL页面，js脚本【js_fillMarkupGoalRepo】 将填写各字段, 并'导入'按钮，【请勿手动操作】")
     await Page.loadEventFired()
-    await DOM.getDocument();
-    console.log("此时在gitee导入URL页面，填写各字段、点击'导入'按钮 后，【注意'仓库名称' 'project_name'字段是标记字段，其他各字段不要与标记字段取值相同】")
-    // sleep(5)
-    reqWpHasMarkup()
+
+    await DOM.getDocument();//阻塞的DOMget5
+
+    //寻找有标记字段值的请求们
+    const _reqWpHasMarkup:ReqWrapT[] = reqWpHasMarkup()
+    if(_reqWpHasMarkup.length>0){
+      console.log("【退出nodejs进程，退出代码为0，业务功能正常完成】, 找到有标记字段值的请求们，写入路径请看上面日志")
+      process.exit(0)
+    }else{
+      console.log("【退出nodejs进程，退出代码为1，业务功能正常完成】, 找到有标记字段值的请求们，写入路径请看上面日志")
+      process.exit(1)
+    }
+
 
   }catch(err){
     console.error(err);
   }
 }
 
-interept()
+mainFunc()
