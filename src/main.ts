@@ -351,7 +351,11 @@ async function interept( ) {
     await Runtime.evaluate(<DP.Protocol.Runtime.EvaluateRequest>{
       expression:js_fillMarkupGoalRepo
     })
+    // sleep(2)
+    await Page.loadEventFired()
+    await DOM.getDocument();
     console.log("此时在gitee导入URL页面，填写各字段、点击'导入'按钮 后，【注意'仓库名称' 'project_name'字段是标记字段，其他各字段不要与标记字段取值相同】")
+    // sleep(5)
     reqWpHasMarkup()
 
   }catch(err){
