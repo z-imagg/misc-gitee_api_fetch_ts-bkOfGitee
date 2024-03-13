@@ -39,12 +39,20 @@ document.title="${loginPageMsg}"+document.title;
 //gitee导入页面url
 const giteeImportPageUrl="https://gitee.com/projects/import/url";
 const project_import_url = "https://github.com/intel/ARM_NEON_2_x86_SSE.git"
-const markupPrjName = "markupField----intel--ARM_NEON_2_x86_SSE"
+const markupPrjName = "markupPrjName----intel--ARM_NEON_2_x86_SSE"
+const markupOrgName = "tmpOrg" ; //mirrr
+const markupPrjPath = "markupPrjPath----intel--ARM_NEON_2_x86_SSE"
+const markupPrjDesc = "markupPrjDesc----intel--ARM_NEON_2_x86_SSE"
 const importPageMsg="【gitee导入页面】已填充标记字段，"
 const js_fillMarkupGoalRepo=`
+document.title="${importPageMsg}"+document.title;
 document.getElementById("project_import_url").value="${project_import_url}";
 document.getElementById("project_name").value="${markupPrjName}";
-document.title="${importPageMsg}"+document.title;
+document.getElementById("project_namespace_path").value="${markupOrgName}";
+// $($x('//*[@id="project_namespace_selection"]/div[1]')[0]).text("${markupOrgName}"); //这行代码在浏览器开发者工具正常执行，但在这里貌似不奏效。 由于 此字段用于显示，并非提交到接口的数据字段，因此忽略
+document.getElementById("project_path").value="${markupPrjPath}";
+document.getElementById("project_description").value="${markupPrjDesc}";
+document.getElementById("submit-project-new").click();
 `
 //gitee账户页面url .  作为 登录判定依据 的 账户页面   的 url 故意且必须 和  正常进入 账户页面 不同 以 区分
 const accInfoPgUrl="https://gitee.com/profile/account_information?different_to_normal=AvoidNoise";
