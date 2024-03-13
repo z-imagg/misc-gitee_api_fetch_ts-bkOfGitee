@@ -317,10 +317,8 @@ async function interept( ) {
     console.log(`打开gitee账户页面 ${accInfoPgUrl}`)
     await Page.navigate( {url:accInfoPgUrl});//nav1 引起页面新加载
     //给浏览器以足够时间，看她是否重定向
-    console.log(`给浏览器以足够时间，看她是否重定向`)
     await Page.loadEventFired()
     await DOM.getDocument();//阻塞的DOMget1 被 nav1 吃掉
-    // sleep(8);
     //是否已登录
     const LoginFlag:LoginEnum=calcLoginFlag()
     reqLs.clear()
@@ -361,12 +359,10 @@ async function interept( ) {
     await Runtime.evaluate(<DP.Protocol.Runtime.EvaluateRequest>{
       expression:js_fillMarkupGoalRepo
     })
-    // sleep(2)
     console.log("在gitee导入URL页面，请填写各字段, 点击'导入'按钮，【勿动标记字段'仓库名称'】")
     await Page.loadEventFired()
     //用户在chroome浏览器进程上点击 '导入'按钮 , 引起页面新加载，将吃掉 nodejs进程中 阻塞的DOMget5
     await DOM.getDocument();//阻塞的DOMget5
-    // sleep(5)
     reqWpHasMarkup()
 
   }catch(err){
