@@ -94,26 +94,27 @@ async function interept( ) {
       const reqWp:ReqWrapT=reqLs.get(params.requestId);
       const resp:DP.Protocol.Network.Response = params.response;
 
-
-      if( reqWp.req.url == accInfoPgUrl ){
-        if(resp.status==302){
-          const targetUrl:string=resp.headers["Location"]
-          console.log(`【发现故意制造的重定向】【账户页--->登录页】【此即未登录】${reqWp.req.url} ----> ${targetUrl}`)
-          //未登录
-          loginFlag=FALSE;
-        }else
-        if(resp.status==200){
-          console.log(`【发现直接进入账户页】【undefined--->账户页】【此即已登录】${reqWp.req.url}`)
-          //已登录:
-          loginFlag=TRUE;
-        }else{
-          throw new Error(`断言失败 ， 请求 ${reqWp.req.url} 的响应状态码不应该是${resp.status}` )
-        }
-      }
-
       const req:DP.Protocol.Network.Request = reqWp.req;
       const url:string=reqWp.req.url;
       const headerText=reqWp.req.headers.toString();
+      const respStatus:number = resp.status;
+
+      if( url == accInfoPgUrl ){
+        if(respStatus==302){
+          const targetUrl:string=resp.headers["Location"]
+          console.log(`【发现故意制造的重定向】【账户页--->登录页】【此即未登录】${url} ----> ${targetUrl}`)
+          //未登录
+          loginFlag=FALSE;
+        }else
+        if(respStatus==200){
+          console.log(`【发现直接进入账户页】【undefined--->账户页】【此即已登录】${url}`)
+          //已登录:
+          loginFlag=TRUE;
+        }else{
+          throw new Error(`断言失败 ， 请求 ${url} 的响应状态码不应该是${resp.status}` )
+        }
+      }
+
       if(headerText.includes(markupPrjName)){
         console.log(`【在请求头,发现标记请求地址】【${url}】【${headerText}】`)
       }
