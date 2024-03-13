@@ -221,6 +221,8 @@ enum TemplPlace{
 }
 
 interface ReqTemplate{
+  //当前毫秒数
+  nowMs:number,
   //请求id
   reqId:DP.Protocol.Network.RequestId
   //请求
@@ -234,7 +236,7 @@ const reqTemplDir:string="./reqTemplate"
 // 写请求例子作为请求模板
 function writeReqExampleAsTemplate(reqId:DP.Protocol.Network.RequestId, req:DP.Protocol.Network.Request,templatePlace:TemplPlace){
   const reqTemplText:string=JSON.stringify(<ReqTemplate>{
-    reqId,req,templatePlace,markupFieldLs
+    nowMs,reqId,req,templatePlace,markupFieldLs
   })
   if(!existsSync(reqTemplDir)){
     mkdirSync(reqTemplDir)
