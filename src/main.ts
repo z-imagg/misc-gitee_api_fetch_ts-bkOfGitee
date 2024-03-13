@@ -83,6 +83,11 @@ async function interept( ) {
     // 请求和对应的响应，查找被标记的请求的响应，
     //     参考 https://stackoverflow.com/questions/70926015/get-response-of-a-api-request-made-using-chrome-remote-interface/70926579#70926579
     Network.on("responseReceived",(params: DP.Protocol.Network.ResponseReceivedEvent) =>{
+      if(params.response.url.startsWith("https://gitee.com")){
+        // 暂时不打印 普通 请求日志
+        console.log(`【响应地址】${params.response.url}`)
+      }
+
       const requestId:DP.Protocol.Network.RequestId = params.requestId
       const respUrl:string = params.response.url;
       assert(reqLs.has(requestId),`断言失败，响应【requestId=${requestId},response.url=${respUrl}】对应的请求不存在`)
@@ -126,6 +131,10 @@ async function interept( ) {
 
     //记录请求
     Network.on("requestWillBeSent", (params: DP.Protocol.Network.RequestWillBeSentEvent) => {
+      if(params.request.url.startsWith("https://gitee.com")){
+        // 暂时不打印 普通 请求日志
+        console.log(`【请求地址】${params.request.url}`)
+      }
       pushReq(params.redirectResponse, params.requestId,params.request )
     })
 
