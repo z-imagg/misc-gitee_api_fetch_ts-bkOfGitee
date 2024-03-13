@@ -174,11 +174,11 @@ async function interept( ) {
     Network.on("responseReceivedExtraInfo",(params: DP.Protocol.Network.ResponseReceivedExtraInfoEvent) =>{
 
       const reqChain:ReqWrapT[]=reqLs.get(params.requestId);
-      findLogin(reqChain,params.statusCode,null)
       if(__reqLs_get_req_url_any_startWith(params.requestId,"https://gitee.com")){
         // 暂时不打印 普通 请求日志
         console.log(`【响应ExtraInfo】【reqId=${params.requestId}】 【响应码=${params.statusCode}】  【reqUrl=${ __reqLs_get_req_urlLsJoin(params.requestId) }】`)
       }
+      findLogin(reqChain,params.statusCode,null)
     })
     // 请求和对应的响应，查找被标记的请求的响应，
     //     参考 https://stackoverflow.com/questions/70926015/get-response-of-a-api-request-made-using-chrome-remote-interface/70926579#70926579
