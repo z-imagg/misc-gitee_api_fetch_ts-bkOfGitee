@@ -103,6 +103,7 @@ async function interept( ) {
     //请求过滤
     Network.on("requestWillBeSent", (params: DP.Protocol.Network.RequestWillBeSentEvent) => {
       const requestId:DP.Protocol.Network.RequestId = params.requestId
+      const redirectResp:DP.Protocol.Network.Response=params.redirectResponse;
 
       const req:DP.Protocol.Network.Request=params.request;
       const url:string = params.request.url;
@@ -112,6 +113,7 @@ async function interept( ) {
       // 暂时不打印 普通 请求日志
       // console.log(`【请求地址】${url}`)
 
+      //记录标记请求
       const headerText=req.headers.toString();
       if(headerText.includes(markupPrjName)){
         console.log(`【在请求头,发现标记请求地址】【${url}】【${headerText}】`)
@@ -132,43 +134,17 @@ async function interept( ) {
        【在请求体】【发现标记请求地址】【https://gitee.com/tmpOrg/projects】【utf8=%E2%9C%93&authenticity_token=xUuuL7czpeKrHp3QoLju7yfE67WTOa5xnSQk7C%2FOaNAqAUO7fXTpgQUJqsXW4aiSOxIUoOHqvkwKr3yaLxaZ4g%3D%3D&project%5Bimport_url%5D=https%3A%2F%2Fgithub.com%2Fintel%2FARM_NEON_2_x86_SSE.git&user_sync_code=&password_sync_code=&project%5Bname%5D=intel--ARM_NEON_2_x86_SSE&project%5Bnamespace_path%5D=tmpOrg&project%5Bpath%5D=xxxxxx&project%5Bdescription%5D=zzzzz&project%5Bpublic%5D=1&language=0】
        */
 
-    })
-
-    //请求过滤，寻找重定向
-    Network.on("requestWillBeSent",(params: DP.Protocol.Network.RequestWillBeSentEvent)=>{
-      const requestId:DP.Protocol.Network.RequestId = params.requestId
-      const req:DP.Protocol.Network.Request=params.request;
-      const reqUrl:string=req.url;
-      const redirectResp:DP.Protocol.Network.Response=params.redirectResponse;
-
-      if(redirectResp==null && reqUrl==accInfoPgUrl){
-        console.log(`【发现直接进入账户页】【undefined--->账户页】【此即已登录】undefined ----> ${reqUrl}`)
-        /*
-        若 params.request获得的响应的状态码是302 ，则 未登录；  后续 会发生期望的重定向
-        若 params.request获得的响应的状态码是200 ，则 已登录；  后续 不会发生期望的重定向
-        因此 不用判定 响应的状态码，只需要看后续的重定向
-        即 这里可以等效的认为： 暂时 在这里 判定为 已登录  是 不会导致结果错误的
-         */
-        //已登录:
-        loginFlag=TRUE;
-      }
-
-      if(redirectResp && reqUrl){
+      //记录重定向
+      if(redirectResp ){
         const redirectRespUrl:string=redirectResp.url;
-        console.assert(redirectRespUrl!=null)
-
-        if(accInfoPgUrl==redirectRespUrl && reqUrl==giteeLoginPageUrl){
-          console.log(`【发现故意制造的重定向】【账户页--->登录页】【此即未登录】${redirectRespUrl} ----> ${reqUrl}`)
-          //未登录
-          loginFlag=FALSE;
+        if(redirectRespUrl!=null){
+          // 普通 重定向日志
+          console.log(`【发现重定向】${redirectRespUrl} ----> ${url}`)
         }
-
-        // 暂时不打印 普通 重定向日志
-        console.log(`【发现重定向】${redirectRespUrl} ----> ${reqUrl}`)
-
       }
 
     })
+
 
 
     await Network.enable();
