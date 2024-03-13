@@ -58,7 +58,7 @@ enum MarkupPlace{
   InUrl=1,
   InBody=2
 }
-class ReqT {
+class ReqWrapT {
 
   redirectResp:DP.Protocol.Network.Response;
   reqId:DP.Protocol.Network.RequestId;
@@ -73,19 +73,11 @@ class ReqT {
     this.req = req
   }
 
-  req_equal(reqId:DP.Protocol.Network.RequestId ):boolean{
-    return this.reqId == reqId
-  }
 }
+const reqLs:Map<DP.Protocol.Network.RequestId,ReqWrapT>=new Map();
 
-const reqLs:ReqT[]=[];
-
-function isMarkupReq(requestId:DP.Protocol.Network.RequestId ):boolean{
-  const left:ReqT[]=reqLs.filter(markupReqK=>markupReqK.req_equal(requestId ))
-  return left.length>0
-}
 function pushReq(redirectResp:DP.Protocol.Network.Response, reqId:DP.Protocol.Network.RequestId,req:DP.Protocol.Network.Request ){
-  reqLs.push(new ReqT(redirectResp, reqId,req ))
+  reqLs.set(reqId,new ReqWrapT(redirectResp, reqId,req ))
 }
 
 async function interept( ) {
@@ -97,10 +89,8 @@ async function interept( ) {
     //     参考 https://stackoverflow.com/questions/70926015/get-response-of-a-api-request-made-using-chrome-remote-interface/70926579#70926579
     Network.on("responseReceived",(params: DP.Protocol.Network.ResponseReceivedEvent) =>{
       const requestId:DP.Protocol.Network.RequestId = params.requestId
+      const reqWrp:ReqWrapT=reqLs.get(params.requestId);
       const respUrl:string = params.response.url;
-      if(isMarkupReq(requestId)){
-        console.log(`【发现标记请求的响应】【${requestId}【${respUrl}】】`)
-      }
 
     })
 
