@@ -6,6 +6,7 @@ import readlineSync from 'readline-sync'
 
 import * as fs from "fs";
 import assert from "assert";
+import Protocol from "devtools-protocol";
 
 // nodejs版本>=9.3时， 阻塞式sleep实现如下，参考  https://www.npmjs.com/package/sleep
 function msleep(ms) {
@@ -80,6 +81,12 @@ async function interept( ) {
     const client:CDP.Client = await CDP();
     const {Network, Page,DOM,Runtime, Fetch} = client;
 
+    Network.on("responseReceivedExtraInfo",(params: DP.Protocol.Network.ResponseReceivedExtraInfoEvent) =>{
+      if(reqLs.get(params.requestId).req.url.startsWith("https://gitee.com")){
+        // 暂时不打印 普通 请求日志
+        console.log(`【响应ExtraInfo】 【${params.statusCode}】  【reqUrl=${ reqLs.get(params.requestId).req.url }】`)
+      }
+    })
     // 请求和对应的响应，查找被标记的请求的响应，
     //     参考 https://stackoverflow.com/questions/70926015/get-response-of-a-api-request-made-using-chrome-remote-interface/70926579#70926579
     Network.on("responseReceived",(params: DP.Protocol.Network.ResponseReceivedEvent) =>{
