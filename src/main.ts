@@ -1,12 +1,10 @@
 
 import CDP from 'chrome-remote-interface';
 import * as DP  from "devtools-protocol";
-import {Runtime} from "inspector";
 import readlineSync from 'readline-sync'
 
 import * as fs from "fs";
 import assert from "assert";
-import Protocol from "devtools-protocol";
 
 // nodejs版本>=9.3时， 阻塞式sleep实现如下，参考  https://www.npmjs.com/package/sleep
 function msleep(ms) {
@@ -101,6 +99,8 @@ function pushRespHd( reqId:DP.Protocol.Network.RequestId, statusCode:number, res
   }
   ls.push(new RespHdWrapT(reqId,statusCode, respHd ))
 }
+
+
 function reqLs_has(reqId:DP.Protocol.Network.RequestId){
   const ls:ReqWrapT[]=reqLs.get(reqId)
   const empty:boolean=(ls==null||ls.length==0)
@@ -256,34 +256,23 @@ async function interept( ) {
     const client:CDP.Client = await CDP();
     const {Network, Page,DOM,Runtime, Fetch} = client;
 
+    // 记录精简响应（全部响应都有，但全部都只有响应头、无响应体）
     Network.on("responseReceivedExtraInfo",(params: DP.Protocol.Network.ResponseReceivedExtraInfoEvent) =>{
 
-      const reqChain:ReqWrapT[]=reqLs.get(params.requestId);
-      const respChain:RespHdWrapT[]=respHdLs.get(params.requestId);
       if(__reqLs_get_req_url_any_startWith(params.requestId,"https://gitee.com")){
         // 暂时不打印 普通 请求日志
         console.log(`【响应ExtraInfo】【reqId=${params.requestId}】 【响应码=${params.statusCode}】  【reqUrl=${ __reqLs_get_req_urlLsJoin(params.requestId) }】`)
       }
       pushRespHd(params.requestId,params.statusCode,params.headers)
-      // findLogin(reqChain,respChain)
     })
-    // 请求和对应的响应，查找被标记的请求的响应，
+    // 记录完整响应（不含302等无响应体的）
     //     参考 https://stackoverflow.com/questions/70926015/get-response-of-a-api-request-made-using-chrome-remote-interface/70926579#70926579
     Network.on("responseReceived",(params: DP.Protocol.Network.ResponseReceivedEvent) =>{
       if(params.response.url.startsWith("https://gitee.com")){
         // 暂时不打印 普通 请求日志
         console.log(`【响应】【reqId=${params.requestId}】【响应Url=${params.response.url}】 【响应码=${params.response.status}】  【请求Url=${ __reqLs_get_req_urlLsJoin(params.requestId) }】`)
       }
-
-      const requestId:DP.Protocol.Network.RequestId = params.requestId
-      const respUrl:string = params.response.url;
-      assert(reqLs_has(requestId),`断言失败，响应【requestId=${requestId},response.url=${respUrl}】对应的请求不存在`)
-
-/////////////////
-      const reqChain:ReqWrapT[]=reqLs.get(params.requestId);
-      const reqWpEnd:ReqWrapT=reqLs_endReq(reqChain);
-      // pushRespHd(params.requestId,params.response.status,params.response.headers)
-      // findLogin(reqChain,params.response.status,params.response)
+      // pushResponse(params.requestId,params.response)
 
     })
 
