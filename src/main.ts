@@ -84,7 +84,7 @@ async function interept( ) {
     Network.on("responseReceivedExtraInfo",(params: DP.Protocol.Network.ResponseReceivedExtraInfoEvent) =>{
       if(reqLs.get(params.requestId).req.url.startsWith("https://gitee.com")){
         // 暂时不打印 普通 请求日志
-        console.log(`【响应ExtraInfo】 【${params.statusCode}】  【reqUrl=${ reqLs.get(params.requestId).req.url }】`)
+        console.log(`【响应ExtraInfo】【reqId=${params.requestId}】 【响应码=${params.statusCode}】  【reqUrl=${ reqLs.get(params.requestId).req.url }】`)
       }
     })
     // 请求和对应的响应，查找被标记的请求的响应，
@@ -92,7 +92,7 @@ async function interept( ) {
     Network.on("responseReceived",(params: DP.Protocol.Network.ResponseReceivedEvent) =>{
       if(params.response.url.startsWith("https://gitee.com")){
         // 暂时不打印 普通 请求日志
-        console.log(`【响应】【respUrl=${params.response.url}】 【${params.response.status}】  【reqUrl=${ reqLs.get(params.requestId).req.url }】`)
+        console.log(`【响应】【reqId=${params.requestId}】【响应Url=${params.response.url}】 【响应码=${params.response.status}】  【请求Url=${ reqLs.get(params.requestId).req.url }】`)
       }
 
       const requestId:DP.Protocol.Network.RequestId = params.requestId
@@ -140,7 +140,7 @@ async function interept( ) {
     Network.on("requestWillBeSent", (params: DP.Protocol.Network.RequestWillBeSentEvent) => {
       if(params.request.url.startsWith("https://gitee.com")){
         // 暂时不打印 普通 请求日志
-        console.log(`【请求】${ (params.redirectResponse||{}).url } ----> ${params.request.url}`)
+        console.log(`【请求】【reqId=${params.requestId}】 【${ (params.redirectResponse||{}).url } ----> ${params.request.url} 】`)
       }
       pushReq(params.redirectResponse, params.requestId,params.request )
     })
