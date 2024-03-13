@@ -281,6 +281,17 @@ async function interept( ) {
 
     //记录请求
     Network.on("requestWillBeSent", (params: DP.Protocol.Network.RequestWillBeSentEvent) => {
+      if(params.request.url.endsWith(".css")
+        || params.request.url.indexOf(".js")>0
+        || params.request.url.indexOf("cn-assets.gitee.com") > 0
+        || params.request.url.indexOf("images") > 0
+        || params.request.url.indexOf(".gif") > 0
+        || params.request.url.startsWith("data:") // data:application, data:image
+        || params.request.url.indexOf("gitee") < 0
+      ){
+        //调试用，暂时忽略可能的资源文件
+        return;
+      }
       if(params.request.url.startsWith("https://gitee.com")){
         // 暂时不打印 普通 请求日志
         // console.log(`【请求】【reqId=${params.requestId}】 【${ (params.redirectResponse||{}).url } ----> ${params.request.url} 】`)
