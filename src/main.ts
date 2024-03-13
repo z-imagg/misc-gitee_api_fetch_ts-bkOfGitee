@@ -73,11 +73,11 @@ class MarkupReqT {
   }
 
   req_equal(reqId:DP.Protocol.Network.RequestId ):boolean{
-    return this.reqId == reqId 
+    return this.reqId == reqId
   }
 }
 
-let markupReqLs:MarkupReqT[]=[];
+const markupReqLs:MarkupReqT[]=[];
 
 function isMarkupReq(requestId:DP.Protocol.Network.RequestId ):boolean{
   const left:MarkupReqT[]=markupReqLs.filter(markupReqK=>markupReqK.req_equal(requestId ))
