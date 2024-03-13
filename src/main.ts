@@ -1,6 +1,6 @@
 
 import CDP from 'chrome-remote-interface';
-import Protocol from "devtools-protocol";
+import Protocol, {RequestId} from "devtools-protocol";
 import {Runtime} from "inspector";
 import readlineSync from 'readline-sync'
 
@@ -52,13 +52,58 @@ const accInfoPgUrl="https://gitee.com/profile/account_information?different_to_n
 const Unknown=0; const TRUE=1; const FALSE=2;
 //是否已登录
 let loginFlag:number=Unknown;
+
+enum MarkupPlace{
+  InHeader=0,
+  InUrl=1,
+  InBody=2
+}
+class MarkupReqT {
+
+  reqId:Protocol.Network.RequestId;
+  reqUrl:string;
+  place: MarkupPlace;
+
+
+  // 构造函数
+  constructor(reqId:Protocol.Network.RequestId,reqUrl:string,place:MarkupPlace) {
+    this.reqId = reqId
+    this.reqUrl = reqUrl
+    this.place=place
+  }
+
+  req_equal(reqId:Protocol.Network.RequestId, reqUrl:string):boolean{
+    return this.reqId == reqId && this.reqUrl == reqUrl
+  }
+}
+
+let markupReqLs:MarkupReqT[]=[];
+
+function isMarkupReq(requestId:Protocol.Network.RequestId, reqUrl:string):boolean{
+  const left:MarkupReqT[]=markupReqLs.filter(markupReqK=>markupReqK.req_equal(requestId,reqUrl))
+  return left.length>0
+}
+
 async function interept( ) {
   try{
     const client:CDP.Client = await CDP();
     const {Network, Page,DOM,Runtime, Fetch} = client;
 
+    // 请求和对应的响应，查找被标记的请求的响应，
+    //     参考 https://stackoverflow.com/questions/70926015/get-response-of-a-api-request-made-using-chrome-remote-interface/70926579#70926579
+    Network.on("responseReceived",(params: Protocol.Network.ResponseReceivedEvent) =>{
+      const requestId:Protocol.Network.RequestId = params.requestId
+      const respUrl:string = params.response.url;
+      if(isMarkupReq(requestId,respUrl)){
+        console.log(`【发现标记请求的响应】【${respUrl}】【${requestId}】`)
+      }
+
+    })
+
     //请求过滤
     Network.on("requestWillBeSent", (params: Protocol.Network.RequestWillBeSentEvent) => {
+      const requestId:Protocol.Network.RequestId = params.requestId
+
       const req:Protocol.Network.Request=params.request;
       const url:string = params.request.url;
       if(!url.startsWith("https://gitee.com")){
@@ -70,14 +115,17 @@ async function interept( ) {
       const headerText=req.headers.toString();
       if(headerText.includes(markupPrjName)){
         console.log(`【在请求头,发现标记请求地址】【${url}】【${headerText}】`)
+        markupReqLs.push(new MarkupReqT(requestId,url,MarkupPlace.InHeader))
       }
       if(url.includes(markupPrjName)){
         console.log(`【在url,发现标记请求地址】【${url}】`)
+        markupReqLs.push(new MarkupReqT(requestId,url,MarkupPlace.InUrl))
       }
       if(req.hasPostData){
         const postData:string = req.postData;
         if(postData && postData.includes(markupPrjName)){
           console.log(`【在请求体,发现标记请求地址】【${url}】【${postData}】`)
+          markupReqLs.push(new MarkupReqT(requestId,url,MarkupPlace.InBody))
         }
       }
       /**
@@ -88,6 +136,7 @@ async function interept( ) {
 
     //请求过滤，寻找重定向
     Network.on("requestWillBeSent",(params: Protocol.Network.RequestWillBeSentEvent)=>{
+      const requestId:Protocol.Network.RequestId = params.requestId
       const req:Protocol.Network.Request=params.request;
       const reqUrl:string=req.url;
       const redirectResp:Protocol.Network.Response=params.redirectResponse;
