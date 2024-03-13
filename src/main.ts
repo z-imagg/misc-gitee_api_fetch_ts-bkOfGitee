@@ -6,6 +6,7 @@ import readlineSync from 'readline-sync'
 import * as fs from "fs";
 import assert from "assert";
 import * as CL from 'chrome-launcher'
+import {existsSync, mkdir, mkdirSync, writeFileSync} from "fs";
 
 
 
@@ -29,14 +30,27 @@ document.getElementById("user_password").value="${giteePwd}";
 document.title="${loginPageMsg}"+document.title;
 `
 
+interface MarkupField{
+  fldNm:string,
+  fldVal:string
+}
+
 //gitee导入页面url
 const giteeImportPageUrl="https://gitee.com/projects/import/url";
 const project_import_url = "https://github.com/intel/ARM_NEON_2_x86_SSE.git"
 const nowMs:number = Date.now();
 const markupPrjName = `markupPrjName----intel--ARM_NEON_2_x86_SSE__${nowMs}`
-const markupOrgName = "tmpOrg" ; //mirrr
+const markupOrgName = "markup-organization-9473" ; //mirrr
 const markupPrjPath = `markupPrjPath----intel--ARM_NEON_2_x86_SSE__${nowMs}`
 const markupPrjDesc = `markupPrjDesc----intel--ARM_NEON_2_x86_SSE__${nowMs}`
+
+const markupFieldLs:MarkupField[]=[]
+markupFieldLs.push(<MarkupField>{fldNm:"project_import_url",fldVal:project_import_url})
+markupFieldLs.push(<MarkupField>{fldNm:"markupPrjName",fldVal:markupPrjName})
+markupFieldLs.push(<MarkupField>{fldNm:"markupOrgName",fldVal:markupOrgName})
+markupFieldLs.push(<MarkupField>{fldNm:"markupPrjPath",fldVal:markupPrjPath})
+markupFieldLs.push(<MarkupField>{fldNm:"markupPrjDesc",fldVal:markupPrjDesc})
+
 const importPageMsg="【已填充标记字段】"
 const js_fillMarkupGoalRepo=`
 document.title="${importPageMsg}"+document.title;
@@ -180,21 +194,54 @@ function hasMarkupFieldIn1Req(reqWpEnd:ReqWrapT){
   const urlEnd:string=reqWpEnd.req.url;
   if(headerText.includes(markupPrjName)){
     console.log(`【在请求头,发现标记请求地址】【${urlEnd}】【${headerText}】`)
+    writeReqExampleAsTemplate(reqWpEnd.reqId, req,TemplPlace.ReqHeader)
     _markup=MarkupHasEnum.Yes
   }
   if(urlEnd.includes(markupPrjName)){
     console.log(`【在url,发现标记请求地址】【${urlEnd}】`)
     _markup=MarkupHasEnum.Yes
+    writeReqExampleAsTemplate(reqWpEnd.reqId, req,TemplPlace.Url)
   }
   if(req.hasPostData){
     const postData:string = req.postData;
     if(postData && postData.includes(markupPrjName)){
       console.log(`【在请求体,发现标记请求地址】【${urlEnd}】【${postData}】`)
       _markup=MarkupHasEnum.Yes
+      writeReqExampleAsTemplate(reqWpEnd.reqId, req,TemplPlace.Body)
     }
   }
 
   return _markup;
+}
+
+enum TemplPlace{
+  ReqHeader=0,
+  Url=1,
+  Body=2
+}
+
+interface ReqTemplate{
+  //请求id
+  reqId:DP.Protocol.Network.RequestId
+  //请求
+  req:DP.Protocol.Network.Request
+  //模板位置（标记字段在请求中的部位）
+  templatePlace:TemplPlace
+  //标记字段们
+  markupFieldLs:MarkupField[]
+}
+const reqTemplDir:string="./reqTemplate"
+// 写请求例子作为请求模板
+function writeReqExampleAsTemplate(reqId:DP.Protocol.Network.RequestId, req:DP.Protocol.Network.Request,templatePlace:TemplPlace){
+  const reqTemplText:string=JSON.stringify(<ReqTemplate>{
+    reqId,req,templatePlace,markupFieldLs
+  })
+  if(!existsSync(reqTemplDir)){
+    mkdirSync(reqTemplDir)
+  }
+  const reqTmplFp:string=`${reqTemplDir}/${reqId}`
+  writeFileSync(reqTmplFp,reqTemplText)
+  console.log(`已写入请求例子（作为请求模板）文件 【${reqTmplFp}】`)
 }
 
 enum  LoginEnum{
