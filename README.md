@@ -30,8 +30,10 @@ npm install   chrome-remote-interface
 npm install -D  @types/chrome-remote-interface
 npm install readline-sync
 
-/app/chrome-linux/chrome --disable-gpu --no-sandbox --remote-debugging-port=9222
-node ./main.js
+#已经在main.js中启动了chrome, 无需外部启动chrome
+#/app/chrome-linux/chrome --disable-gpu --no-sandbox --remote-debugging-port=9222
+
+npm run clean; npm run build; npm run start
 
 ```
 

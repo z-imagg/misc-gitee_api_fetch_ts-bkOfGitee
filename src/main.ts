@@ -5,6 +5,7 @@ import readlineSync from 'readline-sync'
 
 import * as fs from "fs";
 import assert from "assert";
+import * as CL from 'chrome-launcher'
 
 // nodejs版本>=9.3时， 阻塞式sleep实现如下，参考  https://www.npmjs.com/package/sleep
 function msleep(ms) {
@@ -256,7 +257,13 @@ function calcLoginEnumIn1Chain(reqChain:ReqWrapT[],  respChain:RespHdWrapT[]){
 }
 async function interept( ) {
   try{
-    const client:CDP.Client = await CDP();
+    const chrome:CL.LaunchedChrome= await CL.launch(<CL.Options>{
+      chromePath:"/app/chrome-linux/chrome",
+      chromeFlags:["--no-first-run","--disable-gpu"]
+    });
+    const client:CDP.Client = await CDP(<CDP.Options>{
+      port:chrome.port
+    });
     const {Network, Page,DOM,Runtime, Fetch} = client;
 
     // 记录精简响应（全部响应都有，但全部都只有响应头、无响应体）
