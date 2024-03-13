@@ -332,6 +332,8 @@ async function interept( ) {
     await Runtime.evaluate(<DP.Protocol.Runtime.EvaluateRequest>{
       expression:js_fillUserPass
     })
+    await Page.loadEventFired()
+    await DOM.getDocument();
     const _trash=readlineSync.question("此时在gitee登录页面，填写各字段、点击'登录'按钮、填写可能的验证码 后，在此nodejs控制台按任意键继续")
     }
     //已登录
