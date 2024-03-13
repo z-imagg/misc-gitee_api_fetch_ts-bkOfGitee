@@ -312,7 +312,7 @@ async function interept( ) {
     await DOM.enable();
     await Page.enable();
 
-    readlineSync.question("回调Network.on已经执行， 按回车继续   ")
+    readlineSync.question("回调Network.on已经执行。 若测试已登录情形，请现在在此浏览器人工登录gitee，后回车继续。否则直接回车继续。")
     //打开gitee账户页面
     console.log(`打开gitee账户页面 ${accInfoPgUrl}`)
     await Page.navigate( {url:accInfoPgUrl});//nav1 引起页面新加载

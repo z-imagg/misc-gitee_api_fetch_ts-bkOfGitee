@@ -1,9 +1,8 @@
-回调Network.on已经执行， 按回车继续
+回调Network.on已经执行。 若测试已登录情形，请现在在此浏览器人工登录gitee，后回车继续。否则直接回车继续。
 打开gitee账户页面 https://gitee.com/profile/account_information?different_to_normal=AvoidNoise
-给浏览器以足够时间，看她是否重定向
 【发现故意制造的重定向】【账户页--->登录页】【此即未登录】https://gitee.com/profile/account_information?different_to_normal=AvoidNoise ----> https://gitee.com/login
 打开gitee登录页面 https://gitee.com/login
 在gitee登录页面，请填写各字段、填写可能的验证码, 点击'登录'按钮 。
 打开gitee导入页面 https://gitee.com/projects/import/url
 在gitee导入URL页面，请填写各字段, 点击'导入'按钮，【勿动标记字段'仓库名称'】
-【在请求体,发现标记请求地址】【https://gitee.com/tmpOrg/projects】【utf8=%E2%9C%93&authenticity_token=2O6u2YTNsef%2FwdaAG0nyvGZPwOoQowBwEAuc6GPQcE%2Fg3LbWacaUcWUzYibgwYDqy7PJFw3Iv%2Fw9SZ34D3PX1Q%3D%3D&project%5Bimport_url%5D=https%3A%2F%2Fgithub.com%2Fintel%2FARM_NEON_2_x86_SSE.git&user_sync_code=&password_sync_code=&project%5Bname%5D=markupField----intel--ARM_NEON_2_x86_SSE99999&project%5Bnamespace_path%5D=tmpOrg&project%5Bpath%5D=markup-field----intel--arm_-neon_2_x86_-sse99999&project%5Bdescription%5D=lllllllllllll&project%5Bpublic%5D=1&language=0】
+【在请求体,发现标记请求地址】【https://gitee.com/tmpOrg/projects】【utf8=%E2%9C%93&authenticity_token=l38M4YI7DipDlHUllV9l%2FueXNl52eFn66wq5EAIh6RI85UOrxzBn6ntNUVzfoDYTeF%2F9wVwtYafLkHIOglJ4Tg%3D%3D&project%5Bimport_url%5D=https%3A%2F%2Fgithub.com%2Fintel%2FARM_NEON_2_x86_SSE.git&user_sync_code=&password_sync_code=&project%5Bname%5D=markupField----intel--ARM_NEON_2_x86_SSEuuuuuuu&project%5Bnamespace_path%5D=tmpOrg&project%5Bpath%5D=markup-field----intel--arm_-neon_2_x86_-sseuuuuuuu&project%5Bdescription%5D=jjjjj&project%5Bpublic%5D=1&language=0】
