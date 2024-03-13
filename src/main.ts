@@ -1,6 +1,6 @@
 
 import CDP from 'chrome-remote-interface';
-import Protocol from "devtools-protocol";
+import * as DP  from "devtools-protocol";
 import {Runtime} from "inspector";
 import readlineSync from 'readline-sync'
 
@@ -52,14 +52,59 @@ const accInfoPgUrl="https://gitee.com/profile/account_information?different_to_n
 const Unknown=0; const TRUE=1; const FALSE=2;
 //是否已登录
 let loginFlag:number=Unknown;
+
+enum MarkupPlace{
+  InHeader=0,
+  InUrl=1,
+  InBody=2
+}
+class MarkupReqT {
+
+  reqId:DP.Protocol.Network.RequestId;
+  reqUrl:string;
+  place: MarkupPlace;
+
+
+  // 构造函数
+  constructor(reqId:DP.Protocol.Network.RequestId,reqUrl:string,place:MarkupPlace) {
+    this.reqId = reqId
+    this.reqUrl = reqUrl
+    this.place=place
+  }
+
+  req_equal(reqId:DP.Protocol.Network.RequestId ):boolean{
+    return this.reqId == reqId
+  }
+}
+
+const markupReqLs:MarkupReqT[]=[];
+
+function isMarkupReq(requestId:DP.Protocol.Network.RequestId ):boolean{
+  const left:MarkupReqT[]=markupReqLs.filter(markupReqK=>markupReqK.req_equal(requestId ))
+  return left.length>0
+}
+
 async function interept( ) {
   try{
     const client:CDP.Client = await CDP();
     const {Network, Page,DOM,Runtime, Fetch} = client;
 
+    // 请求和对应的响应，查找被标记的请求的响应，
+    //     参考 https://stackoverflow.com/questions/70926015/get-response-of-a-api-request-made-using-chrome-remote-interface/70926579#70926579
+    Network.on("responseReceived",(params: DP.Protocol.Network.ResponseReceivedEvent) =>{
+      const requestId:DP.Protocol.Network.RequestId = params.requestId
+      const respUrl:string = params.response.url;
+      if(isMarkupReq(requestId)){
+        console.log(`【发现标记请求的响应】【${requestId}【${respUrl}】】`)
+      }
+
+    })
+
     //请求过滤
-    Network.on("requestWillBeSent", (params: Protocol.Network.RequestWillBeSentEvent) => {
-      const req:Protocol.Network.Request=params.request;
+    Network.on("requestWillBeSent", (params: DP.Protocol.Network.RequestWillBeSentEvent) => {
+      const requestId:DP.Protocol.Network.RequestId = params.requestId
+
+      const req:DP.Protocol.Network.Request=params.request;
       const url:string = params.request.url;
       if(!url.startsWith("https://gitee.com")){
         return;
@@ -70,14 +115,17 @@ async function interept( ) {
       const headerText=req.headers.toString();
       if(headerText.includes(markupPrjName)){
         console.log(`【在请求头,发现标记请求地址】【${url}】【${headerText}】`)
+        markupReqLs.push(new MarkupReqT(requestId,url,MarkupPlace.InHeader))
       }
       if(url.includes(markupPrjName)){
         console.log(`【在url,发现标记请求地址】【${url}】`)
+        markupReqLs.push(new MarkupReqT(requestId,url,MarkupPlace.InUrl))
       }
       if(req.hasPostData){
         const postData:string = req.postData;
         if(postData && postData.includes(markupPrjName)){
           console.log(`【在请求体,发现标记请求地址】【${url}】【${postData}】`)
+          markupReqLs.push(new MarkupReqT(requestId,url,MarkupPlace.InBody))
         }
       }
       /**
@@ -87,10 +135,11 @@ async function interept( ) {
     })
 
     //请求过滤，寻找重定向
-    Network.on("requestWillBeSent",(params: Protocol.Network.RequestWillBeSentEvent)=>{
-      const req:Protocol.Network.Request=params.request;
+    Network.on("requestWillBeSent",(params: DP.Protocol.Network.RequestWillBeSentEvent)=>{
+      const requestId:DP.Protocol.Network.RequestId = params.requestId
+      const req:DP.Protocol.Network.Request=params.request;
       const reqUrl:string=req.url;
-      const redirectResp:Protocol.Network.Response=params.redirectResponse;
+      const redirectResp:DP.Protocol.Network.Response=params.redirectResponse;
 
       if(redirectResp==null && reqUrl==accInfoPgUrl){
         console.log(`【发现直接进入账户页】【undefined--->账户页】【此即已登录】undefined ----> ${reqUrl}`)
@@ -147,7 +196,7 @@ async function interept( ) {
     await Page.loadEventFired()
     await DOM.getDocument();
     //填写用户名、密码
-    await Runtime.evaluate(<Protocol.Runtime.EvaluateRequest>{
+    await Runtime.evaluate(<DP.Protocol.Runtime.EvaluateRequest>{
       expression:js_fillUserPass
     })
     const _trash=readlineSync.question("此时在gitee登录页面，填写各字段、点击'登录'按钮、填写可能的验证码 后，在此nodejs控制台按任意键继续")
@@ -164,7 +213,7 @@ async function interept( ) {
     await Page.loadEventFired()
     await DOM.getDocument();
     //填写标记仓库
-    await Runtime.evaluate(<Protocol.Runtime.EvaluateRequest>{
+    await Runtime.evaluate(<DP.Protocol.Runtime.EvaluateRequest>{
       expression:js_fillMarkupGoalRepo
     })
     readlineSync.question("此时在gitee导入URL页面，填写各字段、点击'导入'按钮 后，【注意'仓库名称' 'project_name'字段是标记字段，其他各字段不要与标记字段取值相同】, 在此nodejs控制台按任意键继续")

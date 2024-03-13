@@ -30,7 +30,7 @@ npm install   chrome-remote-interface
 npm install -D  @types/chrome-remote-interface
 npm install readline-sync
 
-/app/chrome-linux/chrome --remote-debugging-port=9222
+/app/chrome-linux/chrome --disable-gpu --no-sandbox --remote-debugging-port=9222
 node ./main.js
 
 ```
