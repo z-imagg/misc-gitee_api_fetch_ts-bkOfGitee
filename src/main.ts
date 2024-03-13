@@ -97,6 +97,13 @@ function reqLs_req2(reqId:DP.Protocol.Network.RequestId ){
   const lack:boolean=(ls==null||ls.length<2)
   return (!lack)?ls[1]:null;
 }
+
+function reqLs_endReq(reqId:DP.Protocol.Network.RequestId ){
+  const ls:ReqWrapT[]=reqLs.get(reqId)
+  const endIdx:number=ls.length-1;
+  return (endIdx>=0)?ls[endIdx]:null;
+}
+
 function reqLs_req1Eq_req2Eq(reqId:DP.Protocol.Network.RequestId,req1Url:string,req2Url:string){
   const ls:ReqWrapT[]=reqLs.get(reqId)
   if(ls==null||ls.length<2){
@@ -123,12 +130,60 @@ function reqLs_get_req_urlLsJoin(reqId:DP.Protocol.Network.RequestId){
   }
   return "";
 }
+
+function findMarkupField(reqWpEnd:ReqWrapT){
+  const headerText=reqWpEnd.req.headers.toString();
+  const req:DP.Protocol.Network.Request = reqWpEnd.req;
+  const urlEnd:string=reqWpEnd.req.url;
+  if(headerText.includes(markupPrjName)){
+    console.log(`【在请求头,发现标记请求地址】【${urlEnd}】【${headerText}】`)
+  }
+  if(urlEnd.includes(markupPrjName)){
+    console.log(`【在url,发现标记请求地址】【${urlEnd}】`)
+  }
+  if(req.hasPostData){
+    const postData:string = req.postData;
+    if(postData && postData.includes(markupPrjName)){
+      console.log(`【在请求体,发现标记请求地址】【${urlEnd}】【${postData}】`)
+    }
+  }
+}
+function findLogin(requestId:DP.Protocol.Network.RequestId, respStatus:number, resp:null|DP.Protocol.Network.Response){
+
+  const reqWp1:ReqWrapT=reqLs_req1(requestId);
+  assert(reqWp1!=null, "xxx1")
+  // if( reqWp1  == null ){return;}
+
+
+  const reqWpEnd:ReqWrapT=reqLs_endReq(requestId);
+  const urlEnd:string=reqWpEnd.req.url;
+
+  if( reqWp1.req. url == accInfoPgUrl ){
+    const reqWp2:ReqWrapT=reqLs_req2(requestId);
+    if( reqWp2.req. url == giteeLoginPageUrl){ //&& respStatus==302
+      assert(resp!=null, "断言失败, 重定向的第二个请求的响应一定是正常的200")
+      const targetUrl:string=resp.headers["Location"]
+      console.log(`【发现故意制造的重定向】【账户页--->登录页】【此即未登录】${urlEnd} ----> ${targetUrl}`)
+      //未登录
+      loginFlag=FALSE;
+    }else
+    if(reqWp2==null){ // && respStatus==200
+      console.log(`【发现直接进入账户页】【undefined--->账户页】【此即已登录】${urlEnd}`)
+      //已登录:
+      loginFlag=TRUE;
+    }else{
+      throw new Error(`断言失败 ， 请求 ${urlEnd} 的响应状态码不应该是${resp.status}` )
+    }
+  }
+
+}
 async function interept( ) {
   try{
     const client:CDP.Client = await CDP();
     const {Network, Page,DOM,Runtime, Fetch} = client;
 
     Network.on("responseReceivedExtraInfo",(params: DP.Protocol.Network.ResponseReceivedExtraInfoEvent) =>{
+      findLogin(params.requestId,params.statusCode,null)
       if(reqLs_get_req_url_any_startWith(params.requestId,"https://gitee.com")){
         // 暂时不打印 普通 请求日志
         console.log(`【响应ExtraInfo】【reqId=${params.requestId}】 【响应码=${params.statusCode}】  【reqUrl=${ reqLs_get_req_urlLsJoin(params.requestId) }】`)
@@ -152,30 +207,14 @@ async function interept( ) {
       const req:DP.Protocol.Network.Request = reqWp.req;
       const url:string=reqWp.req.url;
       const headerText=reqWp.req.headers.toString();
-      // const respStatus:number = resp.status;
+      const respStatus:number = resp.status;
 
-      const reqWp1:ReqWrapT=reqLs_req1(requestId);
-      if( reqWp1  == null ){
-        return;
-      }
+/////////////////
+      const reqWpEnd:ReqWrapT=reqLs_endReq(requestId);
+      const reqWpChain:ReqWrapT[]=reqLs.get(params.requestId);
+      findLogin(params.requestId,params.response.status,params.response)
 
-      if( reqWp1.req. url == accInfoPgUrl ){
-        const reqWp2:ReqWrapT=reqLs_req2(requestId);
-        if( reqWp2.req. url == giteeLoginPageUrl){ //&& respStatus==302
-          const targetUrl:string=resp.headers["Location"]
-          console.log(`【发现故意制造的重定向】【账户页--->登录页】【此即未登录】${url} ----> ${targetUrl}`)
-          //未登录
-          loginFlag=FALSE;
-        }else
-        if(reqWp2==null){ // && respStatus==200
-          console.log(`【发现直接进入账户页】【undefined--->账户页】【此即已登录】${url}`)
-          //已登录:
-          loginFlag=TRUE;
-        }else{
-          throw new Error(`断言失败 ， 请求 ${url} 的响应状态码不应该是${resp.status}` )
-        }
-      }
-
+      findMarkupField(reqWpEnd)
       if(headerText.includes(markupPrjName)){
         console.log(`【在请求头,发现标记请求地址】【${url}】【${headerText}】`)
       }
