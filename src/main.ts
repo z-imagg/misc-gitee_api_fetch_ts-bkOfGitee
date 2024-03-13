@@ -85,7 +85,7 @@ async function interept( ) {
     Network.on("responseReceived",(params: DP.Protocol.Network.ResponseReceivedEvent) =>{
       if(params.response.url.startsWith("https://gitee.com")){
         // 暂时不打印 普通 请求日志
-        console.log(`【响应地址】${params.response.url}`)
+        console.log(`【响应】【respUrl=${params.response.url}】 【${params.response.status}】  【reqUrl=${ reqLs.get(params.requestId).req.url }】`)
       }
 
       const requestId:DP.Protocol.Network.RequestId = params.requestId
@@ -133,7 +133,7 @@ async function interept( ) {
     Network.on("requestWillBeSent", (params: DP.Protocol.Network.RequestWillBeSentEvent) => {
       if(params.request.url.startsWith("https://gitee.com")){
         // 暂时不打印 普通 请求日志
-        console.log(`【请求地址】${params.request.url}`)
+        console.log(`【请求】${ (params.redirectResponse||{}).url } ----> ${params.request.url}`)
       }
       pushReq(params.redirectResponse, params.requestId,params.request )
     })
