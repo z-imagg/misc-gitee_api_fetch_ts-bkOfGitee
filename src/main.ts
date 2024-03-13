@@ -49,8 +49,7 @@ const js_fillMarkupGoalRepo=`
 document.title="${importPageMsg}"+document.title;
 document.getElementById("project_import_url").value="${project_import_url}";
 document.getElementById("project_name").value="${markupPrjName}";
-document.getElementById("project_namespace_path").value="${markupOrgName}";
-document.querySelector("#project_namespace_selection").textContent="${markupOrgName}"
+document.querySelector('.scrolling > div[data-value="${markupOrgName}"]').click() //点击下拉列表中具有给定组织名的元素
 document.getElementById("project_path").value="${markupPrjPath}";
 document.getElementById("project_description").value="${markupPrjDesc}";
 document.getElementById("submit-project-new").click();
