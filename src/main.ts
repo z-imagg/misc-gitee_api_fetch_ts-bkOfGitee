@@ -87,33 +87,21 @@ function reqLs_has(reqId:DP.Protocol.Network.RequestId){
   return !empty;
 }
 
-function reqLs_req1(reqId:DP.Protocol.Network.RequestId ){
-  const ls:ReqWrapT[]=reqLs.get(reqId)
-  const empty:boolean=(ls==null||ls.length==0)
-  return (!empty)?ls[0]:null;
+function reqLs_req1(chain:ReqWrapT[]){
+  const empty:boolean=(chain==null||chain.length==0)
+  return (!empty)?chain[0]:null;
 }
-function reqLs_req2(reqId:DP.Protocol.Network.RequestId ){
-  const ls:ReqWrapT[]=reqLs.get(reqId)
-  const lack:boolean=(ls==null||ls.length<2)
-  return (!lack)?ls[1]:null;
+function reqLs_req2(chain:ReqWrapT[]){
+  const lack:boolean=(chain==null||chain.length<2)
+  return (!lack)?chain[1]:null;
 }
 
-function reqLs_endReq(reqId:DP.Protocol.Network.RequestId ){
-  const ls:ReqWrapT[]=reqLs.get(reqId)
-  const endIdx:number=ls.length-1;
-  return (endIdx>=0)?ls[endIdx]:null;
+function reqLs_endReq(chain:ReqWrapT[]){
+  const endIdx:number=chain.length-1;
+  return (endIdx>=0)?chain[endIdx]:null;
 }
 
-function reqLs_req1Eq_req2Eq(reqId:DP.Protocol.Network.RequestId,req1Url:string,req2Url:string){
-  const ls:ReqWrapT[]=reqLs.get(reqId)
-  if(ls==null||ls.length<2){
-    return false;
-  }
-  const fit:boolean=ls[0].req.url==req1Url && ls[1].req.url==req2Url
-  return fit
-}
-
-function reqLs_get_req_url_any_startWith(reqId:DP.Protocol.Network.RequestId,urlPrefix:string){
+function __reqLs_get_req_url_any_startWith(reqId:DP.Protocol.Network.RequestId,urlPrefix:string){
   const ls:ReqWrapT[]=reqLs.get(reqId)
   const empty:boolean=(ls==null||ls.length==0)
   if(!empty){
@@ -122,7 +110,7 @@ function reqLs_get_req_url_any_startWith(reqId:DP.Protocol.Network.RequestId,url
   return false;
 }
 
-function reqLs_get_req_urlLsJoin(reqId:DP.Protocol.Network.RequestId){
+function __reqLs_get_req_urlLsJoin(reqId:DP.Protocol.Network.RequestId){
   const ls:ReqWrapT[]=reqLs.get(reqId)
   const empty:boolean=(ls==null||ls.length==0)
   if(!empty){
@@ -148,18 +136,18 @@ function findMarkupField(reqWpEnd:ReqWrapT){
     }
   }
 }
-function findLogin(requestId:DP.Protocol.Network.RequestId, respStatus:number, resp:null|DP.Protocol.Network.Response){
+function findLogin(reqChain:ReqWrapT[], respStatus:number, resp:null|DP.Protocol.Network.Response){
 
-  const reqWp1:ReqWrapT=reqLs_req1(requestId);
+  const reqWp1:ReqWrapT=reqLs_req1(reqChain);
   assert(reqWp1!=null, "xxx1")
   // if( reqWp1  == null ){return;}
 
 
-  const reqWpEnd:ReqWrapT=reqLs_endReq(requestId);
+  const reqWpEnd:ReqWrapT=reqLs_endReq(reqChain);
   const urlEnd:string=reqWpEnd.req.url;
 
   if( reqWp1.req. url == accInfoPgUrl ){
-    const reqWp2:ReqWrapT=reqLs_req2(requestId);
+    const reqWp2:ReqWrapT=reqLs_req2(reqChain);
     if( reqWp2.req. url == giteeLoginPageUrl){ //&& respStatus==302
       assert(resp!=null, "断言失败, 重定向的第二个请求的响应一定是正常的200")
       const targetUrl:string=resp.headers["Location"]
@@ -183,10 +171,12 @@ async function interept( ) {
     const {Network, Page,DOM,Runtime, Fetch} = client;
 
     Network.on("responseReceivedExtraInfo",(params: DP.Protocol.Network.ResponseReceivedExtraInfoEvent) =>{
-      findLogin(params.requestId,params.statusCode,null)
-      if(reqLs_get_req_url_any_startWith(params.requestId,"https://gitee.com")){
+
+      const reqChain:ReqWrapT[]=reqLs.get(params.requestId);
+      findLogin(reqChain,params.statusCode,null)
+      if(__reqLs_get_req_url_any_startWith(params.requestId,"https://gitee.com")){
         // 暂时不打印 普通 请求日志
-        console.log(`【响应ExtraInfo】【reqId=${params.requestId}】 【响应码=${params.statusCode}】  【reqUrl=${ reqLs_get_req_urlLsJoin(params.requestId) }】`)
+        console.log(`【响应ExtraInfo】【reqId=${params.requestId}】 【响应码=${params.statusCode}】  【reqUrl=${ __reqLs_get_req_urlLsJoin(params.requestId) }】`)
       }
     })
     // 请求和对应的响应，查找被标记的请求的响应，
@@ -194,39 +184,19 @@ async function interept( ) {
     Network.on("responseReceived",(params: DP.Protocol.Network.ResponseReceivedEvent) =>{
       if(params.response.url.startsWith("https://gitee.com")){
         // 暂时不打印 普通 请求日志
-        console.log(`【响应】【reqId=${params.requestId}】【响应Url=${params.response.url}】 【响应码=${params.response.status}】  【请求Url=${ reqLs_get_req_urlLsJoin(params.requestId) }】`)
+        console.log(`【响应】【reqId=${params.requestId}】【响应Url=${params.response.url}】 【响应码=${params.response.status}】  【请求Url=${ __reqLs_get_req_urlLsJoin(params.requestId) }】`)
       }
 
       const requestId:DP.Protocol.Network.RequestId = params.requestId
       const respUrl:string = params.response.url;
       assert(reqLs_has(requestId),`断言失败，响应【requestId=${requestId},response.url=${respUrl}】对应的请求不存在`)
-      reqLs_req1Eq_req2Eq(params.requestId,accInfoPgUrl,giteeLoginPageUrl)
-      const reqWp:ReqWrapT=reqLs.get(params.requestId);
-      const resp:DP.Protocol.Network.Response = params.response;
-
-      const req:DP.Protocol.Network.Request = reqWp.req;
-      const url:string=reqWp.req.url;
-      const headerText=reqWp.req.headers.toString();
-      const respStatus:number = resp.status;
 
 /////////////////
-      const reqWpEnd:ReqWrapT=reqLs_endReq(requestId);
-      const reqWpChain:ReqWrapT[]=reqLs.get(params.requestId);
-      findLogin(params.requestId,params.response.status,params.response)
+      const reqChain:ReqWrapT[]=reqLs.get(params.requestId);
+      const reqWpEnd:ReqWrapT=reqLs_endReq(reqChain);
+      findLogin(reqChain,params.response.status,params.response)
 
       findMarkupField(reqWpEnd)
-      if(headerText.includes(markupPrjName)){
-        console.log(`【在请求头,发现标记请求地址】【${url}】【${headerText}】`)
-      }
-      if(url.includes(markupPrjName)){
-        console.log(`【在url,发现标记请求地址】【${url}】`)
-      }
-      if(req.hasPostData){
-        const postData:string = req.postData;
-        if(postData && postData.includes(markupPrjName)){
-          console.log(`【在请求体,发现标记请求地址】【${url}】【${postData}】`)
-        }
-      }
     })
 
     //记录请求
