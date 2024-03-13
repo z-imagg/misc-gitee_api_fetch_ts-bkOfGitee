@@ -320,7 +320,7 @@ async function interept( ) {
     console.log(`给浏览器以足够时间，看她是否重定向`)
     await Page.loadEventFired()
     await DOM.getDocument();
-    sleep(8);
+    // sleep(8);
     //是否已登录
     const LoginFlag:LoginEnum=calcLoginFlag()
     reqLs.clear()
