@@ -50,10 +50,6 @@ document.title="${importPageMsg}"+document.title;
 //gitee账户页面url .  作为 登录判定依据 的 账户页面   的 url 故意且必须 和  正常进入 账户页面 不同 以 区分
 const accInfoPgUrl="https://gitee.com/profile/account_information?different_to_normal=AvoidNoise";
 
-const Unknown=0; const TRUE=1; const FALSE=2;
-//是否已登录
-let loginFlag:number=Unknown;
-
 class ReqWrapT {
 
   redirectResp:DP.Protocol.Network.Response;
@@ -70,7 +66,23 @@ class ReqWrapT {
   }
 
 }
+class RespHdWrapT {
+
+  reqId:DP.Protocol.Network.RequestId;
+  statusCode:number
+  respHd:DP.Protocol.Network.Headers;
+
+
+  // 构造函数
+  constructor( reqId:DP.Protocol.Network.RequestId,statusCode:number, respHd:DP.Protocol.Network.Headers ) {
+    this.reqId = reqId
+    this.statusCode=statusCode
+    this.respHd = respHd
+  }
+
+}
 const reqLs:Map<DP.Protocol.Network.RequestId,ReqWrapT[]>=new Map();
+const respHdLs:Map<DP.Protocol.Network.RequestId,RespHdWrapT[]>=new Map();
 
 function pushReq(redirectResp:DP.Protocol.Network.Response, reqId:DP.Protocol.Network.RequestId,req:DP.Protocol.Network.Request ){
   let ls:ReqWrapT[]=reqLs.get(reqId)
@@ -81,6 +93,14 @@ function pushReq(redirectResp:DP.Protocol.Network.Response, reqId:DP.Protocol.Ne
   ls.push(new ReqWrapT(redirectResp, reqId,req ))
 }
 
+function pushRespHd( reqId:DP.Protocol.Network.RequestId, statusCode:number, respHd:DP.Protocol.Network.Headers){
+  let ls:RespHdWrapT[]=respHdLs.get(reqId)
+  if(ls==null){
+    respHdLs.set(reqId,[]);
+    ls=respHdLs.get(reqId)
+  }
+  ls.push(new RespHdWrapT(reqId,statusCode, respHd ))
+}
 function reqLs_has(reqId:DP.Protocol.Network.RequestId){
   const ls:ReqWrapT[]=reqLs.get(reqId)
   const empty:boolean=(ls==null||ls.length==0)
@@ -95,8 +115,20 @@ function reqLs_req2(chain:ReqWrapT[]){
   const lack:boolean=(chain==null||chain.length<2)
   return (!lack)?chain[1]:null;
 }
+function respLs_1(chain:RespHdWrapT[]){
+  const empty:boolean=(chain==null||chain.length==0)
+  return (!empty)?chain[0]:null;
+}
+function respLs_2(chain:RespHdWrapT[]){
+  const lack:boolean=(chain==null||chain.length<2)
+  return (!lack)?chain[1]:null;
+}
 
 function reqLs_endReq(chain:ReqWrapT[]){
+  const endIdx:number=chain.length-1;
+  return (endIdx>=0)?chain[endIdx]:null;
+}
+function respLs_endResp(chain:RespHdWrapT[]){
   const endIdx:number=chain.length-1;
   return (endIdx>=0)?chain[endIdx]:null;
 }
@@ -118,52 +150,104 @@ function __reqLs_get_req_urlLsJoin(reqId:DP.Protocol.Network.RequestId){
   }
   return "";
 }
+enum  MarkupHasEnum{
+  Yes=1,
+  No=2
+}
+function reqWpHasMarkup( ){
 
-function findMarkupField(reqWpEnd:ReqWrapT){
+  const reqIdLs:string[]=reqLs.keys()
+  const _reqWpHasMarkup:ReqWrapT[]=reqIdLs.map(reqId=>{ //隐含了同一种消息是严格有序的，且 forEach 严格遵守数组下标顺序
+    const reqChain:ReqWrapT[]=reqLs.get(reqId)
+    const reqWpEnd:ReqWrapT=reqLs_endReq(reqChain);
+    const retK:MarkupHasEnum=hasMarkupFieldIn1Req(reqWpEnd);
+    if(retK==MarkupHasEnum.Yes){//排除其他页面的干扰
+      return reqWpEnd;
+    }
+    return null;
+  }).filter(k=>k!=null)
+  return _reqWpHasMarkup;
+}
+function hasMarkupFieldIn1Req(reqWpEnd:ReqWrapT){
+  let _markup:MarkupHasEnum=MarkupHasEnum.No;
   const headerText=reqWpEnd.req.headers.toString();
   const req:DP.Protocol.Network.Request = reqWpEnd.req;
   const urlEnd:string=reqWpEnd.req.url;
   if(headerText.includes(markupPrjName)){
     console.log(`【在请求头,发现标记请求地址】【${urlEnd}】【${headerText}】`)
+    _markup=MarkupHasEnum.Yes
   }
   if(urlEnd.includes(markupPrjName)){
     console.log(`【在url,发现标记请求地址】【${urlEnd}】`)
+    _markup=MarkupHasEnum.Yes
   }
   if(req.hasPostData){
     const postData:string = req.postData;
     if(postData && postData.includes(markupPrjName)){
       console.log(`【在请求体,发现标记请求地址】【${urlEnd}】【${postData}】`)
+      _markup=MarkupHasEnum.Yes
     }
   }
-}
-function findLogin(reqChain:ReqWrapT[], respStatus:number, resp:null|DP.Protocol.Network.Response){
 
+  return _markup;
+}
+
+enum  LoginEnum{
+  Other=0,
+  AlreadLogin=1,
+  NotLogin=2
+}
+function calcLoginFlag( ){
+
+  let _LoginFlag:LoginEnum=LoginEnum.Other;
+  const reqIdLs:string[]=reqLs.keys()
+  reqIdLs.forEach(reqId=>{ //隐含了同一种消息是严格有序的，且 forEach 严格遵守数组下标顺序
+    const reqChain:ReqWrapT[]=reqLs.get(reqId)
+    const respChain:RespHdWrapT[]=respHdLs.get(reqId)
+    const retK:LoginEnum=calcLoginEnumIn1Chain(reqChain, respChain);
+    if(retK!=LoginEnum.Other){//排除其他页面的干扰
+      _LoginFlag=retK;
+    }
+  })
+  return _LoginFlag;
+}
+
+
+function calcLoginEnumIn1Chain(reqChain:ReqWrapT[],  respChain:RespHdWrapT[]){
+
+  let _loginFlag:LoginEnum=LoginEnum.Other;
   const reqWp1:ReqWrapT=reqLs_req1(reqChain);
   assert(reqWp1!=null, "xxx1")
   // if( reqWp1  == null ){return;}
+  const respWp1:RespHdWrapT=respLs_1(respChain);
 
 
   const reqWpEnd:ReqWrapT=reqLs_endReq(reqChain);
   const urlEnd:string=reqWpEnd.req.url;
 
+  // const respWpEnd:RespHdWrapT=respLs_endResp(respChain);
+
   if( reqWp1.req. url == accInfoPgUrl ){
     const reqWp2:ReqWrapT=reqLs_req2(reqChain);
-    if(reqWp2==null){ // && respStatus==200
+    const respWp2:RespHdWrapT=respLs_2(respChain);
+    if(reqWp2==null){ // && respWp2.statusCode==200
       console.log(`【发现直接进入账户页】【undefined--->账户页】【此即已登录】${urlEnd}`)
       //已登录:
-      loginFlag=TRUE;
+      _loginFlag=LoginEnum.AlreadLogin;
     } else
-    if( reqWp2.req. url == giteeLoginPageUrl){ //&& respStatus==302
-      assert(resp!=null, "断言失败, 重定向的第二个请求的响应一定是正常的200")
-      const targetUrl:string=resp.headers["Location"]
+    if( reqWp2.req. url == giteeLoginPageUrl){ //&& respWp2.statusCode==302
+      assert(respWp2!=null, "断言失败, 重定向的第二个请求的响应一定是正常的200")
+      const targetUrl:string=respWp1.respHd["Location"]
       console.log(`【发现故意制造的重定向】【账户页--->登录页】【此即未登录】${urlEnd} ----> ${targetUrl}`)
       //未登录
-      loginFlag=FALSE;
+      _loginFlag=LoginEnum.NotLogin;
     }
-    else{
-      throw new Error(`断言失败 ， 请求 ${urlEnd} 的响应状态码不应该是${resp.status}` )
-    }
+    // else{
+    //   // throw new Error(`断言失败 ， 请求 ${urlEnd} 的响应状态码不应该是${resp.status}` )
+    // }
+
   }
+  return _loginFlag;
 
 }
 async function interept( ) {
@@ -174,11 +258,13 @@ async function interept( ) {
     Network.on("responseReceivedExtraInfo",(params: DP.Protocol.Network.ResponseReceivedExtraInfoEvent) =>{
 
       const reqChain:ReqWrapT[]=reqLs.get(params.requestId);
+      const respChain:RespHdWrapT[]=respHdLs.get(params.requestId);
       if(__reqLs_get_req_url_any_startWith(params.requestId,"https://gitee.com")){
         // 暂时不打印 普通 请求日志
         console.log(`【响应ExtraInfo】【reqId=${params.requestId}】 【响应码=${params.statusCode}】  【reqUrl=${ __reqLs_get_req_urlLsJoin(params.requestId) }】`)
       }
-      findLogin(reqChain,params.statusCode,null)
+      pushRespHd(params.requestId,params.statusCode,params.headers)
+      // findLogin(reqChain,respChain)
     })
     // 请求和对应的响应，查找被标记的请求的响应，
     //     参考 https://stackoverflow.com/questions/70926015/get-response-of-a-api-request-made-using-chrome-remote-interface/70926579#70926579
@@ -195,9 +281,9 @@ async function interept( ) {
 /////////////////
       const reqChain:ReqWrapT[]=reqLs.get(params.requestId);
       const reqWpEnd:ReqWrapT=reqLs_endReq(reqChain);
-      findLogin(reqChain,params.response.status,params.response)
+      // pushRespHd(params.requestId,params.response.status,params.response.headers)
+      // findLogin(reqChain,params.response.status,params.response)
 
-      findMarkupField(reqWpEnd)
     })
 
     //记录请求
@@ -221,12 +307,14 @@ async function interept( ) {
     //给浏览器以足够时间，看她是否重定向
     console.log(`给浏览器以足够时间，看她是否重定向`)
     sleep(8);
+    //是否已登录
+    const LoginFlag:LoginEnum=calcLoginFlag()
 
     //断言 此时登录状态不应该是未知
-    assert(loginFlag != Unknown)
+    assert(LoginFlag != LoginEnum.Other)
 
     //未登录
-    if ( loginFlag==FALSE){
+    if ( LoginFlag==LoginEnum.NotLogin){
     //打开gitee登录页面
     console.log(`打开gitee登录页面 ${giteeLoginPageUrl}`)
     await Page.navigate( {url:giteeLoginPageUrl});
@@ -240,7 +328,7 @@ async function interept( ) {
     const _trash=readlineSync.question("此时在gitee登录页面，填写各字段、点击'登录'按钮、填写可能的验证码 后，在此nodejs控制台按任意键继续")
     }
     //已登录
-    if ( loginFlag==TRUE){
+    if ( LoginFlag==LoginEnum.AlreadLogin){
       //不用打开gitee登录页面
       console.log(`已登录 不用打开gitee登录页面 `)
     }
@@ -255,6 +343,7 @@ async function interept( ) {
       expression:js_fillMarkupGoalRepo
     })
     readlineSync.question("此时在gitee导入URL页面，填写各字段、点击'导入'按钮 后，【注意'仓库名称' 'project_name'字段是标记字段，其他各字段不要与标记字段取值相同】, 在此nodejs控制台按任意键继续")
+    reqWpHasMarkup()
 
   }catch(err){
     console.error(err);
