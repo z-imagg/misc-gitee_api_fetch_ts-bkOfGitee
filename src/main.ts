@@ -341,7 +341,9 @@ async function interept( ) {
     await Runtime.evaluate(<DP.Protocol.Runtime.EvaluateRequest>{
       expression:js_fillUserPass
     })
-    const _trash=readlineSync.question("此时在gitee登录页面，填写各字段、点击'登录'按钮、填写可能的验证码 后，在此nodejs控制台按任意键继续")
+    console.log("此时在gitee登录页面，填写各字段、点击'登录'按钮、填写可能的验证码 后。即引发加载新页面，从而将从下方 await DOM.getDocument() 中恢复执行流")
+    await Page.loadEventFired()
+    await DOM.getDocument();
     }
     //已登录
     else if ( LoginFlag==LoginEnum.AlreadLogin){
