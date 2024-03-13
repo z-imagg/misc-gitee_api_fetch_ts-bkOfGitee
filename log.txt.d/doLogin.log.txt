@@ -4,6 +4,7 @@
 打开gitee登录页面 https://gitee.com/login
 在gitee登录页面，请填写各字段、填写可能的验证码, 点击'登录'按钮 。
 打开gitee导入页面 https://gitee.com/projects/import/url
-在gitee导入URL页面，请填写各字段, 点击'导入'按钮，【勿动标记字段'仓库名称'】
-【在请求体,发现标记请求地址】【https://gitee.com/markup-organization-9473/projects】【utf8=%E2%9C%93&authenticity_token=inqNsxeKJxfol0lvzptlFwnmilmOaDWBky2zMS%2FbTXvfoKzObybN1lDj2eGLUd%2FsoPhn2Wk2b3CTbDeqFqm6kg%3D%3D&project%5Bimport_url%5D=https%3A%2F%2Fgithub.com%2Fintel%2FARM_NEON_2_x86_SSE.git&user_sync_code=&password_sync_code=&project%5Bname%5D=markupPrjName----intel--ARM_NEON_2_x86_SSE__1710342763398&project%5Bnamespace_path%5D=markup-organization-9473&project%5Bpath%5D=markupPrjPath----intel--ARM_NEON_2_x86_SSE__1710342763398&project%5Bdescription%5D=markupPrjDesc----intel--ARM_NEON_2_x86_SSE__1710342763398&project%5Bpublic%5D=1&language=0】
-已写入请求例子（作为请求模板）文件 【./reqTemplate/146187.431】
+gitee导入URL页面，js脚本【js_fillMarkupGoalRepo】 将填写各字段, 并'导入'按钮，【请勿手动操作】
+【在请求体,发现标记请求地址】【https://gitee.com/markup-organization-9473/projects】【utf8=%E2%9C%93&authenticity_token=%2BEl%2BF4fnDroQEM8g0s0o%2FSDKqApfHy3ZSz3CarGI3FGbOqyp0f9r3WiMSPI2MD6JMZ5%2FsN%2BuEFDZoGClXAyBsw%3D%3D&project%5Bimport_url%5D=https%3A%2F%2Fgithub.com%2Fintel%2FARM_NEON_2_x86_SSE.git&user_sync_code=&password_sync_code=&project%5Bname%5D=markupPrjName----intel--ARM_NEON_2_x86_SSE__1710343381241&project%5Bnamespace_path%5D=markup-organization-9473&project%5Bpath%5D=markupPrjPath----intel--ARM_NEON_2_x86_SSE__1710343381241&project%5Bdescription%5D=markupPrjDesc----intel--ARM_NEON_2_x86_SSE__1710343381241&project%5Bpublic%5D=1&language=0】
+已写入请求例子（作为请求模板）文件 【./reqTemplate/147757.431】
+【退出nodejs进程，退出代码为0，业务功能正常完成】, 找到有标记字段值的请求们，写入路径请看上面日志

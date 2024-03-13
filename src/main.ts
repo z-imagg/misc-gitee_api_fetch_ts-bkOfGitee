@@ -405,13 +405,23 @@ async function mainFunc( ) {
     await DOM.getDocument();//阻塞的DOMget4 被 nav4 吃掉
     //填写标记仓库
     await Runtime.evaluate(<DP.Protocol.Runtime.EvaluateRequest>{
-      expression:js_fillMarkupGoalRepo
+      expression:js_fillMarkupGoalRepo  //此js脚本  点击了 '导入'按钮 , 引起页面新加载，将吃掉 nodejs进程中 阻塞的DOMget5
     })
-    console.log("在gitee导入URL页面，请填写各字段, 点击'导入'按钮，【勿动标记字段'仓库名称'】")
+    console.log("gitee导入URL页面，js脚本【js_fillMarkupGoalRepo】 将填写各字段, 并'导入'按钮，【请勿手动操作】")
     await Page.loadEventFired()
-    //用户在chroome浏览器进程上点击 '导入'按钮 , 引起页面新加载，将吃掉 nodejs进程中 阻塞的DOMget5
+
     await DOM.getDocument();//阻塞的DOMget5
-    reqWpHasMarkup()
+
+    //寻找有标记字段值的请求们
+    const _reqWpHasMarkup:ReqWrapT[] = reqWpHasMarkup()
+    if(_reqWpHasMarkup.length>0){
+      console.log("【退出nodejs进程，退出代码为0，业务功能正常完成】, 找到有标记字段值的请求们，写入路径请看上面日志")
+      process.exit(0)
+    }else{
+      console.log("【退出nodejs进程，退出代码为1，业务功能正常完成】, 找到有标记字段值的请求们，写入路径请看上面日志")
+      process.exit(1)
+    }
+
 
   }catch(err){
     console.error(err);
