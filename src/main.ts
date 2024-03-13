@@ -310,7 +310,9 @@ async function interept( ) {
     console.log(`打开gitee账户页面 ${accInfoPgUrl}`)
     await Page.navigate( {url:accInfoPgUrl});
     //给浏览器以足够时间，看她是否重定向
-    console.log(`给浏览器以足够时间，看她是否重定向`)
+    console.log(`等待浏览器到达该url（即等待该ur的文档就绪）`)
+    await Page.loadEventFired()
+    await DOM.getDocument();
     sleep(8);
     //是否已登录
     const LoginFlag:LoginEnum=calcLoginFlag()
