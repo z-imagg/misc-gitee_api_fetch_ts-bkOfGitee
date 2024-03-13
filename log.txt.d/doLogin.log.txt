@@ -1,11 +1,9 @@
-打开gitee账户页面 https://gitee.com/profile/account_information
-【发现直接进入账户页】【undefined--->账户页】【此即已登录】undefined ----> https://gitee.com/profile/account_information
-【发现故意制造的重定向】【账户页--->登录页】【此即未登录】https://gitee.com/profile/account_information ----> https://gitee.com/login
-【发现重定向】https://gitee.com/profile/account_information ----> https://gitee.com/login
-给浏览器以足够时间，看她是否重定向
+回调Network.on已经执行， 按回车继续
+打开gitee账户页面 https://gitee.com/profile/account_information?different_to_normal=AvoidNoise
+等待浏览器到达该url（即等待该ur的文档就绪）
+【发现故意制造的重定向】【账户页--->登录页】【此即未登录】https://gitee.com/profile/account_information?different_to_normal=AvoidNoise ----> https://gitee.com/login
 打开gitee登录页面 https://gitee.com/login
 此时在gitee登录页面，填写各字段、点击'登录'按钮、填写可能的验证码 后，在此nodejs控制台按任意键继续
 打开gitee导入页面 https://gitee.com/projects/import/url
-【发现重定向】https://gitee.com/login ----> https://gitee.com/profile/account_information
-此时在gitee导入URL页面，填写各字段、点击'导入'按钮 后，【注意'仓库名称' 'project_name'字段是标记字段，其他各字段不要与标记字段取值相同】, 在此nodejs控制台按任意键继续
-【在请求体,发现标记请求地址】【https://gitee.com/tmpOrg/projects】【utf8=%E2%9C%93&authenticity_token=DfCBxdz6bwAjKm%2BY%2BqCyF7JDTQE%2BdiJKz5qB91yswDylQchht3AZT0j2zKlz5mVqQRoqHOBDkG8Kw9zs%2F9UCTQ%3D%3D&project%5Bimport_url%5D=https%3A%2F%2Fgithub.com%2Fintel%2FARM_NEON_2_x86_SSE.git&user_sync_code=&password_sync_code=&project%5Bname%5D=markupField----intel--ARM_NEON_2_x86_SSE&project%5Bnamespace_path%5D=tmpOrg&project%5Bpath%5D=rrrrr&project%5Bdescription%5D=vvvvvv&project%5Bpublic%5D=1&language=0】
+此时在gitee导入URL页面，填写各字段、点击'导入'按钮 后，【注意'仓库名称' 'project_name'字段是标记字段，其他各字段不要与标记字段取值相同】
+【在请求体,发现标记请求地址】【https://gitee.com/tmpOrg/projects】【utf8=%E2%9C%93&authenticity_token=grAWCNeupFONob1HHvgvXscjGtulsQqdnLCTp1Ax09tk79kLq%2B17aYeNsEzHeZOusswAGjkK0HNWQ1h9mSMdDA%3D%3D&project%5Bimport_url%5D=https%3A%2F%2Fgithub.com%2Fintel%2FARM_NEON_2_x86_SSE.git&user_sync_code=&password_sync_code=&project%5Bname%5D=markupField----intel--ARM_NEON_2_x86_SSEgggggggggggggg&project%5Bnamespace_path%5D=tmpOrg&project%5Bpath%5D=markup-field----intel--arm_-neon_2_x86_-ssegggggggggggggg&project%5Bdescription%5D=vvvvvvvvvvvvvvvvv&project%5Bpublic%5D=1&language=0】

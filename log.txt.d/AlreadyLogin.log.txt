@@ -1,7 +1,8 @@
-打开gitee账户页面 https://gitee.com/profile/account_information
-【发现直接进入账户页】【undefined--->账户页】【此即已登录】undefined ----> https://gitee.com/profile/account_information
+回调Network.on已经执行， 按回车继续
+打开gitee账户页面 https://gitee.com/profile/account_information?different_to_normal=AvoidNoise
 给浏览器以足够时间，看她是否重定向
+【发现直接进入账户页】【undefined--->账户页】【此即已登录】https://gitee.com/profile/account_information?different_to_normal=AvoidNoise
 已登录 不用打开gitee登录页面
 打开gitee导入页面 https://gitee.com/projects/import/url
-此时在gitee导入URL页面，填写各字段、点击'导入'按钮 后，【注意'仓库名称' 'project_name'字段是标记字段，其他各字段不要与标记字段取值相同】, 在此nodejs控制台按任意键继续
-【在请求体,发现标记请求地址】【https://gitee.com/tmpOrg/projects】【utf8=%E2%9C%93&authenticity_token=ra0OUyjOqeZu91zXZAj7lrd%2FFx1gI%2F50XtbQUTmofMRZJKauRHssG%2F12BRa7J3k2L9lhl6lm7OLJEowdG0iP9g%3D%3D&project%5Bimport_url%5D=https%3A%2F%2Fgithub.com%2Fintel%2FARM_NEON_2_x86_SSE.git&user_sync_code=&password_sync_code=&project%5Bname%5D=markupField----intel--ARM_NEON_2_x86_SSE&project%5Bnamespace_path%5D=tmpOrg&project%5Bpath%5D=33333&project%5Bdescription%5D=ddsss&project%5Bpublic%5D=1&language=0】
+此时在gitee导入URL页面，填写各字段、点击'导入'按钮 后，【注意'仓库名称' 'project_name'字段是标记字段，其他各字段不要与标记字段取值相同】
+【在请求体,发现标记请求地址】【https://gitee.com/tmpOrg/projects】【utf8=%E2%9C%93&authenticity_token=G2cphg1ibcqXfzmBFbVB45pxoXbgmrCF%2B6f8Zu6WqVP9OOaFcSGy8J1TNIrMNP0T7567t3whamsxVDe8J4RnhA%3D%3D&project%5Bimport_url%5D=https%3A%2F%2Fgithub.com%2Fintel%2FARM_NEON_2_x86_SSE.git&user_sync_code=&password_sync_code=&project%5Bname%5D=markupField----intel--ARM_NEON_2_x86_SSEdddddddddddddd&project%5Bnamespace_path%5D=tmpOrg&project%5Bpath%5D=markup-field----intel--arm_-neon_2_x86_-ssedddddddddddddd&project%5Bdescription%5D=zzzzzzzzzzzzzzzzzz&project%5Bpublic%5D=1&language=0】
