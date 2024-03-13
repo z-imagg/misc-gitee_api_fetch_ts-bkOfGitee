@@ -315,11 +315,11 @@ async function interept( ) {
     readlineSync.question("回调Network.on已经执行， 按回车继续   ")
     //打开gitee账户页面
     console.log(`打开gitee账户页面 ${accInfoPgUrl}`)
-    await Page.navigate( {url:accInfoPgUrl});
+    await Page.navigate( {url:accInfoPgUrl});//nav1 引起页面新加载
     //给浏览器以足够时间，看她是否重定向
     console.log(`给浏览器以足够时间，看她是否重定向`)
     await Page.loadEventFired()
-    await DOM.getDocument();
+    await DOM.getDocument();//阻塞的DOMget1 被 nav1 吃掉
     // sleep(8);
     //是否已登录
     const LoginFlag:LoginEnum=calcLoginFlag()
@@ -333,17 +333,18 @@ async function interept( ) {
     if ( LoginFlag==LoginEnum.NotLogin){
     //打开gitee登录页面
     console.log(`打开gitee登录页面 ${giteeLoginPageUrl}`)
-    await Page.navigate( {url:giteeLoginPageUrl});
+    await Page.navigate( {url:giteeLoginPageUrl});//nav2 引起页面新加载
     // types/chrome-remote-interface 说 没有此方法 loadEventFired，但是 官方例子 中有此方法， https://github.com/cyrus-and/chrome-remote-interface/wiki/Async-await-example
     await Page.loadEventFired()
-    await DOM.getDocument();
+    await DOM.getDocument();//阻塞的DOMget2 被 nav2 吃掉
     //填写用户名、密码
     await Runtime.evaluate(<DP.Protocol.Runtime.EvaluateRequest>{
       expression:js_fillUserPass
     })
-    console.log("此时在gitee登录页面，填写各字段、点击'登录'按钮、填写可能的验证码 后。即引发加载新页面，从而将从下方 await DOM.getDocument() 中恢复执行流")
+    console.log("在gitee登录页面，请填写各字段、填写可能的验证码, 点击'登录'按钮 。")
     await Page.loadEventFired()
-    await DOM.getDocument();
+    //用户在chroome浏览器进程上点击 '登录'按钮 , 引起页面新加载，将吃掉 nodejs进程中 阻塞的DOMget3
+    await DOM.getDocument();//阻塞的DOMget3
     }
     //已登录
     else if ( LoginFlag==LoginEnum.AlreadLogin){
@@ -353,17 +354,18 @@ async function interept( ) {
 
     //打开gitee导入页面
     console.log(`打开gitee导入页面 ${giteeImportPageUrl}`)
-    await Page.navigate({url:giteeImportPageUrl})
+    await Page.navigate({url:giteeImportPageUrl})//nav4 引起页面新加载
     await Page.loadEventFired()
-    await DOM.getDocument();
+    await DOM.getDocument();//阻塞的DOMget4 被 nav4 吃掉
     //填写标记仓库
     await Runtime.evaluate(<DP.Protocol.Runtime.EvaluateRequest>{
       expression:js_fillMarkupGoalRepo
     })
     // sleep(2)
+    console.log("在gitee导入URL页面，请填写各字段, 点击'导入'按钮，【勿动标记字段'仓库名称'】")
     await Page.loadEventFired()
-    await DOM.getDocument();
-    console.log("此时在gitee导入URL页面，填写各字段、点击'导入'按钮 后，【注意'仓库名称' 'project_name'字段是标记字段，其他各字段不要与标记字段取值相同】")
+    //用户在chroome浏览器进程上点击 '导入'按钮 , 引起页面新加载，将吃掉 nodejs进程中 阻塞的DOMget5
+    await DOM.getDocument();//阻塞的DOMget5
     // sleep(5)
     reqWpHasMarkup()
 
