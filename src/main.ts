@@ -70,21 +70,68 @@ class ReqWrapT {
   }
 
 }
-const reqLs:Map<DP.Protocol.Network.RequestId,ReqWrapT>=new Map();
+const reqLs:Map<DP.Protocol.Network.RequestId,ReqWrapT[]>=new Map();
 
 function pushReq(redirectResp:DP.Protocol.Network.Response, reqId:DP.Protocol.Network.RequestId,req:DP.Protocol.Network.Request ){
-  reqLs.set(reqId,new ReqWrapT(redirectResp, reqId,req ))
+  let ls:ReqWrapT[]=reqLs.get(reqId)
+  if(ls==null){
+    reqLs.set(reqId,[]);
+    ls=reqLs.get(reqId)
+  }
+  ls.push(new ReqWrapT(redirectResp, reqId,req ))
 }
 
+function reqLs_has(reqId:DP.Protocol.Network.RequestId){
+  const ls:ReqWrapT[]=reqLs.get(reqId)
+  const empty:boolean=(ls==null||ls.length==0)
+  return !empty;
+}
+
+function reqLs_req1(reqId:DP.Protocol.Network.RequestId ){
+  const ls:ReqWrapT[]=reqLs.get(reqId)
+  const empty:boolean=(ls==null||ls.length==0)
+  return (!empty)?ls[0]:null;
+}
+function reqLs_req2(reqId:DP.Protocol.Network.RequestId ){
+  const ls:ReqWrapT[]=reqLs.get(reqId)
+  const lack:boolean=(ls==null||ls.length<2)
+  return (!lack)?ls[1]:null;
+}
+function reqLs_req1Eq_req2Eq(reqId:DP.Protocol.Network.RequestId,req1Url:string,req2Url:string){
+  const ls:ReqWrapT[]=reqLs.get(reqId)
+  if(ls==null||ls.length<2){
+    return false;
+  }
+  const fit:boolean=ls[0].req.url==req1Url && ls[1].req.url==req2Url
+  return fit
+}
+
+function reqLs_get_req_url_any_startWith(reqId:DP.Protocol.Network.RequestId,urlPrefix:string){
+  const ls:ReqWrapT[]=reqLs.get(reqId)
+  const empty:boolean=(ls==null||ls.length==0)
+  if(!empty){
+    return ls.filter(k=>k.req.url.startsWith(urlPrefix)).length>0
+  }
+  return false;
+}
+
+function reqLs_get_req_urlLsJoin(reqId:DP.Protocol.Network.RequestId){
+  const ls:ReqWrapT[]=reqLs.get(reqId)
+  const empty:boolean=(ls==null||ls.length==0)
+  if(!empty){
+    return ls.map(k=>k.req.url).join(",")
+  }
+  return "";
+}
 async function interept( ) {
   try{
     const client:CDP.Client = await CDP();
     const {Network, Page,DOM,Runtime, Fetch} = client;
 
     Network.on("responseReceivedExtraInfo",(params: DP.Protocol.Network.ResponseReceivedExtraInfoEvent) =>{
-      if(reqLs.get(params.requestId).req.url.startsWith("https://gitee.com")){
+      if(reqLs_get_req_url_any_startWith(params.requestId,"https://gitee.com")){
         // 暂时不打印 普通 请求日志
-        console.log(`【响应ExtraInfo】【reqId=${params.requestId}】 【响应码=${params.statusCode}】  【reqUrl=${ reqLs.get(params.requestId).req.url }】`)
+        console.log(`【响应ExtraInfo】【reqId=${params.requestId}】 【响应码=${params.statusCode}】  【reqUrl=${ reqLs_get_req_urlLsJoin(params.requestId) }】`)
       }
     })
     // 请求和对应的响应，查找被标记的请求的响应，
@@ -92,28 +139,35 @@ async function interept( ) {
     Network.on("responseReceived",(params: DP.Protocol.Network.ResponseReceivedEvent) =>{
       if(params.response.url.startsWith("https://gitee.com")){
         // 暂时不打印 普通 请求日志
-        console.log(`【响应】【reqId=${params.requestId}】【响应Url=${params.response.url}】 【响应码=${params.response.status}】  【请求Url=${ reqLs.get(params.requestId).req.url }】`)
+        console.log(`【响应】【reqId=${params.requestId}】【响应Url=${params.response.url}】 【响应码=${params.response.status}】  【请求Url=${ reqLs_get_req_urlLsJoin(params.requestId) }】`)
       }
 
       const requestId:DP.Protocol.Network.RequestId = params.requestId
       const respUrl:string = params.response.url;
-      assert(reqLs.has(requestId),`断言失败，响应【requestId=${requestId},response.url=${respUrl}】对应的请求不存在`)
+      assert(reqLs_has(requestId),`断言失败，响应【requestId=${requestId},response.url=${respUrl}】对应的请求不存在`)
+      reqLs_req1Eq_req2Eq(params.requestId,accInfoPgUrl,giteeLoginPageUrl)
       const reqWp:ReqWrapT=reqLs.get(params.requestId);
       const resp:DP.Protocol.Network.Response = params.response;
 
       const req:DP.Protocol.Network.Request = reqWp.req;
       const url:string=reqWp.req.url;
       const headerText=reqWp.req.headers.toString();
-      const respStatus:number = resp.status;
+      // const respStatus:number = resp.status;
 
-      if( url == accInfoPgUrl ){
-        if(respStatus==302){
+      const reqWp1:ReqWrapT=reqLs_req1(requestId);
+      if( reqWp1  == null ){
+        return;
+      }
+
+      if( reqWp1.req. url == accInfoPgUrl ){
+        const reqWp2:ReqWrapT=reqLs_req2(requestId);
+        if( reqWp2.req. url == giteeLoginPageUrl){ //&& respStatus==302
           const targetUrl:string=resp.headers["Location"]
           console.log(`【发现故意制造的重定向】【账户页--->登录页】【此即未登录】${url} ----> ${targetUrl}`)
           //未登录
           loginFlag=FALSE;
         }else
-        if(respStatus==200){
+        if(reqWp2==null){ // && respStatus==200
           console.log(`【发现直接进入账户页】【undefined--->账户页】【此即已登录】${url}`)
           //已登录:
           loginFlag=TRUE;
