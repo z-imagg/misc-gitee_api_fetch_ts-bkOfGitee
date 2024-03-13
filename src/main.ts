@@ -256,7 +256,7 @@ function calcLoginEnumIn1Chain(reqChain:ReqWrapT[],  respChain:RespHdWrapT[]){
   return _loginFlag;
 
 }
-async function interept( ) {
+async function mainFunc( ) {
   try{
     const chrome:CL.LaunchedChrome= await CL.launch(<CL.Options>{
       chromePath:"/app/chrome-linux/chrome",
@@ -371,4 +371,4 @@ async function interept( ) {
   }
 }
 
-interept()
+mainFunc()
