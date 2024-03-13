@@ -10,7 +10,36 @@ chrome-remote-interface启动chrome浏览器；
 若未登录，则打开gitee登录页面，由js填写配置的用户名、密码，由人工点击登录按钮，因为点击登录后可能有验证码识别；
 打开gitee导入仓库页面，由js填写各标记字段，生成gitee导入仓库接口的请求例子（请求例子作为请求模板）
 
-## 一些脚本
+## 使用手册
+
+####  1. 填写gitee账户
+```cp gitee_account.json.template  gitee_account.json```, 按照格式填写 你的gitee账户 到配置文件 gitee_account.json
+
+####  2. 填写gitee组织
+
+修改main.ts中以下变量markupOrgName的值为你的gitee组织
+```javascript
+const markupOrgName = "markup-organization-9473" ; //mirrr
+```
+
+#### 3. 修改本机中chrome可执行程序路径
+
+修改```src/main.ts```中```chromePath```为 本机chrome可执行程序路径
+
+
+#### 4. 执行脚本生成gitee 导入仓库接口 的请求模板
+
+```gen_gitee_import_repo_req_template.sh```
+
+该脚本会启动chrome浏览器，
+
+只有在gitee登录页面  需要人工点击 浏览器页面上的登录按钮，因为 点击登录按钮后可能有验证码识别，
+
+其余是动作是chrome-remote-interface直接驱动chrome或对chrome执行js脚本完成的，不需要人工操作浏览器
+
+
+
+## 开发时候用的 
 
 ```shell
 node  --version #v18.19.1
