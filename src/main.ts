@@ -58,18 +58,19 @@ enum MarkupPlace{
   InUrl=1,
   InBody=2
 }
-class MarkupReqT {
+class ReqT {
 
+  redirectResp:DP.Protocol.Network.Response;
   reqId:DP.Protocol.Network.RequestId;
-  reqUrl:string;
-  place: MarkupPlace;
+
+  req:DP.Protocol.Network.Request;
 
 
   // 构造函数
-  constructor(reqId:DP.Protocol.Network.RequestId,reqUrl:string,place:MarkupPlace) {
+  constructor(redirectResp:DP.Protocol.Network.Response, reqId:DP.Protocol.Network.RequestId,req:DP.Protocol.Network.Request ) {
+    this.redirectResp=redirectResp
     this.reqId = reqId
-    this.reqUrl = reqUrl
-    this.place=place
+    this.req = req
   }
 
   req_equal(reqId:DP.Protocol.Network.RequestId ):boolean{
@@ -77,11 +78,14 @@ class MarkupReqT {
   }
 }
 
-const markupReqLs:MarkupReqT[]=[];
+const reqLs:ReqT[]=[];
 
 function isMarkupReq(requestId:DP.Protocol.Network.RequestId ):boolean{
-  const left:MarkupReqT[]=markupReqLs.filter(markupReqK=>markupReqK.req_equal(requestId ))
+  const left:ReqT[]=reqLs.filter(markupReqK=>markupReqK.req_equal(requestId ))
   return left.length>0
+}
+function pushReq(redirectResp:DP.Protocol.Network.Response, reqId:DP.Protocol.Network.RequestId,req:DP.Protocol.Network.Request ){
+  reqLs.push(new ReqT(redirectResp, reqId,req ))
 }
 
 async function interept( ) {
@@ -100,52 +104,10 @@ async function interept( ) {
 
     })
 
-    //请求过滤
+    //记录请求
     Network.on("requestWillBeSent", (params: DP.Protocol.Network.RequestWillBeSentEvent) => {
-      const requestId:DP.Protocol.Network.RequestId = params.requestId
-      const redirectResp:DP.Protocol.Network.Response=params.redirectResponse;
-
-      const req:DP.Protocol.Network.Request=params.request;
-      const url:string = params.request.url;
-      if(!url.startsWith("https://gitee.com")){
-        return;
-      }
-      // 暂时不打印 普通 请求日志
-      // console.log(`【请求地址】${url}`)
-
-      //记录标记请求
-      const headerText=req.headers.toString();
-      if(headerText.includes(markupPrjName)){
-        console.log(`【在请求头,发现标记请求地址】【${url}】【${headerText}】`)
-        markupReqLs.push(new MarkupReqT(requestId,url,MarkupPlace.InHeader))
-      }
-      if(url.includes(markupPrjName)){
-        console.log(`【在url,发现标记请求地址】【${url}】`)
-        markupReqLs.push(new MarkupReqT(requestId,url,MarkupPlace.InUrl))
-      }
-      if(req.hasPostData){
-        const postData:string = req.postData;
-        if(postData && postData.includes(markupPrjName)){
-          console.log(`【在请求体,发现标记请求地址】【${url}】【${postData}】`)
-          markupReqLs.push(new MarkupReqT(requestId,url,MarkupPlace.InBody))
-        }
-      }
-      /**
-       【在请求体】【发现标记请求地址】【https://gitee.com/tmpOrg/projects】【utf8=%E2%9C%93&authenticity_token=xUuuL7czpeKrHp3QoLju7yfE67WTOa5xnSQk7C%2FOaNAqAUO7fXTpgQUJqsXW4aiSOxIUoOHqvkwKr3yaLxaZ4g%3D%3D&project%5Bimport_url%5D=https%3A%2F%2Fgithub.com%2Fintel%2FARM_NEON_2_x86_SSE.git&user_sync_code=&password_sync_code=&project%5Bname%5D=intel--ARM_NEON_2_x86_SSE&project%5Bnamespace_path%5D=tmpOrg&project%5Bpath%5D=xxxxxx&project%5Bdescription%5D=zzzzz&project%5Bpublic%5D=1&language=0】
-       */
-
-      //记录重定向
-      if(redirectResp ){
-        const redirectRespUrl:string=redirectResp.url;
-        if(redirectRespUrl!=null){
-          // 普通 重定向日志
-          console.log(`【发现重定向】${redirectRespUrl} ----> ${url}`)
-        }
-      }
-
+      pushReq(params.redirectResponse, params.requestId,params.request )
     })
-
-
 
     await Network.enable();
     await Runtime.enable();
