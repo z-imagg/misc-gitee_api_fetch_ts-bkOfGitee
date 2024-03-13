@@ -7,7 +7,7 @@ import * as fs from "fs";
 import assert from "assert";
 import * as CL from 'chrome-launcher'
 import {existsSync, mkdir, mkdirSync, writeFileSync} from "fs";
-
+import chromePathConf from './MyConfig.ts'
 
 
 const urlList:string[]=[
@@ -308,7 +308,7 @@ function calcLoginEnumIn1Chain(reqChain:ReqWrapT[],  respChain:RespHdWrapT[]){
 async function mainFunc( ) {
   try{
     const chrome:CL.LaunchedChrome= await CL.launch(<CL.Options>{
-      chromePath:"/app/chrome-linux/chrome",
+      chromePath: chromePathConf, //  "/app/chrome-linux/chrome",
       chromeFlags:["--no-first-run","--disable-gpu"]
     });
     const client:CDP.Client = await CDP(<CDP.Options>{
