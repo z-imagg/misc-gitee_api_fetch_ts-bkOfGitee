@@ -299,6 +299,8 @@ async function interept( ) {
     sleep(8);
     //是否已登录
     const LoginFlag:LoginEnum=calcLoginFlag()
+    reqLs.clear()
+    respHdLs.clear()
 
     //断言 此时登录状态不应该是未知
     assert(LoginFlag != LoginEnum.Other)
@@ -318,7 +320,7 @@ async function interept( ) {
     const _trash=readlineSync.question("此时在gitee登录页面，填写各字段、点击'登录'按钮、填写可能的验证码 后，在此nodejs控制台按任意键继续")
     }
     //已登录
-    if ( LoginFlag==LoginEnum.AlreadLogin){
+    else if ( LoginFlag==LoginEnum.AlreadLogin){
       //不用打开gitee登录页面
       console.log(`已登录 不用打开gitee登录页面 `)
     }
