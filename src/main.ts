@@ -318,7 +318,6 @@ async function interept( ) {
     await Page.navigate( {url:accInfoPgUrl});
     //给浏览器以足够时间，看她是否重定向
     console.log(`给浏览器以足够时间，看她是否重定向`)
-    await Page.loadEventFired()
     await DOM.getDocument();
     sleep(8);
     //是否已登录
@@ -334,8 +333,6 @@ async function interept( ) {
     //打开gitee登录页面
     console.log(`打开gitee登录页面 ${giteeLoginPageUrl}`)
     await Page.navigate( {url:giteeLoginPageUrl});
-    // types/chrome-remote-interface 说 没有此方法 loadEventFired，但是 官方例子 中有此方法， https://github.com/cyrus-and/chrome-remote-interface/wiki/Async-await-example
-    await Page.loadEventFired()
     await DOM.getDocument();
     //填写用户名、密码
     await Runtime.evaluate(<DP.Protocol.Runtime.EvaluateRequest>{
@@ -352,14 +349,12 @@ async function interept( ) {
     //打开gitee导入页面
     console.log(`打开gitee导入页面 ${giteeImportPageUrl}`)
     await Page.navigate({url:giteeImportPageUrl})
-    await Page.loadEventFired()
     await DOM.getDocument();
     //填写标记仓库
     await Runtime.evaluate(<DP.Protocol.Runtime.EvaluateRequest>{
       expression:js_fillMarkupGoalRepo
     })
     // sleep(2)
-    await Page.loadEventFired()
     await DOM.getDocument();
     console.log("此时在gitee导入URL页面，填写各字段、点击'导入'按钮 后，【注意'仓库名称' 'project_name'字段是标记字段，其他各字段不要与标记字段取值相同】")
     // sleep(5)
