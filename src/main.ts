@@ -159,11 +159,14 @@ function reqWpHasMarkup( ){
   const reqIdLs:string[]= Array.from(reqLs.keys())
   const _reqWpHasMarkup:ReqWrapT[]=reqIdLs.map(reqId=>{ //隐含了同一种消息是严格有序的，且 forEach 严格遵守数组下标顺序
     const reqChain:ReqWrapT[]=reqLs.get(reqId)
-    const reqWpEnd:ReqWrapT=reqLs_endReq(reqChain);
-    const retK:MarkupHasEnum=hasMarkupFieldIn1Req(reqWpEnd);
-    if(retK==MarkupHasEnum.Yes){//排除其他页面的干扰
-      return reqWpEnd;
+    // const reqWpEnd:ReqWrapT=reqLs_endReq(reqChain);
+    for (const reqK of reqChain) {
+      const kHas:MarkupHasEnum=hasMarkupFieldIn1Req(reqK);
+      if(kHas==MarkupHasEnum.Yes){//排除其他页面的干扰
+        return reqK;
+      }
     }
+
     return null;
   }).filter(k=>k!=null)
   return _reqWpHasMarkup;
