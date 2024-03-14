@@ -19,30 +19,31 @@ if(reqTmplFNLs.length<=0){
 }
 
 const ARG_START_IDX:number=2
-const ARG_CNT:number=4
-process.argv.push("https://github.com/request/request.git")
-process.argv.push("mirrr")
-process.argv.push("repo01")
-process.argv.push("仓库描述")
+const ARG_CNT:number=5
+process.argv.push("https://github.com/request/request.git") // 0 from_repo markup_project_import_url
+process.argv.push("mirrr") // 1 goal_org markup_project_namespace_path
+process.argv.push("repo01Path") // 2 goal_repoPath markup_project_path
+process.argv.push("repo01Name") // 3 goal_repoName markup_project_name
+process.argv.push("仓库描述") // 4 goal_repoDesc markup_project_description
 
 if (process.argv.length<ARG_START_IDX+ARG_CNT){
   console.log(errMsg_1)
   process.exit(exitCode_1)
 }
 const argLs:string[]=process.argv.slice(ARG_START_IDX)
-const from_repoUrl:string=argLs[0]
-const goal_OrgName:string=argLs[1]
-const goal_repoName:string=argLs[2]
-const goal_repoPath:string=goal_repoName
-const goal_repoDesc:string=argLs[3]
+const markup_project_import_url:string=argLs[0]
+const markup_project_namespace_path:string=argLs[1]
+const markup_project_path:string=argLs[2]
+const markup_project_name:string=argLs[3]
+const markup_project_description:string=argLs[4]
 
 
 const newFieldLs: MarkupFieldI[]=[
-<MarkupFieldI>{fldNm:"project_import_url",fldVal:encodeURIComponent(from_repoUrl) },
-<MarkupFieldI>{fldNm:"markupPrjName",fldVal:encodeURIComponent(goal_OrgName)},
-<MarkupFieldI>{fldNm:"markupOrgName",fldVal:encodeURIComponent(goal_repoName)},
-<MarkupFieldI>{fldNm:"markupPrjPath",fldVal:encodeURIComponent(goal_repoPath)},
-<MarkupFieldI>{fldNm:"markupPrjDesc",fldVal:encodeURIComponent(goal_repoDesc)}
+<MarkupFieldI>{fldNm:"markup_project_import_url",fldVal:encodeURIComponent(markup_project_import_url) },
+<MarkupFieldI>{fldNm:"markup_project_namespace_path",fldVal:encodeURIComponent(markup_project_namespace_path)},
+<MarkupFieldI>{fldNm:"markup_project_path",fldVal:encodeURIComponent(markup_project_path)},
+<MarkupFieldI>{fldNm:"markup_project_name",fldVal:encodeURIComponent(markup_project_name)},
+<MarkupFieldI>{fldNm:"markup_project_description",fldVal:encodeURIComponent(markup_project_description)}
 ]
 
 
