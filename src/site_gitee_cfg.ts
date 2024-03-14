@@ -9,8 +9,9 @@ const giteeAccount=JSON.parse(fs.readFileSync("gitee_account.json","utf8"))
 const giteeUserName=giteeAccount["user"];
 const giteePwd=giteeAccount["pass"];
 
+export const siteBaseUrl="https://gitee.com";
 //gitee登录页面url
-export const giteeLoginPageUrl="https://gitee.com/login";
+export const giteeLoginPageUrl=`${siteBaseUrl}/login`; // "https://gitee.com/login"
 //gitee登录页面中"登录"按钮的css选择器，  firefox开发者工具   人工获得
 // const loginBtnCssSelector="div.field:nth-child(4) > input:nth-child(1)";
 const loginPageMsg="【gitee登录页面】已填充用户名、密码， "
@@ -23,7 +24,7 @@ document.title="${loginPageMsg}"+document.title;
 
 
 //gitee导入页面url
-export const giteeImportPageUrl="https://gitee.com/projects/import/url";
+export const giteeImportPageUrl=`${siteBaseUrl}/projects/import/url`; // "https://gitee.com/projects/import/url";
 export const project_import_url = "https://github.com/intel/ARM_NEON_2_x86_SSE.git"
 export const nowMs:number = Date.now();
 export const markupPrjName = `markupPrjName----intel--ARM_NEON_2_x86_SSE__${nowMs}`
