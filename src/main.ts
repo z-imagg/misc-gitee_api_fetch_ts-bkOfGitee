@@ -6,7 +6,7 @@ import * as fs from "fs";
 import {existsSync, mkdirSync, writeFileSync} from "fs";
 import assert from "assert";
 import * as CL from 'chrome-launcher'
-import {MarkupField, TemplPlace} from "./MyTypes.js";
+import {MarkupField, ReqTemplate, TemplPlace} from "./MyTypes.js";
 
 
 const urlList:string[]=[
@@ -208,18 +208,6 @@ function hasMarkupFieldIn1Req(reqWpEnd:ReqWrapT){
   return _markup;
 }
 
-interface ReqTemplate{
-  //当前毫秒数
-  nowMs:number,
-  //请求id
-  reqId:DP.Protocol.Network.RequestId
-  //请求
-  req:DP.Protocol.Network.Request
-  //模板位置（标记字段在请求中的部位）
-  templatePlace:TemplPlace
-  //标记字段们
-  markupFieldLs:MarkupField[]
-}
 const reqTemplDir:string="./reqTemplate"
 // 写请求例子作为请求模板
 function writeReqExampleAsTemplate(reqId:DP.Protocol.Network.RequestId, req:DP.Protocol.Network.Request,templatePlace:TemplPlace){
