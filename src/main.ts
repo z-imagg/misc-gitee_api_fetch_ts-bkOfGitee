@@ -82,7 +82,7 @@ function writeReqExampleAsTemplate(reqId:DP.Protocol.Network.RequestId, req:DP.P
   if(!existsSync(reqTemplDir)){
     mkdirSync(reqTemplDir)
   }
-  const reqTmplFp:string=`${reqTemplDir}/${reqId}`
+  const reqTmplFp:string=`${reqTemplDir}/${reqId}.json`
   writeFileSync(reqTmplFp,reqTemplText)
   console.log(`已写入请求例子（作为请求模板）文件 【${reqTmplFp}】`)
 }
