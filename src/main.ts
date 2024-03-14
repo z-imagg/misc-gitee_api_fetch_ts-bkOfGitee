@@ -16,7 +16,7 @@ import {
   js_fillUserPass,
   giteeImportPageUrl,
   nowMs,
-  markupPrjName,
+  markup_project_name,
   markupFieldLs,
   js_fillMarkupGoalRepo,
   accInfoPgUrl, siteBaseUrl,
@@ -52,19 +52,19 @@ function hasMarkupFieldIn1Req(reqWpEnd:ReqWrapT,thisSiteCookies:DP.Protocol.Netw
   const headerText=reqWpEnd.req.headers.toString();
   const req:DP.Protocol.Network.Request = reqWpEnd.req;
   const urlEnd:string=reqWpEnd.req.url;
-  if(headerText.includes(markupPrjName)){
+  if(headerText.includes(markup_project_name)){
     console.log(`【在请求头,发现标记请求地址】【${urlEnd}】【${headerText}】`)
     writeReqExampleAsTemplate(reqWpEnd.reqId, req,TemplPlaceE.ReqHeader,thisSiteCookies)
     _markup=MarkupHasEnum.Yes
   }
-  if(urlEnd.includes(markupPrjName)){
+  if(urlEnd.includes(markup_project_name)){
     console.log(`【在url,发现标记请求地址】【${urlEnd}】`)
     _markup=MarkupHasEnum.Yes
     writeReqExampleAsTemplate(reqWpEnd.reqId, req,TemplPlaceE.Url,thisSiteCookies)
   }
   if(req.hasPostData){
     const postData:string = req.postData;
-    if(postData && postData.includes(markupPrjName)){
+    if(postData && postData.includes(markup_project_name)){
       console.log(`【在请求体,发现标记请求地址】【${urlEnd}】【${postData}】`)
       _markup=MarkupHasEnum.Yes
       writeReqExampleAsTemplate(reqWpEnd.reqId, req,TemplPlaceE.Body,thisSiteCookies)
