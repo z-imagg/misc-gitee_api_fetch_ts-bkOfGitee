@@ -16,3 +16,19 @@ export class ReqWrapT {
   }
 
 }
+
+export class RespHdWrapT {
+
+  reqId: DP.Protocol.Network.RequestId;
+  statusCode: number
+  respHd: DP.Protocol.Network.Headers;
+
+
+  // 构造函数
+  constructor(reqId: DP.Protocol.Network.RequestId, statusCode: number, respHd: DP.Protocol.Network.Headers) {
+    this.reqId = reqId
+    this.statusCode = statusCode
+    this.respHd = respHd
+  }
+
+}
