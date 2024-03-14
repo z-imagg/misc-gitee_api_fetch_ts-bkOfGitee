@@ -10,6 +10,7 @@ import {MarkupFieldI, ReqTemplateI, TemplPlaceE} from "./req_tmpl_t.js";
 import {ReqWrapT, RespHdWrapT} from "./rq_rp_wrap_t.js";
 import {LoginEnum, MarkupHasEnum} from "./enums.js";
 import {RqTab} from "./rq_tab_c.js";
+import {RpHdTabC} from "./rpHd_tab_c.js";
 
 
 const urlList:string[]=[
@@ -63,23 +64,6 @@ const accInfoPgUrl="https://gitee.com/profile/account_information?different_to_n
 
 const reqTab:RqTab=new RqTab(new Map())
 
-class RpHdTabC{
-  _rspHdDct:Map<DP.Protocol.Network.RequestId,RespHdWrapT[]>
-
-  constructor(_respHdDct:Map<DP.Protocol.Network.RequestId,RespHdWrapT[]>) {
-    this._rspHdDct=_respHdDct
-  }
-
-  pushRespHd( reqId:DP.Protocol.Network.RequestId, statusCode:number, respHd:DP.Protocol.Network.Headers){
-    let ls:RespHdWrapT[]=this._rspHdDct.get(reqId)
-    if(ls==null){
-      this._rspHdDct.set(reqId,[]);
-      ls=this._rspHdDct.get(reqId)
-    }
-    ls.push(new RespHdWrapT(reqId,statusCode, respHd ))
-  }
-}
-// const respHdTab:Map<DP.Protocol.Network.RequestId,RespHdWrapT[]>=new Map();
 const respHdTab:RpHdTabC=new RpHdTabC(new Map())
 
 
