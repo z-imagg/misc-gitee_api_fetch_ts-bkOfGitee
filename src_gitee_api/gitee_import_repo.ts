@@ -4,6 +4,8 @@ import {readdirSync, readFileSync} from "fs";
 import {MarkupFieldUtilC} from "./MarkupFieldUtil.js";
 
 import * as DP from "devtools-protocol";
+import * as RequestNS from "request";
+import assert from "assert";
 
 const exitCode_1:number=21
 const errMsg_1:string=`【错误】【退出代码${exitCode_1}】目录【${reqTemplDir}】下没有已markup的请求例子，请你先执行脚本gen_gitee_import_repo_req_template.sh以生成请求例子`
@@ -78,5 +80,45 @@ switch (rqTpl.templatePlace){
   }
 }
 
+const constentType:string=rqTpl.req.headers["Content-Type"].split(":")[0]
+
+switch (rqTpl.req.method){
+  case "POST":{
+    // RequestNS.post()
+    switch (constentType){
+      case "application/x-www-form-urlencoded":{
+        const tupleLs:[string,string][]=rqTpl.req.postData.split("&").map(e=>{
+          const _arr:string[]=e.split("=")
+          assert(_arr != null && _arr.length==2)
+          return _arr
+        })
+        const formDct:Map<string,string>=new Map(tupleLs)
+        RequestNS.post(rqTpl.req.url).form(formDct)
+        RequestNS.post(
+          {url:rqTpl.req.url,form:formDct},
+          judgeResult)
+        break
+      }
+    }
+    break
+  }
+  case "GET":{
+    break
+  }
+}
+
+
+function judgeResult(error, response, body) {
+  if (!error && response.statusCode == 200) {
+    console.log(body)
+    console.log("执行gitee导入仓库成功")
+    process.exit(0)
+  }else{
+    console.log(body)
+    console.log(error)
+    console.log("执行gitee导入仓库失败")
+    process.exit(5)
+  }
+}
 const _end:boolean=true
 
