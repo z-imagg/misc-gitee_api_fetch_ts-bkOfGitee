@@ -6,8 +6,8 @@ import * as fs from "fs";
 import {existsSync, mkdirSync, writeFileSync} from "fs";
 import assert from "assert";
 import * as CL from 'chrome-launcher'
-import {MarkupFieldI, ReqTemplateI, TemplPlaceE} from "./ReqTmplT.js";
-import {ReqWrapT, RespHdWrapT} from "./RqRpWrapT.js";
+import {MarkupFieldI, ReqTemplateI, TemplPlaceE} from "./req_tmpl_t.js";
+import {ReqWrapT, RespHdWrapT} from "./rq_rp_wrap_t.js";
 
 
 const urlList:string[]=[
