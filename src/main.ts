@@ -63,17 +63,26 @@ const accInfoPgUrl="https://gitee.com/profile/account_information?different_to_n
 
 const reqTab:RqTab=new RqTab(new Map())
 
-const respHdTab:Map<DP.Protocol.Network.RequestId,RespHdWrapT[]>=new Map();
+class RpHdTabC{
+  _rspHdDct:Map<DP.Protocol.Network.RequestId,RespHdWrapT[]>
 
-
-function pushRespHd( reqId:DP.Protocol.Network.RequestId, statusCode:number, respHd:DP.Protocol.Network.Headers){
-  let ls:RespHdWrapT[]=respHdTab.get(reqId)
-  if(ls==null){
-    respHdTab.set(reqId,[]);
-    ls=respHdTab.get(reqId)
+  constructor(_respHdDct:Map<DP.Protocol.Network.RequestId,RespHdWrapT[]>) {
+    this._rspHdDct=_respHdDct
   }
-  ls.push(new RespHdWrapT(reqId,statusCode, respHd ))
+
+  pushRespHd( reqId:DP.Protocol.Network.RequestId, statusCode:number, respHd:DP.Protocol.Network.Headers){
+    let ls:RespHdWrapT[]=this._rspHdDct.get(reqId)
+    if(ls==null){
+      this._rspHdDct.set(reqId,[]);
+      ls=this._rspHdDct.get(reqId)
+    }
+    ls.push(new RespHdWrapT(reqId,statusCode, respHd ))
+  }
 }
+// const respHdTab:Map<DP.Protocol.Network.RequestId,RespHdWrapT[]>=new Map();
+const respHdTab:RpHdTabC=new RpHdTabC(new Map())
+
+
 
 
 
@@ -170,7 +179,7 @@ function calcLoginFlag(reqTab:RqTab ){
   const reqIdLs:string[]=Array.from(reqTab._rqDct.keys())
   reqIdLs.forEach(reqId=>{ //隐含了同一种消息是严格有序的，且 forEach 严格遵守数组下标顺序
     const reqChain:ReqWrapT[]=reqTab._rqDct.get(reqId)
-    const respChain:RespHdWrapT[]=respHdTab.get(reqId)
+    const respChain:RespHdWrapT[]=respHdTab._rspHdDct.get(reqId)
     const retK:LoginEnum=calcLoginEnumIn1Chain(reqChain, respChain);
     if(retK!=LoginEnum.Other){//排除其他页面的干扰
       _LoginFlag=retK;
@@ -284,7 +293,7 @@ async function mainFunc( ) {
     //是否已登录
     const LoginFlag:LoginEnum=calcLoginFlag(reqTab)
     reqTab._rqDct.clear()
-    respHdTab.clear()
+    respHdTab._rspHdDct.clear()
 
     //断言 此时登录状态不应该是未知
     assert(LoginFlag != LoginEnum.Other)
