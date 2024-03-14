@@ -1,13 +1,12 @@
-
 import CDP from 'chrome-remote-interface';
-import * as DP  from "devtools-protocol";
+import * as DP from "devtools-protocol";
 import readlineSync from 'readline-sync'
 
 import * as fs from "fs";
+import {existsSync, mkdirSync, writeFileSync} from "fs";
 import assert from "assert";
 import * as CL from 'chrome-launcher'
-import {existsSync, mkdir, mkdirSync, writeFileSync} from "fs";
-
+import {TemplPlace} from "./MyTypes.js";
 
 
 const urlList:string[]=[
@@ -212,12 +211,6 @@ function hasMarkupFieldIn1Req(reqWpEnd:ReqWrapT){
   }
 
   return _markup;
-}
-
-enum TemplPlace{
-  ReqHeader=0,
-  Url=1,
-  Body=2
 }
 
 interface ReqTemplate{
