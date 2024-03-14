@@ -35,7 +35,7 @@ const markupOrgName = "markup-organization-9473" ; //mirrr
 
 #### 4. 执行脚本生成gitee 导入仓库接口 的请求模板
 
-```gen_gitee_import_repo_req_template.sh```
+```bash -x gen_gitee_import_repo_req_template.sh```
 
 该脚本会启动chrome浏览器，
 
