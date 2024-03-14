@@ -10,7 +10,7 @@ export class MarkupFieldUtilC{
   static assign_L2R(markupFldLs: MarkupFieldI[], toFldLs: MarkupFieldI[], dorkingText:string){
     const markupDct=MarkupFieldUtilC.toDct(markupFldLs)
     toFldLs.forEach(k=>{
-      dorkingText.replace(markupDct.get(k.fldNm).fldVal, k.fldVal)
+      dorkingText=dorkingText.replace(markupDct.get(k.fldNm).fldVal, k.fldVal)
     })
     return dorkingText
   }

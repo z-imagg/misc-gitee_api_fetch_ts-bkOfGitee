@@ -35,11 +35,11 @@ const goal_repoPath:string=goal_repoName
 const goal_repoDesc:string=argLs[3]
 
 const newFieldLs: MarkupFieldI[]=[
-<MarkupFieldI>{fldNm:"project_import_url",fldVal:from_repoUrl},
-<MarkupFieldI>{fldNm:"markupPrjName",fldVal:goal_OrgName},
-<MarkupFieldI>{fldNm:"markupOrgName",fldVal:goal_repoName},
-<MarkupFieldI>{fldNm:"markupPrjPath",fldVal:goal_repoPath},
-<MarkupFieldI>{fldNm:"markupPrjDesc",fldVal:goal_repoDesc}
+<MarkupFieldI>{fldNm:"project_import_url",fldVal:encodeURI(from_repoUrl) },
+<MarkupFieldI>{fldNm:"markupPrjName",fldVal:encodeURI(goal_OrgName)},
+<MarkupFieldI>{fldNm:"markupOrgName",fldVal:encodeURI(goal_repoName)},
+<MarkupFieldI>{fldNm:"markupPrjPath",fldVal:encodeURI(goal_repoPath)},
+<MarkupFieldI>{fldNm:"markupPrjDesc",fldVal:encodeURI(goal_repoDesc)}
 ]
 
 
