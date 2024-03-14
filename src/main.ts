@@ -65,7 +65,7 @@ class RqTab{
     this.reqTab=_reqDict
   }
 
-  function pushReq(redirectResp:DP.Protocol.Network.Response, reqId:DP.Protocol.Network.RequestId,req:DP.Protocol.Network.Request ){
+    pushReq(redirectResp:DP.Protocol.Network.Response, reqId:DP.Protocol.Network.RequestId,req:DP.Protocol.Network.Request ){
     let ls:ReqWrapT[]=this_reqTab.get(reqId)
     if(ls==null){
       this_reqTab.set(reqId,[]);
@@ -74,13 +74,13 @@ class RqTab{
     ls.push(new ReqWrapT(redirectResp, reqId,req ))
   }
 
-  function reqLs_has(reqId:DP.Protocol.Network.RequestId){
+    reqLs_has(reqId:DP.Protocol.Network.RequestId){
     const ls:ReqWrapT[]=this_reqTab.get(reqId)
     const empty:boolean=(ls==null||ls.length==0)
     return !empty;
   }
 
-  function __reqLs_get_req_url_any_startWith(reqId:DP.Protocol.Network.RequestId,urlPrefix:string){
+    __reqLs_get_req_url_any_startWith(reqId:DP.Protocol.Network.RequestId,urlPrefix:string){
     const ls:ReqWrapT[]=this_reqTab.get(reqId)
     const empty:boolean=(ls==null||ls.length==0)
     if(!empty){
@@ -89,7 +89,7 @@ class RqTab{
     return false;
   }
 
-  function __reqLs_get_req_urlLsJoin(reqId:DP.Protocol.Network.RequestId){
+    __reqLs_get_req_urlLsJoin(reqId:DP.Protocol.Network.RequestId){
     const ls:ReqWrapT[]=this_reqTab.get(reqId)
     const empty:boolean=(ls==null||ls.length==0)
     if(!empty){
@@ -98,7 +98,7 @@ class RqTab{
     return "";
   }
 
-  function reqWpHasMarkup( ){
+    reqWpHasMarkup( ){
     // Array.from(reqLs.values()).map(k=>k[0].reqK.req.url)
     const reqIdLs:string[]= Array.from(this_reqTab.keys())
     const _reqWpHasMarkup:ReqWrapT[]=reqIdLs.map(reqId=>{ //隐含了同一种消息是严格有序的，且 forEach 严格遵守数组下标顺序
@@ -116,7 +116,7 @@ class RqTab{
     return _reqWpHasMarkup;
   }
 
-  function calcLoginFlag( ){
+    calcLoginFlag( ){
 
     let _LoginFlag:LoginEnum=LoginEnum.Other;
     const reqIdLs:string[]=Array.from(this_reqTab.keys())
