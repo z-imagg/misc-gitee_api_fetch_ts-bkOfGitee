@@ -7,10 +7,11 @@ export class MarkupFieldUtilC{
     const dct:Map<MarkupFldNmTyp,MarkupFieldI>=new Map(tupleLs)
     return dct
   }
-  static assign_(fromFldLs: MarkupFieldI[], toFldLs: MarkupFieldI[]){
-    const frmDct=MarkupFieldUtilC.toDct(fromFldLs)
+  static assign_L2R(markupFldLs: MarkupFieldI[], toFldLs: MarkupFieldI[], dorkingText:string){
+    const markupDct=MarkupFieldUtilC.toDct(markupFldLs)
     toFldLs.forEach(k=>{
-      k.fldVal = frmDct.get(k.fldNm).fldVal
+      dorkingText.replace(markupDct.get(k.fldNm).fldVal, k.fldVal)
     })
+    return dorkingText
   }
 }
