@@ -8,6 +8,7 @@ import assert from "assert";
 import * as CL from 'chrome-launcher'
 import {MarkupFieldI, ReqTemplateI, TemplPlaceE} from "./req_tmpl_t.js";
 import {ReqWrapT, RespHdWrapT} from "./rq_rp_wrap_t.js";
+import {LoginEnum, MarkupHasEnum} from "./enums.js";
 
 
 const urlList:string[]=[
@@ -177,11 +178,6 @@ function respLs_endResp(chain:RespHdWrapT[]){
 
 
 
-enum  MarkupHasEnum{
-  Yes=1,
-  No=2
-}
-
 function hasMarkupFieldIn1Req(reqWpEnd:ReqWrapT){
   let _markup:MarkupHasEnum=MarkupHasEnum.No;
   const headerText=reqWpEnd.req.headers.toString();
@@ -221,12 +217,6 @@ function writeReqExampleAsTemplate(reqId:DP.Protocol.Network.RequestId, req:DP.P
   const reqTmplFp:string=`${reqTemplDir}/${reqId}`
   writeFileSync(reqTmplFp,reqTemplText)
   console.log(`已写入请求例子（作为请求模板）文件 【${reqTmplFp}】`)
-}
-
-enum  LoginEnum{
-  Other=0,
-  AlreadLogin=1,
-  NotLogin=2
 }
 
 
