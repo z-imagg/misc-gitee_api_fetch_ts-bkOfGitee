@@ -49,9 +49,7 @@ const reqTmplFP:string=`${reqTemplDir}/${reqTmplFN}`
 const reqTmplText:string= readFileSync(reqTmplFP).toString()
 const rqTpl:ReqTemplateI=JSON.parse(reqTmplText)
 
-rqTpl.markupFieldLs.forEach(k=>{
-  k.fldVal=encodeURI(k.fldVal)
-})
+rqTpl.markupFieldLs= rqTpl.markupFieldLs.map(k=><MarkupFieldI>{fldNm:k.fldNm,fldVal:encodeURI(k.fldVal)})
 
 switch (rqTpl.templatePlace){
   case TemplPlaceE.Url:{
