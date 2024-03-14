@@ -36,11 +36,11 @@ const goal_repoDesc:string=argLs[3]
 
 
 const newFieldLs: MarkupFieldI[]=[
-<MarkupFieldI>{fldNm:"project_import_url",fldVal:encodeURI(from_repoUrl) },
-<MarkupFieldI>{fldNm:"markupPrjName",fldVal:encodeURI(goal_OrgName)},
-<MarkupFieldI>{fldNm:"markupOrgName",fldVal:encodeURI(goal_repoName)},
-<MarkupFieldI>{fldNm:"markupPrjPath",fldVal:encodeURI(goal_repoPath)},
-<MarkupFieldI>{fldNm:"markupPrjDesc",fldVal:encodeURI(goal_repoDesc)}
+<MarkupFieldI>{fldNm:"project_import_url",fldVal:encodeURIComponent(from_repoUrl) },
+<MarkupFieldI>{fldNm:"markupPrjName",fldVal:encodeURIComponent(goal_OrgName)},
+<MarkupFieldI>{fldNm:"markupOrgName",fldVal:encodeURIComponent(goal_repoName)},
+<MarkupFieldI>{fldNm:"markupPrjPath",fldVal:encodeURIComponent(goal_repoPath)},
+<MarkupFieldI>{fldNm:"markupPrjDesc",fldVal:encodeURIComponent(goal_repoDesc)}
 ]
 
 
@@ -49,7 +49,7 @@ const reqTmplFP:string=`${reqTemplDir}/${reqTmplFN}`
 const reqTmplText:string= readFileSync(reqTmplFP).toString()
 const rqTpl:ReqTemplateI=JSON.parse(reqTmplText)
 
-rqTpl.markupFieldLs= rqTpl.markupFieldLs.map(k=><MarkupFieldI>{fldNm:k.fldNm,fldVal:encodeURI(k.fldVal)})
+rqTpl.markupFieldLs= rqTpl.markupFieldLs.map(k=><MarkupFieldI>{fldNm:k.fldNm,fldVal:encodeURIComponent(k.fldVal)})
 
 switch (rqTpl.templatePlace){
   case TemplPlaceE.Url:{
