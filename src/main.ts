@@ -16,10 +16,10 @@ import {
   js_fillUserPass,
   giteeImportPageUrl,
   nowMs,
-  markupPrjName,
+  markup_project_name,
   markupFieldLs,
   js_fillMarkupGoalRepo,
-  accInfoPgUrl,
+  accInfoPgUrl, siteBaseUrl,
 } from './site_gitee_cfg.js'
 
 import {chromePath,reqTemplDir} from "./my_cfg.js";
@@ -36,7 +36,7 @@ function reqWpHasMarkup(reqTab:RqTab ){
     const reqChain:ReqWrapT[]=reqTab._rqDct.get(reqId)
     // const reqWpEnd:ReqWrapT=LsUtilC.endElem(reqChain);
     for (const reqK of reqChain) {
-      const kHas:MarkupHasEnum=hasMarkupFieldIn1Req(reqK);
+      const kHas:MarkupHasEnum=hasMarkupFieldIn1Req(reqK,reqTab.thisSiteCookies);
       if(kHas==MarkupHasEnum.Yes){//排除其他页面的干扰
         return reqK;
       }
@@ -47,27 +47,27 @@ function reqWpHasMarkup(reqTab:RqTab ){
   return _reqWpHasMarkup;
 }
 
-function hasMarkupFieldIn1Req(reqWpEnd:ReqWrapT){
+function hasMarkupFieldIn1Req(reqWpEnd:ReqWrapT,thisSiteCookies:DP.Protocol.Network.Cookie[]){
   let _markup:MarkupHasEnum=MarkupHasEnum.No;
   const headerText=reqWpEnd.req.headers.toString();
   const req:DP.Protocol.Network.Request = reqWpEnd.req;
   const urlEnd:string=reqWpEnd.req.url;
-  if(headerText.includes(markupPrjName)){
+  if(headerText.includes(markup_project_name)){
     console.log(`【在请求头,发现标记请求地址】【${urlEnd}】【${headerText}】`)
-    writeReqExampleAsTemplate(reqWpEnd.reqId, req,TemplPlaceE.ReqHeader)
+    writeReqExampleAsTemplate(reqWpEnd.reqId, req,TemplPlaceE.ReqHeader,thisSiteCookies)
     _markup=MarkupHasEnum.Yes
   }
-  if(urlEnd.includes(markupPrjName)){
+  if(urlEnd.includes(markup_project_name)){
     console.log(`【在url,发现标记请求地址】【${urlEnd}】`)
     _markup=MarkupHasEnum.Yes
-    writeReqExampleAsTemplate(reqWpEnd.reqId, req,TemplPlaceE.Url)
+    writeReqExampleAsTemplate(reqWpEnd.reqId, req,TemplPlaceE.Url,thisSiteCookies)
   }
   if(req.hasPostData){
     const postData:string = req.postData;
-    if(postData && postData.includes(markupPrjName)){
+    if(postData && postData.includes(markup_project_name)){
       console.log(`【在请求体,发现标记请求地址】【${urlEnd}】【${postData}】`)
       _markup=MarkupHasEnum.Yes
-      writeReqExampleAsTemplate(reqWpEnd.reqId, req,TemplPlaceE.Body)
+      writeReqExampleAsTemplate(reqWpEnd.reqId, req,TemplPlaceE.Body,thisSiteCookies)
     }
   }
 
@@ -75,9 +75,9 @@ function hasMarkupFieldIn1Req(reqWpEnd:ReqWrapT){
 }
 
 // 写请求例子作为请求模板
-function writeReqExampleAsTemplate(reqId:DP.Protocol.Network.RequestId, req:DP.Protocol.Network.Request,templatePlace:TemplPlaceE){
+function writeReqExampleAsTemplate(reqId:DP.Protocol.Network.RequestId, req:DP.Protocol.Network.Request,templatePlace:TemplPlaceE,thisSiteCookies:DP.Protocol.Network.Cookie[]){
   const reqTemplText:string=JSON.stringify(<ReqTemplateI>{
-    nowMs,reqId,req,templatePlace,markupFieldLs
+    nowMs,reqId,req,templatePlace,markupFieldLs,thisSiteCookies
   })
   if(!existsSync(reqTemplDir)){
     mkdirSync(reqTemplDir)
@@ -234,6 +234,11 @@ async function mainFunc( ) {
       //不用打开gitee登录页面
       console.log(`已登录 不用打开gitee登录页面 `)
     }
+
+    reqTab.thisSiteCookies=(
+      await client.Network.getCookies(<DP.Protocol.Network.GetCookiesRequest>{urls:[ siteBaseUrl]})  // siteBaseUrl  "https://gitee.com"
+    ).cookies
+
 
     //打开gitee导入页面
     console.log(`打开gitee导入页面 ${giteeImportPageUrl}`)
