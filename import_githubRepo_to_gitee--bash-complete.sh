@@ -16,4 +16,4 @@ _import_githubRepo_to_gitee() {
         COMPREPLY=( $( compgen -W "$opts" -- $cur ) )
     esac
 }
-complete -F _import_githubRepo_to_gitee   import_githubRepo_to_gitee
+complete -F _import_githubRepo_to_gitee   import_githubRepo_to_gitee.sh
