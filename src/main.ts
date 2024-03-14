@@ -235,7 +235,10 @@ async function mainFunc( ) {
       console.log(`已登录 不用打开gitee登录页面 `)
     }
 
-    reqTab.thisSiteCookies=await client.Network.getCookies(<DP.Protocol.Network.GetCookiesRequest>{urls:[ siteBaseUrl]}) // siteBaseUrl  "https://gitee.com"
+    reqTab.thisSiteCookies=(
+      await client.Network.getCookies(<DP.Protocol.Network.GetCookiesRequest>{urls:[ siteBaseUrl]})  // siteBaseUrl  "https://gitee.com"
+    ).cookies
+
 
     //打开gitee导入页面
     console.log(`打开gitee导入页面 ${giteeImportPageUrl}`)
