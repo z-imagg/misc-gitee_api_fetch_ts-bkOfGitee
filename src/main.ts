@@ -6,7 +6,7 @@ import * as fs from "fs";
 import {existsSync, mkdirSync, writeFileSync} from "fs";
 import assert from "assert";
 import * as CL from 'chrome-launcher'
-import {MarkupField, ReqTemplate, TemplPlace} from "./MyTypes.js";
+import {MarkupField, ReqTemplate, TemplPlace} from "./ReqTmplT.js";
 
 
 const urlList:string[]=[
