@@ -6,7 +6,7 @@ import * as fs from "fs";
 import {existsSync, mkdirSync, writeFileSync} from "fs";
 import assert from "assert";
 import * as CL from 'chrome-launcher'
-import {MarkupField, ReqTemplate, TemplPlace} from "./ReqTmplT.js";
+import {MarkupFieldI, ReqTemplateI, TemplPlaceE} from "./ReqTmplT.js";
 import {ReqWrapT, RespHdWrapT} from "./RqRpWrapT.js";
 
 
@@ -39,12 +39,12 @@ const markupOrgName = "markup-organization-9473" ; //mirrr
 const markupPrjPath = `markupPrjPath----intel--ARM_NEON_2_x86_SSE__${nowMs}`
 const markupPrjDesc = `markupPrjDesc----intel--ARM_NEON_2_x86_SSE__${nowMs}`
 
-const markupFieldLs:MarkupField[]=[]
-markupFieldLs.push(<MarkupField>{fldNm:"project_import_url",fldVal:project_import_url})
-markupFieldLs.push(<MarkupField>{fldNm:"markupPrjName",fldVal:markupPrjName})
-markupFieldLs.push(<MarkupField>{fldNm:"markupOrgName",fldVal:markupOrgName})
-markupFieldLs.push(<MarkupField>{fldNm:"markupPrjPath",fldVal:markupPrjPath})
-markupFieldLs.push(<MarkupField>{fldNm:"markupPrjDesc",fldVal:markupPrjDesc})
+const markupFieldLs:MarkupFieldI[]=[]
+markupFieldLs.push(<MarkupFieldI>{fldNm:"project_import_url",fldVal:project_import_url})
+markupFieldLs.push(<MarkupFieldI>{fldNm:"markupPrjName",fldVal:markupPrjName})
+markupFieldLs.push(<MarkupFieldI>{fldNm:"markupOrgName",fldVal:markupOrgName})
+markupFieldLs.push(<MarkupFieldI>{fldNm:"markupPrjPath",fldVal:markupPrjPath})
+markupFieldLs.push(<MarkupFieldI>{fldNm:"markupPrjDesc",fldVal:markupPrjDesc})
 
 const importPageMsg="【已填充标记字段】"
 const js_fillMarkupGoalRepo=`
@@ -158,20 +158,20 @@ function hasMarkupFieldIn1Req(reqWpEnd:ReqWrapT){
   const urlEnd:string=reqWpEnd.req.url;
   if(headerText.includes(markupPrjName)){
     console.log(`【在请求头,发现标记请求地址】【${urlEnd}】【${headerText}】`)
-    writeReqExampleAsTemplate(reqWpEnd.reqId, req,TemplPlace.ReqHeader)
+    writeReqExampleAsTemplate(reqWpEnd.reqId, req,TemplPlaceE.ReqHeader)
     _markup=MarkupHasEnum.Yes
   }
   if(urlEnd.includes(markupPrjName)){
     console.log(`【在url,发现标记请求地址】【${urlEnd}】`)
     _markup=MarkupHasEnum.Yes
-    writeReqExampleAsTemplate(reqWpEnd.reqId, req,TemplPlace.Url)
+    writeReqExampleAsTemplate(reqWpEnd.reqId, req,TemplPlaceE.Url)
   }
   if(req.hasPostData){
     const postData:string = req.postData;
     if(postData && postData.includes(markupPrjName)){
       console.log(`【在请求体,发现标记请求地址】【${urlEnd}】【${postData}】`)
       _markup=MarkupHasEnum.Yes
-      writeReqExampleAsTemplate(reqWpEnd.reqId, req,TemplPlace.Body)
+      writeReqExampleAsTemplate(reqWpEnd.reqId, req,TemplPlaceE.Body)
     }
   }
 
@@ -180,8 +180,8 @@ function hasMarkupFieldIn1Req(reqWpEnd:ReqWrapT){
 
 const reqTemplDir:string="./reqTemplate"
 // 写请求例子作为请求模板
-function writeReqExampleAsTemplate(reqId:DP.Protocol.Network.RequestId, req:DP.Protocol.Network.Request,templatePlace:TemplPlace){
-  const reqTemplText:string=JSON.stringify(<ReqTemplate>{
+function writeReqExampleAsTemplate(reqId:DP.Protocol.Network.RequestId, req:DP.Protocol.Network.Request,templatePlace:TemplPlaceE){
+  const reqTemplText:string=JSON.stringify(<ReqTemplateI>{
     nowMs,reqId,req,templatePlace,markupFieldLs
   })
   if(!existsSync(reqTemplDir)){

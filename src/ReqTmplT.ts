@@ -1,17 +1,17 @@
 import * as DP from "devtools-protocol";
 
-export enum TemplPlace {
+export enum TemplPlaceE {
   ReqHeader = 0,
   Url = 1,
   Body = 2
 }
 
-export interface MarkupField {
+export interface MarkupFieldI {
   fldNm: string,
   fldVal: string
 }
 
-export interface ReqTemplate {
+export interface ReqTemplateI {
   //当前毫秒数
   nowMs: number,
   //请求id
@@ -19,7 +19,7 @@ export interface ReqTemplate {
   //请求
   req: DP.Protocol.Network.Request
   //模板位置（标记字段在请求中的部位）
-  templatePlace: TemplPlace
+  templatePlace: TemplPlaceE
   //标记字段们
-  markupFieldLs: MarkupField[]
+  markupFieldLs: MarkupFieldI[]
 }
