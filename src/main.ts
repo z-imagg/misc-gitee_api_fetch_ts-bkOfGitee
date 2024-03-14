@@ -59,30 +59,30 @@ document.getElementById("submit-project-new").click();
 //gitee账户页面url .  作为 登录判定依据 的 账户页面   的 url 故意且必须 和  正常进入 账户页面 不同 以 区分
 const accInfoPgUrl="https://gitee.com/profile/account_information?different_to_normal=AvoidNoise";
 
-const reqLs:Map<DP.Protocol.Network.RequestId,ReqWrapT[]>=new Map();
-const respHdLs:Map<DP.Protocol.Network.RequestId,RespHdWrapT[]>=new Map();
+const reqTab:Map<DP.Protocol.Network.RequestId,ReqWrapT[]>=new Map();
+const respHdTab:Map<DP.Protocol.Network.RequestId,RespHdWrapT[]>=new Map();
 
 function pushReq(redirectResp:DP.Protocol.Network.Response, reqId:DP.Protocol.Network.RequestId,req:DP.Protocol.Network.Request ){
-  let ls:ReqWrapT[]=reqLs.get(reqId)
+  let ls:ReqWrapT[]=reqTab.get(reqId)
   if(ls==null){
-    reqLs.set(reqId,[]);
-    ls=reqLs.get(reqId)
+    reqTab.set(reqId,[]);
+    ls=reqTab.get(reqId)
   }
   ls.push(new ReqWrapT(redirectResp, reqId,req ))
 }
 
 function pushRespHd( reqId:DP.Protocol.Network.RequestId, statusCode:number, respHd:DP.Protocol.Network.Headers){
-  let ls:RespHdWrapT[]=respHdLs.get(reqId)
+  let ls:RespHdWrapT[]=respHdTab.get(reqId)
   if(ls==null){
-    respHdLs.set(reqId,[]);
-    ls=respHdLs.get(reqId)
+    respHdTab.set(reqId,[]);
+    ls=respHdTab.get(reqId)
   }
   ls.push(new RespHdWrapT(reqId,statusCode, respHd ))
 }
 
 
 function reqLs_has(reqId:DP.Protocol.Network.RequestId){
-  const ls:ReqWrapT[]=reqLs.get(reqId)
+  const ls:ReqWrapT[]=reqTab.get(reqId)
   const empty:boolean=(ls==null||ls.length==0)
   return !empty;
 }
@@ -114,7 +114,7 @@ function respLs_endResp(chain:RespHdWrapT[]){
 }
 
 function __reqLs_get_req_url_any_startWith(reqId:DP.Protocol.Network.RequestId,urlPrefix:string){
-  const ls:ReqWrapT[]=reqLs.get(reqId)
+  const ls:ReqWrapT[]=reqTab.get(reqId)
   const empty:boolean=(ls==null||ls.length==0)
   if(!empty){
     return ls.filter(k=>k.req.url.startsWith(urlPrefix)).length>0
@@ -123,7 +123,7 @@ function __reqLs_get_req_url_any_startWith(reqId:DP.Protocol.Network.RequestId,u
 }
 
 function __reqLs_get_req_urlLsJoin(reqId:DP.Protocol.Network.RequestId){
-  const ls:ReqWrapT[]=reqLs.get(reqId)
+  const ls:ReqWrapT[]=reqTab.get(reqId)
   const empty:boolean=(ls==null||ls.length==0)
   if(!empty){
     return ls.map(k=>k.req.url).join(",")
@@ -136,9 +136,9 @@ enum  MarkupHasEnum{
 }
 function reqWpHasMarkup( ){
   // Array.from(reqLs.values()).map(k=>k[0].reqK.req.url)
-  const reqIdLs:string[]= Array.from(reqLs.keys())
+  const reqIdLs:string[]= Array.from(reqTab.keys())
   const _reqWpHasMarkup:ReqWrapT[]=reqIdLs.map(reqId=>{ //隐含了同一种消息是严格有序的，且 forEach 严格遵守数组下标顺序
-    const reqChain:ReqWrapT[]=reqLs.get(reqId)
+    const reqChain:ReqWrapT[]=reqTab.get(reqId)
     // const reqWpEnd:ReqWrapT=reqLs_endReq(reqChain);
     for (const reqK of reqChain) {
       const kHas:MarkupHasEnum=hasMarkupFieldIn1Req(reqK);
@@ -200,10 +200,10 @@ enum  LoginEnum{
 function calcLoginFlag( ){
 
   let _LoginFlag:LoginEnum=LoginEnum.Other;
-  const reqIdLs:string[]=Array.from(reqLs.keys())
+  const reqIdLs:string[]=Array.from(reqTab.keys())
   reqIdLs.forEach(reqId=>{ //隐含了同一种消息是严格有序的，且 forEach 严格遵守数组下标顺序
-    const reqChain:ReqWrapT[]=reqLs.get(reqId)
-    const respChain:RespHdWrapT[]=respHdLs.get(reqId)
+    const reqChain:ReqWrapT[]=reqTab.get(reqId)
+    const respChain:RespHdWrapT[]=respHdTab.get(reqId)
     const retK:LoginEnum=calcLoginEnumIn1Chain(reqChain, respChain);
     if(retK!=LoginEnum.Other){//排除其他页面的干扰
       _LoginFlag=retK;
@@ -317,8 +317,8 @@ async function mainFunc( ) {
     await DOM.getDocument();//阻塞的DOMget1 被 nav1 吃掉
     //是否已登录
     const LoginFlag:LoginEnum=calcLoginFlag()
-    reqLs.clear()
-    respHdLs.clear()
+    reqTab.clear()
+    respHdTab.clear()
 
     //断言 此时登录状态不应该是未知
     assert(LoginFlag != LoginEnum.Other)
