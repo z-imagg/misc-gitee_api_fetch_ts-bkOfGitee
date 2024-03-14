@@ -1,181 +1,40 @@
-
 import CDP from 'chrome-remote-interface';
-import * as DP  from "devtools-protocol";
+import * as DP from "devtools-protocol";
 import readlineSync from 'readline-sync'
 
-import * as fs from "fs";
+import {existsSync, mkdirSync, writeFileSync} from "fs";
 import assert from "assert";
 import * as CL from 'chrome-launcher'
-import {existsSync, mkdir, mkdirSync, writeFileSync} from "fs";
+import {ReqTemplateI, TemplPlaceE} from "./req_tmpl_t.js";
+import {ReqWrapT, RespHdWrapT} from "./rq_rp_wrap_t.js";
+import {LoginEnum, MarkupHasEnum} from "./enums.js";
+import {RqTab} from "./rq_tab_c.js";
+import {RpHdTabC} from "./rpHd_tab_c.js";
+import {LsUtilC} from "./ls_util_c.js";
+import {
+  giteeLoginPageUrl,
+  js_fillUserPass,
+  giteeImportPageUrl,
+  nowMs,
+  markupPrjName,
+  markupFieldLs,
+  js_fillMarkupGoalRepo,
+  accInfoPgUrl,
+} from './site_gitee_cfg.js'
+
+import {chromePath,reqTemplDir} from "./my_cfg.js";
 
 
+const reqTab:RqTab=new RqTab(new Map())
 
-const urlList:string[]=[
-  "https://gitee.com/tmpOrg/projects"
-];
+const respHdTab:RpHdTabC=new RpHdTabC(new Map())
 
-const giteeAccount=JSON.parse(fs.readFileSync("gitee_account.json","utf8"))
-const giteeUserName=giteeAccount["user"];
-const giteePwd=giteeAccount["pass"];
-
-//gitee登录页面url
-const giteeLoginPageUrl="https://gitee.com/login";
-//gitee登录页面中"登录"按钮的css选择器，  firefox开发者工具   人工获得
-const loginBtnCssSelector="div.field:nth-child(4) > input:nth-child(1)";
-const loginPageMsg="【gitee登录页面】已填充用户名、密码， "
-//gitee登录页面中填写用户名、填写密码的js语句，  firefox开发者工具   人工获得
-const js_fillUserPass=`
-document.getElementById("user_login").value="${giteeUserName}";
-document.getElementById("user_password").value="${giteePwd}";
-document.title="${loginPageMsg}"+document.title;
-`
-
-interface MarkupField{
-  fldNm:string,
-  fldVal:string
-}
-
-//gitee导入页面url
-const giteeImportPageUrl="https://gitee.com/projects/import/url";
-const project_import_url = "https://github.com/intel/ARM_NEON_2_x86_SSE.git"
-const nowMs:number = Date.now();
-const markupPrjName = `markupPrjName----intel--ARM_NEON_2_x86_SSE__${nowMs}`
-const markupOrgName = "markup-organization-9473" ; //mirrr
-const markupPrjPath = `markupPrjPath----intel--ARM_NEON_2_x86_SSE__${nowMs}`
-const markupPrjDesc = `markupPrjDesc----intel--ARM_NEON_2_x86_SSE__${nowMs}`
-
-const markupFieldLs:MarkupField[]=[]
-markupFieldLs.push(<MarkupField>{fldNm:"project_import_url",fldVal:project_import_url})
-markupFieldLs.push(<MarkupField>{fldNm:"markupPrjName",fldVal:markupPrjName})
-markupFieldLs.push(<MarkupField>{fldNm:"markupOrgName",fldVal:markupOrgName})
-markupFieldLs.push(<MarkupField>{fldNm:"markupPrjPath",fldVal:markupPrjPath})
-markupFieldLs.push(<MarkupField>{fldNm:"markupPrjDesc",fldVal:markupPrjDesc})
-
-const importPageMsg="【已填充标记字段】"
-const js_fillMarkupGoalRepo=`
-document.title="${importPageMsg}"+document.title;
-document.getElementById("project_import_url").value="${project_import_url}";
-document.getElementById("project_name").value="${markupPrjName}";
-document.querySelector('.scrolling > div[data-value="${markupOrgName}"]').click() //点击下拉列表中具有给定组织名的元素
-document.getElementById("project_path").value="${markupPrjPath}";
-document.getElementById("project_description").value="${markupPrjDesc}";
-document.getElementById("submit-project-new").click();
-`
-//gitee账户页面url .  作为 登录判定依据 的 账户页面   的 url 故意且必须 和  正常进入 账户页面 不同 以 区分
-const accInfoPgUrl="https://gitee.com/profile/account_information?different_to_normal=AvoidNoise";
-
-class ReqWrapT {
-
-  redirectResp:DP.Protocol.Network.Response;
-  reqId:DP.Protocol.Network.RequestId;
-
-  req:DP.Protocol.Network.Request;
-
-
-  // 构造函数
-  constructor(redirectResp:DP.Protocol.Network.Response, reqId:DP.Protocol.Network.RequestId,req:DP.Protocol.Network.Request ) {
-    this.redirectResp=redirectResp
-    this.reqId = reqId
-    this.req = req
-  }
-
-}
-class RespHdWrapT {
-
-  reqId:DP.Protocol.Network.RequestId;
-  statusCode:number
-  respHd:DP.Protocol.Network.Headers;
-
-
-  // 构造函数
-  constructor( reqId:DP.Protocol.Network.RequestId,statusCode:number, respHd:DP.Protocol.Network.Headers ) {
-    this.reqId = reqId
-    this.statusCode=statusCode
-    this.respHd = respHd
-  }
-
-}
-const reqLs:Map<DP.Protocol.Network.RequestId,ReqWrapT[]>=new Map();
-const respHdLs:Map<DP.Protocol.Network.RequestId,RespHdWrapT[]>=new Map();
-
-function pushReq(redirectResp:DP.Protocol.Network.Response, reqId:DP.Protocol.Network.RequestId,req:DP.Protocol.Network.Request ){
-  let ls:ReqWrapT[]=reqLs.get(reqId)
-  if(ls==null){
-    reqLs.set(reqId,[]);
-    ls=reqLs.get(reqId)
-  }
-  ls.push(new ReqWrapT(redirectResp, reqId,req ))
-}
-
-function pushRespHd( reqId:DP.Protocol.Network.RequestId, statusCode:number, respHd:DP.Protocol.Network.Headers){
-  let ls:RespHdWrapT[]=respHdLs.get(reqId)
-  if(ls==null){
-    respHdLs.set(reqId,[]);
-    ls=respHdLs.get(reqId)
-  }
-  ls.push(new RespHdWrapT(reqId,statusCode, respHd ))
-}
-
-
-function reqLs_has(reqId:DP.Protocol.Network.RequestId){
-  const ls:ReqWrapT[]=reqLs.get(reqId)
-  const empty:boolean=(ls==null||ls.length==0)
-  return !empty;
-}
-
-function reqLs_req1(chain:ReqWrapT[]){
-  const empty:boolean=(chain==null||chain.length==0)
-  return (!empty)?chain[0]:null;
-}
-function reqLs_req2(chain:ReqWrapT[]){
-  const lack:boolean=(chain==null||chain.length<2)
-  return (!lack)?chain[1]:null;
-}
-function respLs_1(chain:RespHdWrapT[]){
-  const empty:boolean=(chain==null||chain.length==0)
-  return (!empty)?chain[0]:null;
-}
-function respLs_2(chain:RespHdWrapT[]){
-  const lack:boolean=(chain==null||chain.length<2)
-  return (!lack)?chain[1]:null;
-}
-
-function reqLs_endReq(chain:ReqWrapT[]){
-  const endIdx:number=chain.length-1;
-  return (endIdx>=0)?chain[endIdx]:null;
-}
-function respLs_endResp(chain:RespHdWrapT[]){
-  const endIdx:number=chain.length-1;
-  return (endIdx>=0)?chain[endIdx]:null;
-}
-
-function __reqLs_get_req_url_any_startWith(reqId:DP.Protocol.Network.RequestId,urlPrefix:string){
-  const ls:ReqWrapT[]=reqLs.get(reqId)
-  const empty:boolean=(ls==null||ls.length==0)
-  if(!empty){
-    return ls.filter(k=>k.req.url.startsWith(urlPrefix)).length>0
-  }
-  return false;
-}
-
-function __reqLs_get_req_urlLsJoin(reqId:DP.Protocol.Network.RequestId){
-  const ls:ReqWrapT[]=reqLs.get(reqId)
-  const empty:boolean=(ls==null||ls.length==0)
-  if(!empty){
-    return ls.map(k=>k.req.url).join(",")
-  }
-  return "";
-}
-enum  MarkupHasEnum{
-  Yes=1,
-  No=2
-}
-function reqWpHasMarkup( ){
+function reqWpHasMarkup(reqTab:RqTab ){
   // Array.from(reqLs.values()).map(k=>k[0].reqK.req.url)
-  const reqIdLs:string[]= Array.from(reqLs.keys())
+  const reqIdLs:string[]= Array.from(reqTab._rqDct.keys())
   const _reqWpHasMarkup:ReqWrapT[]=reqIdLs.map(reqId=>{ //隐含了同一种消息是严格有序的，且 forEach 严格遵守数组下标顺序
-    const reqChain:ReqWrapT[]=reqLs.get(reqId)
-    // const reqWpEnd:ReqWrapT=reqLs_endReq(reqChain);
+    const reqChain:ReqWrapT[]=reqTab._rqDct.get(reqId)
+    // const reqWpEnd:ReqWrapT=LsUtilC.endElem(reqChain);
     for (const reqK of reqChain) {
       const kHas:MarkupHasEnum=hasMarkupFieldIn1Req(reqK);
       if(kHas==MarkupHasEnum.Yes){//排除其他页面的干扰
@@ -187,6 +46,7 @@ function reqWpHasMarkup( ){
   }).filter(k=>k!=null)
   return _reqWpHasMarkup;
 }
+
 function hasMarkupFieldIn1Req(reqWpEnd:ReqWrapT){
   let _markup:MarkupHasEnum=MarkupHasEnum.No;
   const headerText=reqWpEnd.req.headers.toString();
@@ -194,48 +54,29 @@ function hasMarkupFieldIn1Req(reqWpEnd:ReqWrapT){
   const urlEnd:string=reqWpEnd.req.url;
   if(headerText.includes(markupPrjName)){
     console.log(`【在请求头,发现标记请求地址】【${urlEnd}】【${headerText}】`)
-    writeReqExampleAsTemplate(reqWpEnd.reqId, req,TemplPlace.ReqHeader)
+    writeReqExampleAsTemplate(reqWpEnd.reqId, req,TemplPlaceE.ReqHeader)
     _markup=MarkupHasEnum.Yes
   }
   if(urlEnd.includes(markupPrjName)){
     console.log(`【在url,发现标记请求地址】【${urlEnd}】`)
     _markup=MarkupHasEnum.Yes
-    writeReqExampleAsTemplate(reqWpEnd.reqId, req,TemplPlace.Url)
+    writeReqExampleAsTemplate(reqWpEnd.reqId, req,TemplPlaceE.Url)
   }
   if(req.hasPostData){
     const postData:string = req.postData;
     if(postData && postData.includes(markupPrjName)){
       console.log(`【在请求体,发现标记请求地址】【${urlEnd}】【${postData}】`)
       _markup=MarkupHasEnum.Yes
-      writeReqExampleAsTemplate(reqWpEnd.reqId, req,TemplPlace.Body)
+      writeReqExampleAsTemplate(reqWpEnd.reqId, req,TemplPlaceE.Body)
     }
   }
 
   return _markup;
 }
 
-enum TemplPlace{
-  ReqHeader=0,
-  Url=1,
-  Body=2
-}
-
-interface ReqTemplate{
-  //当前毫秒数
-  nowMs:number,
-  //请求id
-  reqId:DP.Protocol.Network.RequestId
-  //请求
-  req:DP.Protocol.Network.Request
-  //模板位置（标记字段在请求中的部位）
-  templatePlace:TemplPlace
-  //标记字段们
-  markupFieldLs:MarkupField[]
-}
-const reqTemplDir:string="./reqTemplate"
 // 写请求例子作为请求模板
-function writeReqExampleAsTemplate(reqId:DP.Protocol.Network.RequestId, req:DP.Protocol.Network.Request,templatePlace:TemplPlace){
-  const reqTemplText:string=JSON.stringify(<ReqTemplate>{
+function writeReqExampleAsTemplate(reqId:DP.Protocol.Network.RequestId, req:DP.Protocol.Network.Request,templatePlace:TemplPlaceE){
+  const reqTemplText:string=JSON.stringify(<ReqTemplateI>{
     nowMs,reqId,req,templatePlace,markupFieldLs
   })
   if(!existsSync(reqTemplDir)){
@@ -246,18 +87,13 @@ function writeReqExampleAsTemplate(reqId:DP.Protocol.Network.RequestId, req:DP.P
   console.log(`已写入请求例子（作为请求模板）文件 【${reqTmplFp}】`)
 }
 
-enum  LoginEnum{
-  Other=0,
-  AlreadLogin=1,
-  NotLogin=2
-}
-function calcLoginFlag( ){
+function calcLoginFlag(reqTab:RqTab ){
 
   let _LoginFlag:LoginEnum=LoginEnum.Other;
-  const reqIdLs:string[]=Array.from(reqLs.keys())
+  const reqIdLs:string[]=Array.from(reqTab._rqDct.keys())
   reqIdLs.forEach(reqId=>{ //隐含了同一种消息是严格有序的，且 forEach 严格遵守数组下标顺序
-    const reqChain:ReqWrapT[]=reqLs.get(reqId)
-    const respChain:RespHdWrapT[]=respHdLs.get(reqId)
+    const reqChain:ReqWrapT[]=reqTab._rqDct.get(reqId)
+    const respChain:RespHdWrapT[]=respHdTab._rspHdDct.get(reqId)
     const retK:LoginEnum=calcLoginEnumIn1Chain(reqChain, respChain);
     if(retK!=LoginEnum.Other){//排除其他页面的干扰
       _LoginFlag=retK;
@@ -266,25 +102,24 @@ function calcLoginFlag( ){
   return _LoginFlag;
 }
 
-
 function calcLoginEnumIn1Chain(reqChain:ReqWrapT[],  respChain:RespHdWrapT[]){
 
   let _loginFlag:LoginEnum=LoginEnum.Other;
-  const reqWp1:ReqWrapT=reqLs_req1(reqChain);
+  const reqWp1:ReqWrapT=LsUtilC.elem1(reqChain);
   assert(reqWp1!=null, "xxx1")
   // if( reqWp1  == null ){return;}
-  const respWp1:RespHdWrapT=respLs_1(respChain);
+  const respWp1:RespHdWrapT=LsUtilC.elem1(respChain);
 
   const urlFirst:string=reqWp1.req.url;
 
-  const reqWpEnd:ReqWrapT=reqLs_endReq(reqChain);
+  const reqWpEnd:ReqWrapT=LsUtilC.endElem(reqChain);
   const urlEnd:string=reqWpEnd.req.url;
 
-  // const respWpEnd:RespHdWrapT=respLs_endResp(respChain);
+  // const respWpEnd:RespHdWrapT=LsUtilC.endElem(respChain);
 
   if( reqWp1.req. url == accInfoPgUrl ){
-    const reqWp2:ReqWrapT=reqLs_req2(reqChain);
-    const respWp2:RespHdWrapT=respLs_2(respChain);
+    const reqWp2:ReqWrapT=LsUtilC.elem2(reqChain);
+    const respWp2:RespHdWrapT=LsUtilC.elem2(respChain);
     if(reqWp2==null){ // && respWp2.statusCode==200
       console.log(`【发现直接进入账户页】【undefined--->账户页】【此即已登录】${urlEnd}`)
       //已登录:
@@ -308,7 +143,7 @@ function calcLoginEnumIn1Chain(reqChain:ReqWrapT[],  respChain:RespHdWrapT[]){
 async function mainFunc( ) {
   try{
     const chrome:CL.LaunchedChrome= await CL.launch(<CL.Options>{
-      chromePath:"/app/chrome-linux/chrome",
+      chromePath:chromePath, // "/app/chrome-linux/chrome"
       chromeFlags:["--no-first-run","--disable-gpu"]
     });
     const client:CDP.Client = await CDP(<CDP.Options>{
@@ -319,18 +154,18 @@ async function mainFunc( ) {
     // 记录精简响应（全部响应都有，但全部都只有响应头、无响应体）
     Network.on("responseReceivedExtraInfo",(params: DP.Protocol.Network.ResponseReceivedExtraInfoEvent) =>{
 
-      if(__reqLs_get_req_url_any_startWith(params.requestId,"https://gitee.com")){
+      if(reqTab.__reqLs_get_req_url_any_startWith(params.requestId,"https://gitee.com")){
         // 暂时不打印 普通 请求日志
-        // console.log(`【响应ExtraInfo】【reqId=${params.requestId}】 【响应码=${params.statusCode}】  【reqUrl=${ __reqLs_get_req_urlLsJoin(params.requestId) }】`)
+        // console.log(`【响应ExtraInfo】【reqId=${params.requestId}】 【响应码=${params.statusCode}】  【reqUrl=${reqTab. __reqLs_get_req_urlLsJoin(params.requestId) }】`)
       }
-      pushRespHd(params.requestId,params.statusCode,params.headers)
+      respHdTab.pushRespHd(params.requestId,params.statusCode,params.headers)
     })
     // 记录完整响应（不含302等无响应体的）
     //     参考 https://stackoverflow.com/questions/70926015/get-response-of-a-api-request-made-using-chrome-remote-interface/70926579#70926579
     Network.on("responseReceived",(params: DP.Protocol.Network.ResponseReceivedEvent) =>{
       if(params.response.url.startsWith("https://gitee.com")){
         // 暂时不打印 普通 请求日志
-        // console.log(`【响应】【reqId=${params.requestId}】【响应Url=${params.response.url}】 【响应码=${params.response.status}】  【请求Url=${ __reqLs_get_req_urlLsJoin(params.requestId) }】`)
+        // console.log(`【响应】【reqId=${params.requestId}】【响应Url=${params.response.url}】 【响应码=${params.response.status}】  【请求Url=${ reqTab.__reqLs_get_req_urlLsJoin(params.requestId) }】`)
       }
       // pushResponse(params.requestId,params.response)
 
@@ -341,7 +176,7 @@ async function mainFunc( ) {
       if(params.request.url.startsWith("https://gitee.com")){//https://gitee.com/tmpOrg/projects
         // 暂时不打印 普通 请求日志
         // console.log(`【请求】【reqId=${params.requestId}】 【${ (params.redirectResponse||{}).url } ----> ${params.request.url} 】`)
-        pushReq(params.redirectResponse, params.requestId,params.request )
+        reqTab.pushReq(params.redirectResponse, params.requestId,params.request )
       }
       if(params.request.url.endsWith(".css")
         || params.request.url.indexOf(".js")>0
@@ -370,9 +205,9 @@ async function mainFunc( ) {
     await Page.loadEventFired()
     await DOM.getDocument();//阻塞的DOMget1 被 nav1 吃掉
     //是否已登录
-    const LoginFlag:LoginEnum=calcLoginFlag()
-    reqLs.clear()
-    respHdLs.clear()
+    const LoginFlag:LoginEnum=calcLoginFlag(reqTab)
+    reqTab._rqDct.clear()
+    respHdTab._rspHdDct.clear()
 
     //断言 此时登录状态不应该是未知
     assert(LoginFlag != LoginEnum.Other)
@@ -415,7 +250,7 @@ async function mainFunc( ) {
     await DOM.getDocument();//阻塞的DOMget5
 
     //寻找有标记字段值的请求们
-    const _reqWpHasMarkup:ReqWrapT[] = reqWpHasMarkup()
+    const _reqWpHasMarkup:ReqWrapT[] = reqWpHasMarkup(reqTab)
     if(_reqWpHasMarkup.length>0){
       console.log("【退出nodejs进程，退出代码为0，业务功能正常完成】, 找到有标记字段值的请求们，写入路径请看上面日志")
       process.exit(0)

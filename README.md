@@ -21,14 +21,14 @@ chrome-remote-interface启动chrome浏览器；
 
 ####  2. 填写gitee组织
 
-修改main.ts中以下变量markupOrgName的值为你的gitee组织
+修改 site_gitee_cfg.ts 中以下变量markupOrgName的值为你的gitee组织
 ```javascript
 const markupOrgName = "markup-organization-9473" ; //mirrr
 ```
 
 #### 3. 修改本机中chrome可执行程序路径
 
-修改```src/main.ts```中```chromePath```为 本机chrome可执行程序路径
+修改 my_cfg.ts 中```chromePath```为 本机chrome可执行程序路径
 
 
 #### 4. 执行脚本生成gitee 导入仓库接口 的请求模板
