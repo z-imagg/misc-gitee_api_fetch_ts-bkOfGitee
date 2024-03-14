@@ -81,21 +81,17 @@ switch (rqTpl.templatePlace){
 }
 
 const constentType:string=rqTpl.req.headers["Content-Type"].split(";")[0]
+const Cookie:string=Array.from(rqTpl.thisSiteCookies).map(ck=>`${ck.name}=${ck.value}`).join("; ")
+rqTpl.req.headers['Cookie']=Cookie
 
 switch (rqTpl.req.method){
   case "POST":{
-    // RequestNS.post()
-    switch (constentType){
-      case "application/x-www-form-urlencoded":{
-        RequestNS.post(
-          {url:rqTpl.req.url,
-            body:rqTpl.req.postData,
-            headers:rqTpl.req.headers
-          },
-          judgeResult)
-        break
-      }
-    }
+    RequestNS.post(
+      {url:rqTpl.req.url,
+        body:rqTpl.req.postData,
+        headers:rqTpl.req.headers
+      },
+      judgeResult)
     break
   }
   case "GET":{
