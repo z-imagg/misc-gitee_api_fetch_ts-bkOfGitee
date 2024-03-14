@@ -283,9 +283,9 @@ async function mainFunc( ) {
     // 记录精简响应（全部响应都有，但全部都只有响应头、无响应体）
     Network.on("responseReceivedExtraInfo",(params: DP.Protocol.Network.ResponseReceivedExtraInfoEvent) =>{
 
-      if(__reqLs_get_req_url_any_startWith(params.requestId,"https://gitee.com")){
+      if(reqTab.__reqLs_get_req_url_any_startWith(params.requestId,"https://gitee.com")){
         // 暂时不打印 普通 请求日志
-        // console.log(`【响应ExtraInfo】【reqId=${params.requestId}】 【响应码=${params.statusCode}】  【reqUrl=${ __reqLs_get_req_urlLsJoin(params.requestId) }】`)
+        // console.log(`【响应ExtraInfo】【reqId=${params.requestId}】 【响应码=${params.statusCode}】  【reqUrl=${reqTab. __reqLs_get_req_urlLsJoin(params.requestId) }】`)
       }
       pushRespHd(params.requestId,params.statusCode,params.headers)
     })
@@ -294,7 +294,7 @@ async function mainFunc( ) {
     Network.on("responseReceived",(params: DP.Protocol.Network.ResponseReceivedEvent) =>{
       if(params.response.url.startsWith("https://gitee.com")){
         // 暂时不打印 普通 请求日志
-        // console.log(`【响应】【reqId=${params.requestId}】【响应Url=${params.response.url}】 【响应码=${params.response.status}】  【请求Url=${ __reqLs_get_req_urlLsJoin(params.requestId) }】`)
+        // console.log(`【响应】【reqId=${params.requestId}】【响应Url=${params.response.url}】 【响应码=${params.response.status}】  【请求Url=${ reqTab.__reqLs_get_req_urlLsJoin(params.requestId) }】`)
       }
       // pushResponse(params.requestId,params.response)
 
@@ -305,7 +305,7 @@ async function mainFunc( ) {
       if(params.request.url.startsWith("https://gitee.com")){//https://gitee.com/tmpOrg/projects
         // 暂时不打印 普通 请求日志
         // console.log(`【请求】【reqId=${params.requestId}】 【${ (params.redirectResponse||{}).url } ----> ${params.request.url} 】`)
-        pushReq(params.redirectResponse, params.requestId,params.request )
+        reqTab.pushReq(params.redirectResponse, params.requestId,params.request )
       }
       if(params.request.url.endsWith(".css")
         || params.request.url.indexOf(".js")>0
@@ -334,7 +334,7 @@ async function mainFunc( ) {
     await Page.loadEventFired()
     await DOM.getDocument();//阻塞的DOMget1 被 nav1 吃掉
     //是否已登录
-    const LoginFlag:LoginEnum=calcLoginFlag()
+    const LoginFlag:LoginEnum=reqTab.calcLoginFlag()
     reqTab._rqDct.clear()
     respHdTab.clear()
 
@@ -379,7 +379,7 @@ async function mainFunc( ) {
     await DOM.getDocument();//阻塞的DOMget5
 
     //寻找有标记字段值的请求们
-    const _reqWpHasMarkup:ReqWrapT[] = reqWpHasMarkup()
+    const _reqWpHasMarkup:ReqWrapT[] = reqTab.reqWpHasMarkup()
     if(_reqWpHasMarkup.length>0){
       console.log("【退出nodejs进程，退出代码为0，业务功能正常完成】, 找到有标记字段值的请求们，写入路径请看上面日志")
       process.exit(0)
