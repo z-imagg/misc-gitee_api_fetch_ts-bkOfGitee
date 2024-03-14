@@ -80,9 +80,9 @@ switch (rqTpl.templatePlace){
   }
 }
 
-const constentType:string=rqTpl.req.headers["Content-Type"].split(";")[0]
 const Cookie:string=Array.from(rqTpl.thisSiteCookies).map(ck=>`${ck.name}=${ck.value}`).join("; ")
 rqTpl.req.headers['Cookie']=Cookie
+console.log(`rqTpl.req.postData【${rqTpl.req.postData}】`)
 
 switch (rqTpl.req.method){
   case "POST":{
