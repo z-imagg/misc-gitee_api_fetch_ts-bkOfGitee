@@ -7,6 +7,7 @@ import {existsSync, mkdirSync, writeFileSync} from "fs";
 import assert from "assert";
 import * as CL from 'chrome-launcher'
 import {MarkupField, ReqTemplate, TemplPlace} from "./ReqTmplT.js";
+import {ReqWrapT} from "./RqRpWrapT.js";
 
 
 const urlList:string[]=[
@@ -58,22 +59,6 @@ document.getElementById("submit-project-new").click();
 //gitee账户页面url .  作为 登录判定依据 的 账户页面   的 url 故意且必须 和  正常进入 账户页面 不同 以 区分
 const accInfoPgUrl="https://gitee.com/profile/account_information?different_to_normal=AvoidNoise";
 
-class ReqWrapT {
-
-  redirectResp:DP.Protocol.Network.Response;
-  reqId:DP.Protocol.Network.RequestId;
-
-  req:DP.Protocol.Network.Request;
-
-
-  // 构造函数
-  constructor(redirectResp:DP.Protocol.Network.Response, reqId:DP.Protocol.Network.RequestId,req:DP.Protocol.Network.Request ) {
-    this.redirectResp=redirectResp
-    this.reqId = reqId
-    this.req = req
-  }
-
-}
 class RespHdWrapT {
 
   reqId:DP.Protocol.Network.RequestId;
