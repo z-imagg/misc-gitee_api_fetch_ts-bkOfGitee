@@ -99,23 +99,7 @@ class RqTab{
     return "";
   }
 
-    reqWpHasMarkup( ){
-    // Array.from(reqLs.values()).map(k=>k[0].reqK.req.url)
-    const reqIdLs:string[]= Array.from(this._rqDct.keys())
-    const _reqWpHasMarkup:ReqWrapT[]=reqIdLs.map(reqId=>{ //隐含了同一种消息是严格有序的，且 forEach 严格遵守数组下标顺序
-      const reqChain:ReqWrapT[]=this._rqDct.get(reqId)
-      // const reqWpEnd:ReqWrapT=reqLs_endReq(reqChain);
-      for (const reqK of reqChain) {
-        const kHas:MarkupHasEnum=hasMarkupFieldIn1Req(reqK);
-        if(kHas==MarkupHasEnum.Yes){//排除其他页面的干扰
-          return reqK;
-        }
-      }
 
-      return null;
-    }).filter(k=>k!=null)
-    return _reqWpHasMarkup;
-  }
 
     calcLoginFlag( ){
 
@@ -176,7 +160,23 @@ function respLs_endResp(chain:RespHdWrapT[]){
 }
 
 
+function reqWpHasMarkup(reqTab:RqTab ){
+  // Array.from(reqLs.values()).map(k=>k[0].reqK.req.url)
+  const reqIdLs:string[]= Array.from(reqTab._rqDct.keys())
+  const _reqWpHasMarkup:ReqWrapT[]=reqIdLs.map(reqId=>{ //隐含了同一种消息是严格有序的，且 forEach 严格遵守数组下标顺序
+    const reqChain:ReqWrapT[]=this._rqDct.get(reqId)
+    // const reqWpEnd:ReqWrapT=reqLs_endReq(reqChain);
+    for (const reqK of reqChain) {
+      const kHas:MarkupHasEnum=hasMarkupFieldIn1Req(reqK);
+      if(kHas==MarkupHasEnum.Yes){//排除其他页面的干扰
+        return reqK;
+      }
+    }
 
+    return null;
+  }).filter(k=>k!=null)
+  return _reqWpHasMarkup;
+}
 
 function hasMarkupFieldIn1Req(reqWpEnd:ReqWrapT){
   let _markup:MarkupHasEnum=MarkupHasEnum.No;
@@ -369,7 +369,7 @@ async function mainFunc( ) {
     await DOM.getDocument();//阻塞的DOMget5
 
     //寻找有标记字段值的请求们
-    const _reqWpHasMarkup:ReqWrapT[] = reqTab.reqWpHasMarkup()
+    const _reqWpHasMarkup:ReqWrapT[] = reqWpHasMarkup(reqTab)
     if(_reqWpHasMarkup.length>0){
       console.log("【退出nodejs进程，退出代码为0，业务功能正常完成】, 找到有标记字段值的请求们，写入路径请看上面日志")
       process.exit(0)
