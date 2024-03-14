@@ -6,9 +6,11 @@ export enum TemplPlaceE {
   Body = 2
 }
 
+export type MarkupFldNmTyp = string
+export type MarkupFldValTyp = string
 export interface MarkupFieldI {
-  fldNm: string,
-  fldVal: string
+  fldNm: MarkupFldNmTyp,
+  fldVal: MarkupFldValTyp
 }
 
 export interface ReqTemplateI {
