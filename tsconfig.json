@@ -17,7 +17,8 @@
     "noUnusedParameters": true,
     "noImplicitAny": false,
     "noImplicitThis": false,
-    "strictNullChecks": false
+    "strictNullChecks": false,
+    "esModuleInterop": true
   },
-  "include": ["src/**/*", "__tests__/**/*"]
+  "include": ["src/**/*","src_gitee_api/**/*", "__tests__/**/*"]
 }
