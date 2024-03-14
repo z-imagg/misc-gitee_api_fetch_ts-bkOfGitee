@@ -59,6 +59,14 @@ document.getElementById("submit-project-new").click();
 //gitee账户页面url .  作为 登录判定依据 的 账户页面   的 url 故意且必须 和  正常进入 账户页面 不同 以 区分
 const accInfoPgUrl="https://gitee.com/profile/account_information?different_to_normal=AvoidNoise";
 
+class RqTab{
+  reqTab:Map<DP.Protocol.Network.RequestId,ReqWrapT[]>
+  constructor(_reqDict:Map<DP.Protocol.Network.RequestId,ReqWrapT[]>) {
+    this.reqTab=_reqDict
+  }
+}
+const reqTab:RqTab=new RqTab(new Map())
+
 const this_reqTab:Map<DP.Protocol.Network.RequestId,ReqWrapT[]>=new Map();
 const respHdTab:Map<DP.Protocol.Network.RequestId,RespHdWrapT[]>=new Map();
 
