@@ -33,7 +33,7 @@ function reqWpHasMarkup(reqTab:RqTab ){
   // Array.from(reqLs.values()).map(k=>k[0].reqK.req.url)
   const reqIdLs:string[]= Array.from(reqTab._rqDct.keys())
   const _reqWpHasMarkup:ReqWrapT[]=reqIdLs.map(reqId=>{ //隐含了同一种消息是严格有序的，且 forEach 严格遵守数组下标顺序
-    const reqChain:ReqWrapT[]=this._rqDct.get(reqId)
+    const reqChain:ReqWrapT[]=reqTab._rqDct.get(reqId)
     // const reqWpEnd:ReqWrapT=LsUtilC.endElem(reqChain);
     for (const reqK of reqChain) {
       const kHas:MarkupHasEnum=hasMarkupFieldIn1Req(reqK);
