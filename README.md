@@ -41,7 +41,7 @@ const markupOrgName = "markup-organization-9473" ; //mirrr
 
 其余是动作是chrome-remote-interface直接驱动chrome或对chrome执行js脚本完成的，不需要人工操作浏览器
 
-
+结果文件举例: doc/example_pretty_json_for_human_read.json
 
 ## 开发时候用的 
 

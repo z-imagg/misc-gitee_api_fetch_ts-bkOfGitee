@@ -82,7 +82,7 @@ function writeReqExampleAsTemplate(reqId:DP.Protocol.Network.RequestId, req:DP.P
   if(!existsSync(reqTemplDir)){
     mkdirSync(reqTemplDir)
   }
-  const reqTmplFp:string=`${reqTemplDir}/${reqId}`
+  const reqTmplFp:string=`${reqTemplDir}/${reqId}.json`
   writeFileSync(reqTmplFp,reqTemplText)
   console.log(`已写入请求例子（作为请求模板）文件 【${reqTmplFp}】`)
 }
@@ -251,14 +251,20 @@ async function mainFunc( ) {
 
     //寻找有标记字段值的请求们
     const _reqWpHasMarkup:ReqWrapT[] = reqWpHasMarkup(reqTab)
+    let exitCode:null|number=null;
     if(_reqWpHasMarkup.length>0){
+      exitCode=0;
       console.log("【退出nodejs进程，退出代码为0，业务功能正常完成】, 找到有标记字段值的请求们，写入路径请看上面日志")
-      process.exit(0)
     }else{
       console.log("【退出nodejs进程，退出代码为1，业务功能正常完成】, 找到有标记字段值的请求们，写入路径请看上面日志")
-      process.exit(1)
+      exitCode=1;
     }
 
+    //结束此函数开头打开的chrome浏览器进程
+    chrome.kill()
+
+    //退出nodejs进程
+    process.exit(exitCode)
 
   }catch(err){
     console.error(err);

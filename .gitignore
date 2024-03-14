@@ -30,3 +30,4 @@ build/
 nohup.out
 
 gitee_account.json
+reqTemplate/*.json
