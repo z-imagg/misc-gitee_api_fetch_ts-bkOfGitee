@@ -4,7 +4,7 @@
 
 **chrome-remote-interface控制chrome浏览器获得gitee导入仓库接口请求模板**
 
-chrome-remote-interface启动chrome浏览器；
+[chrome-remote-interface](https://github.com/cyrus-and/chrome-remote-interface.git)启动chrome浏览器；
 
 由请求、响应回调构造请求链条， 请求链条中尝试发现http302重定向;
 
@@ -21,14 +21,14 @@ chrome-remote-interface启动chrome浏览器；
 
 ####  2. 填写gitee组织
 
-修改 site_gitee_cfg.ts 中以下变量markupOrgName的值为你的gitee组织
+修改 [site_gitee_cfg.ts](http://giteaz:3000/msic/node-typescript-boilerplate/src/branch/main/src/site_gitee_cfg.ts) 中以下变量markupOrgName的值为你的gitee组织
 ```javascript
 const markupOrgName = "markup-organization-9473" ; //mirrr
 ```
 
 #### 3. 修改本机中chrome可执行程序路径
 
-修改 my_cfg.ts 中```chromePath```为 本机chrome可执行程序路径
+修改 [my_cfg.ts](http://giteaz:3000/msic/node-typescript-boilerplate/src/branch/main/src/my_cfg.ts) 中```chromePath```为 本机chrome可执行程序路径
 
 
 #### 4. 执行脚本生成gitee 导入仓库接口 的请求模板
@@ -41,7 +41,7 @@ const markupOrgName = "markup-organization-9473" ; //mirrr
 
 其余是动作是chrome-remote-interface直接驱动chrome或对chrome执行js脚本完成的，不需要人工操作浏览器
 
-结果文件举例: doc/example_pretty_json_for_human_read.json
+结果文件举例: [doc/example_pretty_json_for_human_read.json](http://giteaz:3000/msic/node-typescript-boilerplate/src/branch/main/doc/example_pretty_json_for_human_read.json)
 
 ## 开发时候用的 
 
