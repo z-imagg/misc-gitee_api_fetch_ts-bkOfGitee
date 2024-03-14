@@ -4,15 +4,17 @@
 
 **chrome-remote-interface控制chrome浏览器获得gitee导入仓库接口请求模板**
 
-[chrome-remote-interface](https://github.com/cyrus-and/chrome-remote-interface.git)启动chrome浏览器；
+实现过程步骤描述：
 
-由请求、响应回调构造请求链条， 请求链条中尝试发现http302重定向;
+1. [chrome-remote-interface](https://github.com/cyrus-and/chrome-remote-interface.git)启动chrome浏览器；
 
-打开gitee的账户信息页面，请求链条中若有重定向，则判定为已登录，否则未登录；
+2. 由请求、响应回调构造请求链条， 请求链条中尝试发现http302重定向;
 
-若未登录，则打开gitee登录页面，由js填写配置的用户名、密码，由人工点击登录按钮，因为点击登录后可能有验证码识别；
+3. 打开gitee的账户信息页面，请求链条中若有重定向，则判定为已登录，否则未登录；
 
-打开gitee导入仓库页面，由js填写各标记字段，生成gitee导入仓库接口的请求例子（请求例子作为请求模板）
+4. 若未登录，则打开gitee登录页面，由js填写配置的用户名、密码，由人工点击登录按钮，因为点击登录后可能有验证码识别；
+
+5. 打开gitee导入仓库页面，由js填写各标记字段，生成gitee导入仓库接口的请求例子（请求例子作为请求模板）
 
 ## 使用手册
 
