@@ -43,7 +43,15 @@ const markupOrgName = "markup-organization-9473" ; //mirrr
 
 其余是动作是chrome-remote-interface直接驱动chrome或对chrome执行js脚本完成的，不需要人工操作浏览器
 
-结果文件举例: [doc/example_pretty_json_for_human_read.json](http://giteaz:3000/msic/node-typescript-boilerplate/src/branch/main/doc/example_pretty_json_for_human_read.json)
+#### 5. 使用 请求模板（带有标记值字段的请求 即 请求模板）
+
+[步骤4](giteaz:3000/msic/node-typescript-boilerplate#4-执行脚本生成gitee-导入仓库接口-的请求模板) 产生的结果文件举例: [doc/example_pretty_json_for_human_read.json](http://giteaz:3000/msic/node-typescript-boilerplate/src/branch/main/doc/example_pretty_json_for_human_read.json)
+
+该结果文件 即  带有标记markup值字段的请求 即 请求模板
+
+其中 字段postDataEntries==base64(postData), 因此可忽略字段postDataEntries
+
+将其中"markupFieldLs"描述的各字段值替换 成 目标字段值（比如 来源gitee组织、目标github仓库 等）， 替换后json转换为请求执行即可 将目标github仓库导入进给定的gitee组织
 
 ## 开发时候用的 
 
