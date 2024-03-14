@@ -8,7 +8,7 @@ import assert from "assert";
 import * as CL from 'chrome-launcher'
 import {MarkupField, ReqTemplate, TemplPlace} from "./ReqTmplT.js";
 import {ReqWrapT, RespHdWrapT} from "./RqRpWrapT.js";
-import {reqLs} from "./RqRpLsT.js";
+import {reqLs, respHdLs} from "./RqRpLsT.js";
 
 
 const urlList:string[]=[
@@ -59,8 +59,6 @@ document.getElementById("submit-project-new").click();
 `
 //gitee账户页面url .  作为 登录判定依据 的 账户页面   的 url 故意且必须 和  正常进入 账户页面 不同 以 区分
 const accInfoPgUrl="https://gitee.com/profile/account_information?different_to_normal=AvoidNoise";
-
-const respHdLs:Map<DP.Protocol.Network.RequestId,RespHdWrapT[]>=new Map();
 
 function pushReq(redirectResp:DP.Protocol.Network.Response, reqId:DP.Protocol.Network.RequestId,req:DP.Protocol.Network.Request ){
   let ls:ReqWrapT[]=reqLs.get(reqId)
