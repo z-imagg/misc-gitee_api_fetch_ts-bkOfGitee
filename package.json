@@ -40,6 +40,7 @@
   "dependencies": {
     "chrome-launcher": "^1.1.0",
     "chrome-remote-interface": "^0.33.0",
+    "commander": "^12.0.0",
     "readline-sync": "^1.4.10",
     "request": "^2.88.2",
     "tslib": "~2.6"

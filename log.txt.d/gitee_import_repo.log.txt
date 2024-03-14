@@ -1,0 +1,5 @@
+rqTpl.req.postData【utf8=%E2%9C%93&authenticity_token=PrCSRChZYWaMOTcHXSmqpJPHHqMYjbXdzgnyW95OU0hJ5kAkSjv5hGaQe9CK%2B5QEctXSUjLOcfKMdcvCYOFUmg%3D%3D&project%5Bimport_url%5D=https%3A%2F%2Fgithub.com%2Frequest%2Frequest.git&user_sync_code=&password_sync_code=&project%5Bname%5D=repo01Name&project%5Bnamespace_path%5D=mirrr&project%5Bpath%5D=repo01Path&project%5Bdescription%5D=%E4%BB%93%E5%BA%93%E6%8F%8F%E8%BF%B0&project%5Bpublic%5D=1&language=0】
+location.href = "/mirrr/repo01Path";
+
+
+执行gitee导入仓库成功
