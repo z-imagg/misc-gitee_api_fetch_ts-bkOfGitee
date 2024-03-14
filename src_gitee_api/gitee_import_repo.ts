@@ -63,7 +63,13 @@ switch (rqTpl.templatePlace){
       const newVal:string=MarkupFieldUtilC.assign_L2R(rqTpl.markupFieldLs,newFieldLs,val)
       return [newKey,newVal]
     })
-    rqTpl.req.headers=new DP.Protocol.Network.Headers(newFieldLs)
+
+    //重新构造headers
+    rqTpl.req.headers=<DP.Protocol.Network.Headers>{}
+    tupleLs.forEach(([key,val],idx)=>{
+      rqTpl.req.headers[key]=val
+    })
+
     break;
   }
   case TemplPlaceE.Body:{
