@@ -3,3 +3,8 @@ export enum TemplPlace {
   Url = 1,
   Body = 2
 }
+
+export interface MarkupField {
+  fldNm: string,
+  fldVal: string
+}

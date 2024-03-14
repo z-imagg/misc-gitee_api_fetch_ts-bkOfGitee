@@ -6,7 +6,7 @@ import * as fs from "fs";
 import {existsSync, mkdirSync, writeFileSync} from "fs";
 import assert from "assert";
 import * as CL from 'chrome-launcher'
-import {TemplPlace} from "./MyTypes.js";
+import {MarkupField, TemplPlace} from "./MyTypes.js";
 
 
 const urlList:string[]=[
@@ -28,11 +28,6 @@ document.getElementById("user_login").value="${giteeUserName}";
 document.getElementById("user_password").value="${giteePwd}";
 document.title="${loginPageMsg}"+document.title;
 `
-
-interface MarkupField{
-  fldNm:string,
-  fldVal:string
-}
 
 //gitee导入页面url
 const giteeImportPageUrl="https://gitee.com/projects/import/url";
