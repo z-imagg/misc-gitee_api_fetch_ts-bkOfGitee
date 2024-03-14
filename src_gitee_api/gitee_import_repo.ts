@@ -20,8 +20,8 @@ if(reqTmplFNLs.length<=0){
 
 const ARG_START_IDX:number=2
 const ARG_CNT:number=4
-process.argv.push("http://xxx.com/yyy.git")
-process.argv.push("org01")
+process.argv.push("https://github.com/request/request.git")
+process.argv.push("mirrr")
 process.argv.push("repo01")
 process.argv.push("仓库描述")
 
