@@ -3,9 +3,11 @@ import {ReqWrapT} from "./rq_rp_wrap_t.js";
 
 export class RqTab {
   _rqDct: Map<DP.Protocol.Network.RequestId, ReqWrapT[]>
+  thisSiteCookies:DP.Protocol.Network.Cookie[]
 
   constructor(_reqDict: Map<DP.Protocol.Network.RequestId, ReqWrapT[]>) {
     this._rqDct = _reqDict
+    this.thisSiteCookies=null
   }
 
   pushReq(redirectResp: DP.Protocol.Network.Response, reqId: DP.Protocol.Network.RequestId, req: DP.Protocol.Network.Request) {
