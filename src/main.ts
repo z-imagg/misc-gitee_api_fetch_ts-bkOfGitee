@@ -9,6 +9,7 @@ import * as CL from 'chrome-launcher'
 import {MarkupFieldI, ReqTemplateI, TemplPlaceE} from "./req_tmpl_t.js";
 import {ReqWrapT, RespHdWrapT} from "./rq_rp_wrap_t.js";
 import {LoginEnum, MarkupHasEnum} from "./enums.js";
+import {RqTab} from "./rq_tab_c.js";
 
 
 const urlList:string[]=[
@@ -60,49 +61,6 @@ document.getElementById("submit-project-new").click();
 //gitee账户页面url .  作为 登录判定依据 的 账户页面   的 url 故意且必须 和  正常进入 账户页面 不同 以 区分
 const accInfoPgUrl="https://gitee.com/profile/account_information?different_to_normal=AvoidNoise";
 
-class RqTab{
-  _rqDct:Map<DP.Protocol.Network.RequestId,ReqWrapT[]>
-  constructor(_reqDict:Map<DP.Protocol.Network.RequestId,ReqWrapT[]>) {
-    this._rqDct=_reqDict
-  }
-
-    pushReq(redirectResp:DP.Protocol.Network.Response, reqId:DP.Protocol.Network.RequestId,req:DP.Protocol.Network.Request ){
-    let ls:ReqWrapT[]=this._rqDct.get(reqId)
-    if(ls==null){
-      this._rqDct.set(reqId,[]);
-      ls=this._rqDct.get(reqId)
-    }
-    ls.push(new ReqWrapT(redirectResp, reqId,req ))
-  }
-
-    reqLs_has(reqId:DP.Protocol.Network.RequestId){
-    const ls:ReqWrapT[]=this._rqDct.get(reqId)
-    const empty:boolean=(ls==null||ls.length==0)
-    return !empty;
-  }
-
-    __reqLs_get_req_url_any_startWith(reqId:DP.Protocol.Network.RequestId,urlPrefix:string){
-    const ls:ReqWrapT[]=this._rqDct.get(reqId)
-    const empty:boolean=(ls==null||ls.length==0)
-    if(!empty){
-      return ls.filter(k=>k.req.url.startsWith(urlPrefix)).length>0
-    }
-    return false;
-  }
-
-    __reqLs_get_req_urlLsJoin(reqId:DP.Protocol.Network.RequestId){
-    const ls:ReqWrapT[]=this._rqDct.get(reqId)
-    const empty:boolean=(ls==null||ls.length==0)
-    if(!empty){
-      return ls.map(k=>k.req.url).join(",")
-    }
-    return "";
-  }
-
-
-
-
-}
 const reqTab:RqTab=new RqTab(new Map())
 
 const respHdTab:Map<DP.Protocol.Network.RequestId,RespHdWrapT[]>=new Map();
