@@ -64,20 +64,78 @@ class RqTab{
   constructor(_reqDict:Map<DP.Protocol.Network.RequestId,ReqWrapT[]>) {
     this.reqTab=_reqDict
   }
+
+  function pushReq(redirectResp:DP.Protocol.Network.Response, reqId:DP.Protocol.Network.RequestId,req:DP.Protocol.Network.Request ){
+    let ls:ReqWrapT[]=this_reqTab.get(reqId)
+    if(ls==null){
+      this_reqTab.set(reqId,[]);
+      ls=this_reqTab.get(reqId)
+    }
+    ls.push(new ReqWrapT(redirectResp, reqId,req ))
+  }
+
+  function reqLs_has(reqId:DP.Protocol.Network.RequestId){
+    const ls:ReqWrapT[]=this_reqTab.get(reqId)
+    const empty:boolean=(ls==null||ls.length==0)
+    return !empty;
+  }
+
+  function __reqLs_get_req_url_any_startWith(reqId:DP.Protocol.Network.RequestId,urlPrefix:string){
+    const ls:ReqWrapT[]=this_reqTab.get(reqId)
+    const empty:boolean=(ls==null||ls.length==0)
+    if(!empty){
+      return ls.filter(k=>k.req.url.startsWith(urlPrefix)).length>0
+    }
+    return false;
+  }
+
+  function __reqLs_get_req_urlLsJoin(reqId:DP.Protocol.Network.RequestId){
+    const ls:ReqWrapT[]=this_reqTab.get(reqId)
+    const empty:boolean=(ls==null||ls.length==0)
+    if(!empty){
+      return ls.map(k=>k.req.url).join(",")
+    }
+    return "";
+  }
+
+  function reqWpHasMarkup( ){
+    // Array.from(reqLs.values()).map(k=>k[0].reqK.req.url)
+    const reqIdLs:string[]= Array.from(this_reqTab.keys())
+    const _reqWpHasMarkup:ReqWrapT[]=reqIdLs.map(reqId=>{ //隐含了同一种消息是严格有序的，且 forEach 严格遵守数组下标顺序
+      const reqChain:ReqWrapT[]=this_reqTab.get(reqId)
+      // const reqWpEnd:ReqWrapT=reqLs_endReq(reqChain);
+      for (const reqK of reqChain) {
+        const kHas:MarkupHasEnum=hasMarkupFieldIn1Req(reqK);
+        if(kHas==MarkupHasEnum.Yes){//排除其他页面的干扰
+          return reqK;
+        }
+      }
+
+      return null;
+    }).filter(k=>k!=null)
+    return _reqWpHasMarkup;
+  }
+
+  function calcLoginFlag( ){
+
+    let _LoginFlag:LoginEnum=LoginEnum.Other;
+    const reqIdLs:string[]=Array.from(this_reqTab.keys())
+    reqIdLs.forEach(reqId=>{ //隐含了同一种消息是严格有序的，且 forEach 严格遵守数组下标顺序
+      const reqChain:ReqWrapT[]=this_reqTab.get(reqId)
+      const respChain:RespHdWrapT[]=respHdTab.get(reqId)
+      const retK:LoginEnum=calcLoginEnumIn1Chain(reqChain, respChain);
+      if(retK!=LoginEnum.Other){//排除其他页面的干扰
+        _LoginFlag=retK;
+      }
+    })
+    return _LoginFlag;
+  }
 }
 const reqTab:RqTab=new RqTab(new Map())
 
 const this_reqTab:Map<DP.Protocol.Network.RequestId,ReqWrapT[]>=new Map();
 const respHdTab:Map<DP.Protocol.Network.RequestId,RespHdWrapT[]>=new Map();
 
-function pushReq(redirectResp:DP.Protocol.Network.Response, reqId:DP.Protocol.Network.RequestId,req:DP.Protocol.Network.Request ){
-  let ls:ReqWrapT[]=this_reqTab.get(reqId)
-  if(ls==null){
-    this_reqTab.set(reqId,[]);
-    ls=this_reqTab.get(reqId)
-  }
-  ls.push(new ReqWrapT(redirectResp, reqId,req ))
-}
 
 function pushRespHd( reqId:DP.Protocol.Network.RequestId, statusCode:number, respHd:DP.Protocol.Network.Headers){
   let ls:RespHdWrapT[]=respHdTab.get(reqId)
@@ -89,11 +147,7 @@ function pushRespHd( reqId:DP.Protocol.Network.RequestId, statusCode:number, res
 }
 
 
-function reqLs_has(reqId:DP.Protocol.Network.RequestId){
-  const ls:ReqWrapT[]=this_reqTab.get(reqId)
-  const empty:boolean=(ls==null||ls.length==0)
-  return !empty;
-}
+
 
 function reqLs_req1(chain:ReqWrapT[]){
   const empty:boolean=(chain==null||chain.length==0)
@@ -121,44 +175,14 @@ function respLs_endResp(chain:RespHdWrapT[]){
   return (endIdx>=0)?chain[endIdx]:null;
 }
 
-function __reqLs_get_req_url_any_startWith(reqId:DP.Protocol.Network.RequestId,urlPrefix:string){
-  const ls:ReqWrapT[]=this_reqTab.get(reqId)
-  const empty:boolean=(ls==null||ls.length==0)
-  if(!empty){
-    return ls.filter(k=>k.req.url.startsWith(urlPrefix)).length>0
-  }
-  return false;
-}
 
-function __reqLs_get_req_urlLsJoin(reqId:DP.Protocol.Network.RequestId){
-  const ls:ReqWrapT[]=this_reqTab.get(reqId)
-  const empty:boolean=(ls==null||ls.length==0)
-  if(!empty){
-    return ls.map(k=>k.req.url).join(",")
-  }
-  return "";
-}
+
+
 enum  MarkupHasEnum{
   Yes=1,
   No=2
 }
-function reqWpHasMarkup( ){
-  // Array.from(reqLs.values()).map(k=>k[0].reqK.req.url)
-  const reqIdLs:string[]= Array.from(this_reqTab.keys())
-  const _reqWpHasMarkup:ReqWrapT[]=reqIdLs.map(reqId=>{ //隐含了同一种消息是严格有序的，且 forEach 严格遵守数组下标顺序
-    const reqChain:ReqWrapT[]=this_reqTab.get(reqId)
-    // const reqWpEnd:ReqWrapT=reqLs_endReq(reqChain);
-    for (const reqK of reqChain) {
-      const kHas:MarkupHasEnum=hasMarkupFieldIn1Req(reqK);
-      if(kHas==MarkupHasEnum.Yes){//排除其他页面的干扰
-        return reqK;
-      }
-    }
 
-    return null;
-  }).filter(k=>k!=null)
-  return _reqWpHasMarkup;
-}
 function hasMarkupFieldIn1Req(reqWpEnd:ReqWrapT){
   let _markup:MarkupHasEnum=MarkupHasEnum.No;
   const headerText=reqWpEnd.req.headers.toString();
@@ -205,20 +229,7 @@ enum  LoginEnum{
   AlreadLogin=1,
   NotLogin=2
 }
-function calcLoginFlag( ){
 
-  let _LoginFlag:LoginEnum=LoginEnum.Other;
-  const reqIdLs:string[]=Array.from(this_reqTab.keys())
-  reqIdLs.forEach(reqId=>{ //隐含了同一种消息是严格有序的，且 forEach 严格遵守数组下标顺序
-    const reqChain:ReqWrapT[]=this_reqTab.get(reqId)
-    const respChain:RespHdWrapT[]=respHdTab.get(reqId)
-    const retK:LoginEnum=calcLoginEnumIn1Chain(reqChain, respChain);
-    if(retK!=LoginEnum.Other){//排除其他页面的干扰
-      _LoginFlag=retK;
-    }
-  })
-  return _LoginFlag;
-}
 
 
 function calcLoginEnumIn1Chain(reqChain:ReqWrapT[],  respChain:RespHdWrapT[]){
