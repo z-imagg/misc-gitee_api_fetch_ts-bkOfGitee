@@ -335,7 +335,7 @@ async function mainFunc( ) {
     await DOM.getDocument();//阻塞的DOMget1 被 nav1 吃掉
     //是否已登录
     const LoginFlag:LoginEnum=calcLoginFlag()
-    this.reqTab.clear()
+    reqTab._rqDct.clear()
     respHdTab.clear()
 
     //断言 此时登录状态不应该是未知
