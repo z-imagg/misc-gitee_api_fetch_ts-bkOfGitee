@@ -45,7 +45,9 @@ const markupOrgName = "markup-organization-9473" ; //mirrr
 
 ## 开发时候用的 
 
+1. 环境
 ```shell
+cat /etc/issue #Ubuntu 22.04.4 LTS \n \l
 node  --version #v18.19.1
 npm --version #10.5.0
 yarn --version #1.22.21
@@ -53,6 +55,7 @@ pnpm --version #8.15.4
 yrm --version #1.0.6
 ```
 
+2. npm安装依赖 ```npm install```
 ```shell
 npm install
 
@@ -63,26 +66,48 @@ npm run clean
 npm run build  
 
 ```
-webstorm打开本项目，可以直接调试js文件 ./build/src/main.js
 
+开发过程中安装依赖所用命令:
 ```shell
-#运行
-npm run start
-
-```
-
-```shell
-npm init
 npm install   chrome-remote-interface
 npm install -D  @types/chrome-remote-interface
 npm install readline-sync
+```
+注意这些依赖已经写入package.json中，
+因此此时不需要这样，此时只需要执行面说的```npm install```即可按照package.json安装依赖，
+这里只是记录一下，供给下次开发别的参考
 
-#已经在main.js中启动了chrome, 无需外部启动chrome
-#/app/chrome-linux/chrome --disable-gpu --no-sandbox --remote-debugging-port=9222
 
-npm run clean; npm run build; npm run start
+3. 清理、编译、启动
 
+
+已经在main.js中启动了chrome, 无需外部启动chrome
+
+外部启动chrome: ```/app/chrome-linux/chrome --disable-gpu --no-sandbox --remote-debugging-port=9222```
+
+```shell
+#清理 ,即删除build目录
+npm run clean
+#编译，即调用tsc将src/**.ts转换为build/src/**.js
+npm run build  
+#启动，用node命令执行package.json中指定的入口文件(这里是main.js)
+npm run start
 ```
 
+解释 : ``` npm run xxx == npx `package.json/scripts/xxx`  ```
 
-https://github.com/fate0/pychrome
+
+4. webstorm
+
+webstorm打开本项目，可以直接调试js文件 ./build/src/main.js
+
+
+
+5. 【不推荐】 fate0/pychrome : 有人以python3.5对chrome-remote-interface做的包装,
+
+[fate0/pychrome](https://github.com/fate0/pychrome)
+
+看其例子用法，只是借用了python3.5的async关键字来伪装nodejs的async关键字，
+
+而且后来的python3.x(x是几？）已经废弃了python关键字async, 因此 不建议使用此包装
+
