@@ -4,7 +4,7 @@ import {readdirSync, readFileSync} from "fs";
 import {MarkupFieldUtilC} from "./MarkupFieldUtil.js";
 
 import * as DP from "devtools-protocol";
-import * as RequestNS from "request";
+import  RequestNS from "request";
 import assert from "assert";
 
 const exitCode_1:number=21
@@ -80,22 +80,18 @@ switch (rqTpl.templatePlace){
   }
 }
 
-const constentType:string=rqTpl.req.headers["Content-Type"].split(":")[0]
+const constentType:string=rqTpl.req.headers["Content-Type"].split(";")[0]
 
 switch (rqTpl.req.method){
   case "POST":{
     // RequestNS.post()
     switch (constentType){
       case "application/x-www-form-urlencoded":{
-        const tupleLs:[string,string][]=rqTpl.req.postData.split("&").map(e=>{
-          const _arr:string[]=e.split("=")
-          assert(_arr != null && _arr.length==2)
-          return _arr
-        })
-        const formDct:Map<string,string>=new Map(tupleLs)
-        RequestNS.post(rqTpl.req.url).form(formDct)
         RequestNS.post(
-          {url:rqTpl.req.url,form:formDct},
+          {url:rqTpl.req.url,
+            body:rqTpl.req.postData,
+            headers:rqTpl.req.headers
+          },
           judgeResult)
         break
       }
