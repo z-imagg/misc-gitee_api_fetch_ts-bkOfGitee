@@ -34,6 +34,7 @@ const goal_repoName:string=argLs[2]
 const goal_repoPath:string=goal_repoName
 const goal_repoDesc:string=argLs[3]
 
+
 const newFieldLs: MarkupFieldI[]=[
 <MarkupFieldI>{fldNm:"project_import_url",fldVal:encodeURI(from_repoUrl) },
 <MarkupFieldI>{fldNm:"markupPrjName",fldVal:encodeURI(goal_OrgName)},
@@ -48,6 +49,9 @@ const reqTmplFP:string=`${reqTemplDir}/${reqTmplFN}`
 const reqTmplText:string= readFileSync(reqTmplFP).toString()
 const rqTpl:ReqTemplateI=JSON.parse(reqTmplText)
 
+rqTpl.markupFieldLs.forEach(k=>{
+  k.fldVal=encodeURI(k.fldVal)
+})
 
 switch (rqTpl.templatePlace){
   case TemplPlaceE.Url:{
