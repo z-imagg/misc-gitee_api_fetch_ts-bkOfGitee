@@ -161,7 +161,7 @@ async function mainFunc( ) {
         // 暂时不打印 普通 请求日志
         // console.log(`【响应ExtraInfo】【reqId=${params.requestId}】 【响应码=${params.statusCode}】  【reqUrl=${reqTab. __reqLs_get_req_urlLsJoin(params.requestId) }】`)
       }
-      pushRespHd(params.requestId,params.statusCode,params.headers)
+      respHdTab.pushRespHd(params.requestId,params.statusCode,params.headers)
     })
     // 记录完整响应（不含302等无响应体的）
     //     参考 https://stackoverflow.com/questions/70926015/get-response-of-a-api-request-made-using-chrome-remote-interface/70926579#70926579
