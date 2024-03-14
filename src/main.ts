@@ -60,28 +60,28 @@ document.getElementById("submit-project-new").click();
 const accInfoPgUrl="https://gitee.com/profile/account_information?different_to_normal=AvoidNoise";
 
 class RqTab{
-  reqTab:Map<DP.Protocol.Network.RequestId,ReqWrapT[]>
+  _rqDct:Map<DP.Protocol.Network.RequestId,ReqWrapT[]>
   constructor(_reqDict:Map<DP.Protocol.Network.RequestId,ReqWrapT[]>) {
-    this.reqTab=_reqDict
+    this._rqDct=_reqDict
   }
 
     pushReq(redirectResp:DP.Protocol.Network.Response, reqId:DP.Protocol.Network.RequestId,req:DP.Protocol.Network.Request ){
-    let ls:ReqWrapT[]=this.reqTab.get(reqId)
+    let ls:ReqWrapT[]=this._rqDct.get(reqId)
     if(ls==null){
-      this.reqTab.set(reqId,[]);
-      ls=this.reqTab.get(reqId)
+      this._rqDct.set(reqId,[]);
+      ls=this._rqDct.get(reqId)
     }
     ls.push(new ReqWrapT(redirectResp, reqId,req ))
   }
 
     reqLs_has(reqId:DP.Protocol.Network.RequestId){
-    const ls:ReqWrapT[]=this.reqTab.get(reqId)
+    const ls:ReqWrapT[]=this._rqDct.get(reqId)
     const empty:boolean=(ls==null||ls.length==0)
     return !empty;
   }
 
     __reqLs_get_req_url_any_startWith(reqId:DP.Protocol.Network.RequestId,urlPrefix:string){
-    const ls:ReqWrapT[]=this.reqTab.get(reqId)
+    const ls:ReqWrapT[]=this._rqDct.get(reqId)
     const empty:boolean=(ls==null||ls.length==0)
     if(!empty){
       return ls.filter(k=>k.req.url.startsWith(urlPrefix)).length>0
@@ -90,7 +90,7 @@ class RqTab{
   }
 
     __reqLs_get_req_urlLsJoin(reqId:DP.Protocol.Network.RequestId){
-    const ls:ReqWrapT[]=this.reqTab.get(reqId)
+    const ls:ReqWrapT[]=this._rqDct.get(reqId)
     const empty:boolean=(ls==null||ls.length==0)
     if(!empty){
       return ls.map(k=>k.req.url).join(",")
@@ -100,9 +100,9 @@ class RqTab{
 
     reqWpHasMarkup( ){
     // Array.from(reqLs.values()).map(k=>k[0].reqK.req.url)
-    const reqIdLs:string[]= Array.from(this.reqTab.keys())
+    const reqIdLs:string[]= Array.from(this._rqDct.keys())
     const _reqWpHasMarkup:ReqWrapT[]=reqIdLs.map(reqId=>{ //隐含了同一种消息是严格有序的，且 forEach 严格遵守数组下标顺序
-      const reqChain:ReqWrapT[]=this.reqTab.get(reqId)
+      const reqChain:ReqWrapT[]=this._rqDct.get(reqId)
       // const reqWpEnd:ReqWrapT=reqLs_endReq(reqChain);
       for (const reqK of reqChain) {
         const kHas:MarkupHasEnum=hasMarkupFieldIn1Req(reqK);
@@ -119,9 +119,9 @@ class RqTab{
     calcLoginFlag( ){
 
     let _LoginFlag:LoginEnum=LoginEnum.Other;
-    const reqIdLs:string[]=Array.from(this.reqTab.keys())
+    const reqIdLs:string[]=Array.from(this._rqDct.keys())
     reqIdLs.forEach(reqId=>{ //隐含了同一种消息是严格有序的，且 forEach 严格遵守数组下标顺序
-      const reqChain:ReqWrapT[]=this.reqTab.get(reqId)
+      const reqChain:ReqWrapT[]=this._rqDct.get(reqId)
       const respChain:RespHdWrapT[]=respHdTab.get(reqId)
       const retK:LoginEnum=calcLoginEnumIn1Chain(reqChain, respChain);
       if(retK!=LoginEnum.Other){//排除其他页面的干扰
