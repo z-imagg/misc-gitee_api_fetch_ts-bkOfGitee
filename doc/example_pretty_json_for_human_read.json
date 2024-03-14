@@ -1,1 +1,53 @@
-{"nowMs":1710385303026,"reqId":"16810.431","req":{"url":"https://gitee.com/markup-organization-9473/projects","method":"POST","headers":{"sec-ch-ua":"\"Not-A.Brand\";v=\"99\", \"Chromium\";v=\"124\"","X-CSRF-Token":"WCgOb4WINCOBS4eXngF2M4vVyZcJcwaT0JsSOEXA5B8DsQDRjHTbUodUYXJ9J9mxMoa/sTKLq5GD53GqkhB2zQ==","sec-ch-ua-mobile":"?0","User-Agent":"Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36","Content-Type":"application/x-www-form-urlencoded; charset=UTF-8","Accept":"text/javascript, application/javascript, application/ecmascript, application/x-ecmascript, */*; q=0.01","Referer":"https://gitee.com/projects/import/url","X-Requested-With":"XMLHttpRequest","sec-ch-ua-platform":"\"Linux\""},"postData":"utf8=%E2%9C%93&authenticity_token=WCgOb4WINCOBS4eXngF2M4vVyZcJcwaT0JsSOEXA5B8DsQDRjHTbUodUYXJ9J9mxMoa%2FsTKLq5GD53GqkhB2zQ%3D%3D&project%5Bimport_url%5D=https%3A%2F%2Fgithub.com%2Fintel%2FARM_NEON_2_x86_SSE.git&user_sync_code=&password_sync_code=&project%5Bname%5D=markupPrjName----intel--ARM_NEON_2_x86_SSE__1710385303026&project%5Bnamespace_path%5D=markup-organization-9473&project%5Bpath%5D=markupPrjPath----intel--ARM_NEON_2_x86_SSE__1710385303026&project%5Bdescription%5D=markupPrjDesc----intel--ARM_NEON_2_x86_SSE__1710385303026&project%5Bpublic%5D=1&language=0","hasPostData":true,"postDataEntries":[{"bytes":"dXRmOD0lRTIlOUMlOTMmYXV0aGVudGljaXR5X3Rva2VuPVdDZ09iNFdJTkNPQlM0ZVhuZ0YyTTR2VnlaY0pjd2FUMEpzU09FWEE1QjhEc1FEUmpIVGJVb2RVWVhKOUo5bXhNb2ElMkZzVEtMcTVHRDUzR3FraEIyelElM0QlM0QmcHJvamVjdCU1QmltcG9ydF91cmwlNUQ9aHR0cHMlM0ElMkYlMkZnaXRodWIuY29tJTJGaW50ZWwlMkZBUk1fTkVPTl8yX3g4Nl9TU0UuZ2l0JnVzZXJfc3luY19jb2RlPSZwYXNzd29yZF9zeW5jX2NvZGU9JnByb2plY3QlNUJuYW1lJTVEPW1hcmt1cFByak5hbWUtLS0taW50ZWwtLUFSTV9ORU9OXzJfeDg2X1NTRV9fMTcxMDM4NTMwMzAyNiZwcm9qZWN0JTVCbmFtZXNwYWNlX3BhdGglNUQ9bWFya3VwLW9yZ2FuaXphdGlvbi05NDczJnByb2plY3QlNUJwYXRoJTVEPW1hcmt1cFByalBhdGgtLS0taW50ZWwtLUFSTV9ORU9OXzJfeDg2X1NTRV9fMTcxMDM4NTMwMzAyNiZwcm9qZWN0JTVCZGVzY3JpcHRpb24lNUQ9bWFya3VwUHJqRGVzYy0tLS1pbnRlbC0tQVJNX05FT05fMl94ODZfU1NFX18xNzEwMzg1MzAzMDI2JnByb2plY3QlNUJwdWJsaWMlNUQ9MSZsYW5ndWFnZT0w"}],"mixedContentType":"none","initialPriority":"High","referrerPolicy":"unsafe-url","isSameSite":true},"templatePlace":2,"markupFieldLs":[{"fldNm":"project_import_url","fldVal":"https://github.com/intel/ARM_NEON_2_x86_SSE.git"},{"fldNm":"markupPrjName","fldVal":"markupPrjName----intel--ARM_NEON_2_x86_SSE__1710385303026"},{"fldNm":"markupOrgName","fldVal":"markup-organization-9473"},{"fldNm":"markupPrjPath","fldVal":"markupPrjPath----intel--ARM_NEON_2_x86_SSE__1710385303026"},{"fldNm":"markupPrjDesc","fldVal":"markupPrjDesc----intel--ARM_NEON_2_x86_SSE__1710385303026"}]}
+{
+  "nowMs": 1710385303026,
+  "reqId": "16810.431",
+  "req": {
+    "url": "https://gitee.com/markup-organization-9473/projects",
+    "method": "POST",
+    "headers": {
+      "sec-ch-ua": "\"Not-A.Brand\";v=\"99\", \"Chromium\";v=\"124\"",
+      "X-CSRF-Token": "WCgOb4WINCOBS4eXngF2M4vVyZcJcwaT0JsSOEXA5B8DsQDRjHTbUodUYXJ9J9mxMoa/sTKLq5GD53GqkhB2zQ==",
+      "sec-ch-ua-mobile": "?0",
+      "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
+      "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
+      "Accept": "text/javascript, application/javascript, application/ecmascript, application/x-ecmascript, */*; q=0.01",
+      "Referer": "https://gitee.com/projects/import/url",
+      "X-Requested-With": "XMLHttpRequest",
+      "sec-ch-ua-platform": "\"Linux\""
+    },
+    "postData": "utf8=%E2%9C%93&authenticity_token=WCgOb4WINCOBS4eXngF2M4vVyZcJcwaT0JsSOEXA5B8DsQDRjHTbUodUYXJ9J9mxMoa%2FsTKLq5GD53GqkhB2zQ%3D%3D&project%5Bimport_url%5D=https%3A%2F%2Fgithub.com%2Fintel%2FARM_NEON_2_x86_SSE.git&user_sync_code=&password_sync_code=&project%5Bname%5D=markupPrjName----intel--ARM_NEON_2_x86_SSE__1710385303026&project%5Bnamespace_path%5D=markup-organization-9473&project%5Bpath%5D=markupPrjPath----intel--ARM_NEON_2_x86_SSE__1710385303026&project%5Bdescription%5D=markupPrjDesc----intel--ARM_NEON_2_x86_SSE__1710385303026&project%5Bpublic%5D=1&language=0",
+    "hasPostData": true,
+    "postDataEntries": [
+      {
+        "bytes": "dXRmOD0lRTIlOUMlOTMmYXV0aGVudGljaXR5X3Rva2VuPVdDZ09iNFdJTkNPQlM0ZVhuZ0YyTTR2VnlaY0pjd2FUMEpzU09FWEE1QjhEc1FEUmpIVGJVb2RVWVhKOUo5bXhNb2ElMkZzVEtMcTVHRDUzR3FraEIyelElM0QlM0QmcHJvamVjdCU1QmltcG9ydF91cmwlNUQ9aHR0cHMlM0ElMkYlMkZnaXRodWIuY29tJTJGaW50ZWwlMkZBUk1fTkVPTl8yX3g4Nl9TU0UuZ2l0JnVzZXJfc3luY19jb2RlPSZwYXNzd29yZF9zeW5jX2NvZGU9JnByb2plY3QlNUJuYW1lJTVEPW1hcmt1cFByak5hbWUtLS0taW50ZWwtLUFSTV9ORU9OXzJfeDg2X1NTRV9fMTcxMDM4NTMwMzAyNiZwcm9qZWN0JTVCbmFtZXNwYWNlX3BhdGglNUQ9bWFya3VwLW9yZ2FuaXphdGlvbi05NDczJnByb2plY3QlNUJwYXRoJTVEPW1hcmt1cFByalBhdGgtLS0taW50ZWwtLUFSTV9ORU9OXzJfeDg2X1NTRV9fMTcxMDM4NTMwMzAyNiZwcm9qZWN0JTVCZGVzY3JpcHRpb24lNUQ9bWFya3VwUHJqRGVzYy0tLS1pbnRlbC0tQVJNX05FT05fMl94ODZfU1NFX18xNzEwMzg1MzAzMDI2JnByb2plY3QlNUJwdWJsaWMlNUQ9MSZsYW5ndWFnZT0w"
+      }
+    ],
+    "mixedContentType": "none",
+    "initialPriority": "High",
+    "referrerPolicy": "unsafe-url",
+    "isSameSite": true
+  },
+  "templatePlace": 2,
+  "markupFieldLs": [
+    {
+      "fldNm": "project_import_url",
+      "fldVal": "https://github.com/intel/ARM_NEON_2_x86_SSE.git"
+    },
+    {
+      "fldNm": "markupPrjName",
+      "fldVal": "markupPrjName----intel--ARM_NEON_2_x86_SSE__1710385303026"
+    },
+    {
+      "fldNm": "markupOrgName",
+      "fldVal": "markup-organization-9473"
+    },
+    {
+      "fldNm": "markupPrjPath",
+      "fldVal": "markupPrjPath----intel--ARM_NEON_2_x86_SSE__1710385303026"
+    },
+    {
+      "fldNm": "markupPrjDesc",
+      "fldVal": "markupPrjDesc----intel--ARM_NEON_2_x86_SSE__1710385303026"
+    }
+  ]
+}
