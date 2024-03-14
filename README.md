@@ -43,15 +43,48 @@ const markupOrgName = "markup-organization-9473" ; //mirrr
 
 其余是动作是chrome-remote-interface直接驱动chrome或对chrome执行js脚本完成的，不需要人工操作浏览器
 
+假设 本步骤产生的结果文件 名为   ```./reqTemplate/x.json```
+
 #### 5. 使用 请求模板（带有标记值字段的请求 即 请求模板）
 
-[步骤4](giteaz:3000/msic/node-typescript-boilerplate#4-执行脚本生成gitee-导入仓库接口-的请求模板) 产生的结果文件举例: [doc/example_pretty_json_for_human_read.json](http://giteaz:3000/msic/node-typescript-boilerplate/src/branch/main/doc/example_pretty_json_for_human_read.json)
+[步骤4](giteaz:3000/msic/node-typescript-boilerplate#4-执行脚本生成gitee-导入仓库接口-的请求模板) 产生的结果文件```./reqTemplate/x.json```举例: [doc/example_pretty_json_for_human_read.json](http://giteaz:3000/msic/node-typescript-boilerplate/src/branch/main/doc/example_pretty_json_for_human_read.json)
 
-该结果文件 即  带有标记markup值字段的请求 即 请求模板
+1. 解释 请求模板
+该结果文件```./reqTemplate/x.json``` 即  带有标记markup值字段的请求 即 请求模板
 
-其中 字段postDataEntries==base64(postData), 因此可忽略字段postDataEntries
 
-将其中"markupFieldLs"描述的各字段值替换 成 目标字段值（比如 来源gitee组织、目标github仓库 等）， 替换后json转换为请求执行即可 将目标github仓库导入进给定的gitee组织
+2. 可忽略字段
+
+忽略 "nowMs", 此项目定义的
+
+忽略 "hasPostData" "mixedContentType" "initialPriority" "referrerPolicy" "isSameSite"  "postDataEntries"
+
+[devtools-protocol/types/protocol.d.ts](https://github.com/ChromeDevTools/devtools-protocol/blob/master/types/protocol.d.ts)
+
+忽略字段postDataEntries 的原因是 字段postDataEntries==base64(postData)
+
+3. 解释 "templatePlace"、"markupFieldLs"
+
+字段"templatePlace"定义为 [req_tmpl_t.ts](giteaz:3000/msic/node-typescript-boilerplate/src/branch/main/src/req_tmpl_t.ts)下的枚举TemplPlaceE
+
+字段"templatePlace"描述了 "markupFieldLs"的标记值们 作用到哪
+```js
+//来自  http://giteaz:3000/msic/node-typescript-boilerplate/src/branch/main/src/req_tmpl_t.ts
+export enum TemplPlaceE {
+  ReqHeader = 0, // "markupFieldLs"的标记值 在 ./reqTemplate/x.json:/"req"/"headers"
+  Url = 1, // "markupFieldLs"的标记值 在 ./reqTemplate/x.json:/"req"/"url"
+  Body = 2 // "markupFieldLs"的标记值 在 ./reqTemplate/x.json:/"req"/"postData"
+}
+
+```
+
+4. 使用方法
+
+将其中"markupFieldLs"描述的各字段值替换 成 目标字段值（比如 来源gitee组织、目标github仓库 等）， 
+
+替换后json转换为请求执行
+
+执行该请求 即可将目标github仓库导入进给定的gitee组织
 
 ## 开发时候用的 
 
