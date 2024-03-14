@@ -3,11 +3,13 @@ import {reqTemplDir} from "../src/my_cfg.js";
 import {readdirSync, readFileSync} from "fs";
 import {MarkupFieldUtilC} from "./MarkupFieldUtil.js";
 
+import readlineSync from 'readline-sync'
+
 import * as DP from "devtools-protocol";
 import  RequestNS from "request";
 import assert from "assert";
-import {program,Command} from "commander"
-
+import {Command} from "commander"
+const program = new Command()
 const exitCode_1:number=21
 const errMsg_1:string=`【错误】【退出代码${exitCode_1}】目录【${reqTemplDir}】下没有已markup的请求例子，请你先执行脚本gen_gitee_import_repo_req_template.sh以生成请求例子`
 const exitCode_2:number=22
@@ -20,11 +22,11 @@ if(reqTmplFNLs.length<=0){
 }
 
 program
-  .requiredOption("--from_repo","来源git仓库url")  //"https://github.com/request/request.git",  0 from_repo markup_project_import_url
-  .requiredOption("--goal_org","gitee组织名")  //"mirrr",  1 goal_org markup_project_namespace_path
-  .requiredOption("--goal_repoPath","gitee仓库路径")  //"repo01Path", 2 goal_repoPath markup_project_path
-  .requiredOption("--goal_repoName","gitee仓库名字")  //"repo01Name", 3 goal_repoName markup_project_name
-  .requiredOption("--goal_repoDesc","gitee仓库描述")  //"仓库描述", 4 goal_repoDesc markup_project_description
+  .option("-f --from_repo <from_repo>" )  //"https://github.com/request/request.git",  0 from_repo markup_project_import_url
+  .option("-o, --goal_org <goal_org>")  //"mirrr",  1 goal_org markup_project_namespace_path
+  .option("-r, --goal_repoPath <goal_repoPath>","gitee仓库路径")  //"repo01Path", 2 goal_repoPath markup_project_path
+  .option("-n, --goal_repoName <goal_repoName>","gitee仓库名字")  //"repo01Name", 3 goal_repoName markup_project_name
+  .option("-d, --goal_repoDesc <goal_repoDesc>","gitee仓库描述")  //"仓库描述", 4 goal_repoDesc markup_project_description
 
 program.parse()
 const options = program.opts()
@@ -35,6 +37,7 @@ const markup_project_path:string=options.goal_repoPath // 2
 const markup_project_name:string=options.goal_repoName // 3
 const markup_project_description:string=options.goal_repoDesc // 4
 
+// console.log(`${options},${markup_project_import_url}, ${markup_project_namespace_path}, ${markup_project_path}, ${markup_project_name}, ${markup_project_description}`)
 
 const newFieldLs: MarkupFieldI[]=[
 <MarkupFieldI>{fldNm:"markup_project_import_url",fldVal:encodeURIComponent(markup_project_import_url) },
