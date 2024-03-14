@@ -101,20 +101,7 @@ class RqTab{
 
 
 
-    calcLoginFlag( ){
 
-    let _LoginFlag:LoginEnum=LoginEnum.Other;
-    const reqIdLs:string[]=Array.from(this._rqDct.keys())
-    reqIdLs.forEach(reqId=>{ //隐含了同一种消息是严格有序的，且 forEach 严格遵守数组下标顺序
-      const reqChain:ReqWrapT[]=this._rqDct.get(reqId)
-      const respChain:RespHdWrapT[]=respHdTab.get(reqId)
-      const retK:LoginEnum=calcLoginEnumIn1Chain(reqChain, respChain);
-      if(retK!=LoginEnum.Other){//排除其他页面的干扰
-        _LoginFlag=retK;
-      }
-    })
-    return _LoginFlag;
-  }
 }
 const reqTab:RqTab=new RqTab(new Map())
 
@@ -219,7 +206,20 @@ function writeReqExampleAsTemplate(reqId:DP.Protocol.Network.RequestId, req:DP.P
   console.log(`已写入请求例子（作为请求模板）文件 【${reqTmplFp}】`)
 }
 
+function calcLoginFlag(reqTab:RqTab ){
 
+  let _LoginFlag:LoginEnum=LoginEnum.Other;
+  const reqIdLs:string[]=Array.from(reqTab._rqDct.keys())
+  reqIdLs.forEach(reqId=>{ //隐含了同一种消息是严格有序的，且 forEach 严格遵守数组下标顺序
+    const reqChain:ReqWrapT[]=reqTab._rqDct.get(reqId)
+    const respChain:RespHdWrapT[]=respHdTab.get(reqId)
+    const retK:LoginEnum=calcLoginEnumIn1Chain(reqChain, respChain);
+    if(retK!=LoginEnum.Other){//排除其他页面的干扰
+      _LoginFlag=retK;
+    }
+  })
+  return _LoginFlag;
+}
 
 function calcLoginEnumIn1Chain(reqChain:ReqWrapT[],  respChain:RespHdWrapT[]){
 
@@ -324,7 +324,7 @@ async function mainFunc( ) {
     await Page.loadEventFired()
     await DOM.getDocument();//阻塞的DOMget1 被 nav1 吃掉
     //是否已登录
-    const LoginFlag:LoginEnum=reqTab.calcLoginFlag()
+    const LoginFlag:LoginEnum=calcLoginFlag(reqTab)
     reqTab._rqDct.clear()
     respHdTab.clear()
 
