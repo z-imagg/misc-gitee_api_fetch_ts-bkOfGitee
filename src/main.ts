@@ -66,22 +66,22 @@ class RqTab{
   }
 
     pushReq(redirectResp:DP.Protocol.Network.Response, reqId:DP.Protocol.Network.RequestId,req:DP.Protocol.Network.Request ){
-    let ls:ReqWrapT[]=this_reqTab.get(reqId)
+    let ls:ReqWrapT[]=this.reqTab.get(reqId)
     if(ls==null){
-      this_reqTab.set(reqId,[]);
-      ls=this_reqTab.get(reqId)
+      this.reqTab.set(reqId,[]);
+      ls=this.reqTab.get(reqId)
     }
     ls.push(new ReqWrapT(redirectResp, reqId,req ))
   }
 
     reqLs_has(reqId:DP.Protocol.Network.RequestId){
-    const ls:ReqWrapT[]=this_reqTab.get(reqId)
+    const ls:ReqWrapT[]=this.reqTab.get(reqId)
     const empty:boolean=(ls==null||ls.length==0)
     return !empty;
   }
 
     __reqLs_get_req_url_any_startWith(reqId:DP.Protocol.Network.RequestId,urlPrefix:string){
-    const ls:ReqWrapT[]=this_reqTab.get(reqId)
+    const ls:ReqWrapT[]=this.reqTab.get(reqId)
     const empty:boolean=(ls==null||ls.length==0)
     if(!empty){
       return ls.filter(k=>k.req.url.startsWith(urlPrefix)).length>0
@@ -90,7 +90,7 @@ class RqTab{
   }
 
     __reqLs_get_req_urlLsJoin(reqId:DP.Protocol.Network.RequestId){
-    const ls:ReqWrapT[]=this_reqTab.get(reqId)
+    const ls:ReqWrapT[]=this.reqTab.get(reqId)
     const empty:boolean=(ls==null||ls.length==0)
     if(!empty){
       return ls.map(k=>k.req.url).join(",")
@@ -100,9 +100,9 @@ class RqTab{
 
     reqWpHasMarkup( ){
     // Array.from(reqLs.values()).map(k=>k[0].reqK.req.url)
-    const reqIdLs:string[]= Array.from(this_reqTab.keys())
+    const reqIdLs:string[]= Array.from(this.reqTab.keys())
     const _reqWpHasMarkup:ReqWrapT[]=reqIdLs.map(reqId=>{ //隐含了同一种消息是严格有序的，且 forEach 严格遵守数组下标顺序
-      const reqChain:ReqWrapT[]=this_reqTab.get(reqId)
+      const reqChain:ReqWrapT[]=this.reqTab.get(reqId)
       // const reqWpEnd:ReqWrapT=reqLs_endReq(reqChain);
       for (const reqK of reqChain) {
         const kHas:MarkupHasEnum=hasMarkupFieldIn1Req(reqK);
@@ -119,9 +119,9 @@ class RqTab{
     calcLoginFlag( ){
 
     let _LoginFlag:LoginEnum=LoginEnum.Other;
-    const reqIdLs:string[]=Array.from(this_reqTab.keys())
+    const reqIdLs:string[]=Array.from(this.reqTab.keys())
     reqIdLs.forEach(reqId=>{ //隐含了同一种消息是严格有序的，且 forEach 严格遵守数组下标顺序
-      const reqChain:ReqWrapT[]=this_reqTab.get(reqId)
+      const reqChain:ReqWrapT[]=this.reqTab.get(reqId)
       const respChain:RespHdWrapT[]=respHdTab.get(reqId)
       const retK:LoginEnum=calcLoginEnumIn1Chain(reqChain, respChain);
       if(retK!=LoginEnum.Other){//排除其他页面的干扰
@@ -335,7 +335,7 @@ async function mainFunc( ) {
     await DOM.getDocument();//阻塞的DOMget1 被 nav1 吃掉
     //是否已登录
     const LoginFlag:LoginEnum=calcLoginFlag()
-    this_reqTab.clear()
+    this.reqTab.clear()
     respHdTab.clear()
 
     //断言 此时登录状态不应该是未知
