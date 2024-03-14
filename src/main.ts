@@ -133,7 +133,6 @@ class RqTab{
 }
 const reqTab:RqTab=new RqTab(new Map())
 
-const this_reqTab:Map<DP.Protocol.Network.RequestId,ReqWrapT[]>=new Map();
 const respHdTab:Map<DP.Protocol.Network.RequestId,RespHdWrapT[]>=new Map();
 
 
