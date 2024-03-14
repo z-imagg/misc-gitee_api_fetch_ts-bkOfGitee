@@ -259,8 +259,12 @@ async function mainFunc( ) {
       console.log("【退出nodejs进程，退出代码为1，业务功能正常完成】, 找到有标记字段值的请求们，写入路径请看上面日志")
       exitCode=1;
     }
-    process.exit(exitCode)
 
+    //结束此函数开头打开的chrome浏览器进程
+    chrome.kill()
+
+    //退出nodejs进程
+    process.exit(exitCode)
 
   }catch(err){
     console.error(err);
