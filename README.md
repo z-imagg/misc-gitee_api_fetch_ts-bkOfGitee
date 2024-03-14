@@ -18,6 +18,8 @@
 
 ## 使用手册
 
+### 一、生成请求模板(gitee导入给定url仓库 请求 模板）
+
 ####  1. 填写gitee账户
 ```cp gitee_account.json.template  gitee_account.json```, 按照格式填写 你的gitee账户 到配置文件 gitee_account.json
 
@@ -85,6 +87,23 @@ export enum TemplPlaceE {
 2. 替换后json转换为请求执行
 
 3. 执行该请求 即可将目标github仓库导入进给定的gitee组织
+
+
+### 二、调用导入接口( 基于 以上 gitee导入给定url仓库 请求模板）
+
+```shell
+#导入github仓库到gitee
+export PATH=/fridaAnlzAp/github-gitee-gitea/gitee_api_fetch_ts:$PATH
+
+#生成bash命令import_githubRepo_to_gitee.sh的提示
+source import_githubRepo_to_gitee--bash-complete.sh
+
+import_githubRepo_to_gitee.sh --help
+
+import_githubRepo_to_gitee.sh --两次tab 即有命令提示
+
+```
+
 
 ## 开发时候用的 
 
