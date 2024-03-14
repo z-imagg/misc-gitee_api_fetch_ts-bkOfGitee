@@ -22,9 +22,7 @@ import {
   accInfoPgUrl,
 } from './site_gitee_cfg.js'
 
-
-
-
+import {chromePath,reqTemplDir} from "./my_cfg.js";
 
 
 const reqTab:RqTab=new RqTab(new Map())
@@ -76,7 +74,6 @@ function hasMarkupFieldIn1Req(reqWpEnd:ReqWrapT){
   return _markup;
 }
 
-const reqTemplDir:string="./reqTemplate"
 // 写请求例子作为请求模板
 function writeReqExampleAsTemplate(reqId:DP.Protocol.Network.RequestId, req:DP.Protocol.Network.Request,templatePlace:TemplPlaceE){
   const reqTemplText:string=JSON.stringify(<ReqTemplateI>{
@@ -146,7 +143,7 @@ function calcLoginEnumIn1Chain(reqChain:ReqWrapT[],  respChain:RespHdWrapT[]){
 async function mainFunc( ) {
   try{
     const chrome:CL.LaunchedChrome= await CL.launch(<CL.Options>{
-      chromePath:"/app/chrome-linux/chrome",
+      chromePath:chromePath, // "/app/chrome-linux/chrome"
       chromeFlags:["--no-first-run","--disable-gpu"]
     });
     const client:CDP.Client = await CDP(<CDP.Options>{
