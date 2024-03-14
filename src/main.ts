@@ -11,6 +11,7 @@ import {ReqWrapT, RespHdWrapT} from "./rq_rp_wrap_t.js";
 import {LoginEnum, MarkupHasEnum} from "./enums.js";
 import {RqTab} from "./rq_tab_c.js";
 import {RpHdTabC} from "./rpHd_tab_c.js";
+import {LsUtilC} from "./ls_util_c.js";
 
 
 const urlList:string[]=[
@@ -66,44 +67,12 @@ const reqTab:RqTab=new RqTab(new Map())
 
 const respHdTab:RpHdTabC=new RpHdTabC(new Map())
 
-
-
-
-
-
-function reqLs_req1(chain:ReqWrapT[]){
-  const empty:boolean=(chain==null||chain.length==0)
-  return (!empty)?chain[0]:null;
-}
-function reqLs_req2(chain:ReqWrapT[]){
-  const lack:boolean=(chain==null||chain.length<2)
-  return (!lack)?chain[1]:null;
-}
-function respLs_1(chain:RespHdWrapT[]){
-  const empty:boolean=(chain==null||chain.length==0)
-  return (!empty)?chain[0]:null;
-}
-function respLs_2(chain:RespHdWrapT[]){
-  const lack:boolean=(chain==null||chain.length<2)
-  return (!lack)?chain[1]:null;
-}
-
-function reqLs_endReq(chain:ReqWrapT[]){
-  const endIdx:number=chain.length-1;
-  return (endIdx>=0)?chain[endIdx]:null;
-}
-function respLs_endResp(chain:RespHdWrapT[]){
-  const endIdx:number=chain.length-1;
-  return (endIdx>=0)?chain[endIdx]:null;
-}
-
-
 function reqWpHasMarkup(reqTab:RqTab ){
   // Array.from(reqLs.values()).map(k=>k[0].reqK.req.url)
   const reqIdLs:string[]= Array.from(reqTab._rqDct.keys())
   const _reqWpHasMarkup:ReqWrapT[]=reqIdLs.map(reqId=>{ //隐含了同一种消息是严格有序的，且 forEach 严格遵守数组下标顺序
     const reqChain:ReqWrapT[]=this._rqDct.get(reqId)
-    // const reqWpEnd:ReqWrapT=reqLs_endReq(reqChain);
+    // const reqWpEnd:ReqWrapT=LsUtilC.endElem(reqChain);
     for (const reqK of reqChain) {
       const kHas:MarkupHasEnum=hasMarkupFieldIn1Req(reqK);
       if(kHas==MarkupHasEnum.Yes){//排除其他页面的干扰
@@ -175,21 +144,21 @@ function calcLoginFlag(reqTab:RqTab ){
 function calcLoginEnumIn1Chain(reqChain:ReqWrapT[],  respChain:RespHdWrapT[]){
 
   let _loginFlag:LoginEnum=LoginEnum.Other;
-  const reqWp1:ReqWrapT=reqLs_req1(reqChain);
+  const reqWp1:ReqWrapT=LsUtilC.elem1(reqChain);
   assert(reqWp1!=null, "xxx1")
   // if( reqWp1  == null ){return;}
-  const respWp1:RespHdWrapT=respLs_1(respChain);
+  const respWp1:RespHdWrapT=LsUtilC.elem1(respChain);
 
   const urlFirst:string=reqWp1.req.url;
 
-  const reqWpEnd:ReqWrapT=reqLs_endReq(reqChain);
+  const reqWpEnd:ReqWrapT=LsUtilC.endElem(reqChain);
   const urlEnd:string=reqWpEnd.req.url;
 
-  // const respWpEnd:RespHdWrapT=respLs_endResp(respChain);
+  // const respWpEnd:RespHdWrapT=LsUtilC.endElem(respChain);
 
   if( reqWp1.req. url == accInfoPgUrl ){
-    const reqWp2:ReqWrapT=reqLs_req2(reqChain);
-    const respWp2:RespHdWrapT=respLs_2(respChain);
+    const reqWp2:ReqWrapT=LsUtilC.elem2(reqChain);
+    const respWp2:RespHdWrapT=LsUtilC.elem2(respChain);
     if(reqWp2==null){ // && respWp2.statusCode==200
       console.log(`【发现直接进入账户页】【undefined--->账户页】【此即已登录】${urlEnd}`)
       //已登录:
