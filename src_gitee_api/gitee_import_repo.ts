@@ -22,11 +22,11 @@ if(reqTmplFNLs.length<=0){
 }
 
 program
-  .option("-f --from_repo <from_repo>" )  //"https://github.com/request/request.git",  0 from_repo markup_project_import_url
-  .option("-o, --goal_org <goal_org>")  //"mirrr",  1 goal_org markup_project_namespace_path
-  .option("-r, --goal_repoPath <goal_repoPath>","gitee仓库路径")  //"repo01Path", 2 goal_repoPath markup_project_path
-  .option("-n, --goal_repoName <goal_repoName>","gitee仓库名字")  //"repo01Name", 3 goal_repoName markup_project_name
-  .option("-d, --goal_repoDesc <goal_repoDesc>","gitee仓库描述")  //"仓库描述", 4 goal_repoDesc markup_project_description
+  .requiredOption("-f --from_repo <from_repo>","【来源，仓库地址,常为github仓库地址】" )  //"https://github.com/request/request.git",  0 from_repo markup_project_import_url
+  .requiredOption("-o, --goal_org <goal_org>","【目标，gitee的组织】")  //"mirrr",  1 goal_org markup_project_namespace_path
+  .requiredOption("-r, --goal_repoPath <goal_repoPath>","【目标，gitee仓库路径】")  //"repo01Path", 2 goal_repoPath markup_project_path
+  .requiredOption("-n, --goal_repoName <goal_repoName>","【目标，gitee仓库名字】")  //"repo01Name", 3 goal_repoName markup_project_name
+  .requiredOption("-d, --goal_repoDesc <goal_repoDesc>","【目标，gitee仓库描述】")  //"仓库描述", 4 goal_repoDesc markup_project_description
 
 program.parse()
 const options = program.opts()
