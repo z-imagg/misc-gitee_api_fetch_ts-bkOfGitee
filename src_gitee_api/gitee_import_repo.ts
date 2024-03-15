@@ -112,12 +112,12 @@ const failed_msg:string = `${options.from_repo}  --->   xxx`
 function judgeResult(error, response, body) {
   if (!error && response.statusCode == 200) {
     console.log(body)
-    console.log(`执行gitee导入仓库成功【${ok_msg}】`)
+    console.log(`执行gitee导入仓库成功， http响应码【${response.statusCode}】【${ok_msg}】`)
     process.exit(0)
   }else{
     console.log(body)
     console.log(error)
-    console.log(`执行gitee导入仓库失败【${failed_msg}】`)
+    console.log(`执行gitee导入仓库失败， http响应码【${response.statusCode}】【${failed_msg}】`)
     process.exit(5)
   }
 }
