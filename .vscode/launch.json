@@ -1,0 +1,29 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "console": "integratedTerminal", // nodejs的 控制台输入 【readline-sync/readlineSync.question】需要此种console
+            "type": "node",
+            "request": "launch",
+            "name": "供应方【生成 标记请求例子】",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "program": "${workspaceFolder}/build/src/main.js",
+        },
+        {
+            "console": "integratedTerminal", // nodejs的 控制台输入 【readline-sync/readlineSync.question】需要此种console
+            "type": "node",
+            "request": "launch",
+            "name": "消费方【执行 标记请求例子， 以导入github仓库到gitee】",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "program": "${workspaceFolder}/build/src_gitee_api/gitee_import_repo.js",
+            "args": ["--from_repo" ,"https://github.com/pytorch/pytorch.git",  "--goal_org", "ML88", "--goal_repoPath", "pytorch", "--goal_repoName", "pytorch", "--goal_repoDesc", "pytorch镜像"]
+        }
+    ]
+}
