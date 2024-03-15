@@ -11,7 +11,7 @@ import assert from "assert";
 import {Command} from "commander"
 const program = new Command()
 const exitCode_1:number=21
-const errMsg_1:string=`【错误】【退出代码${exitCode_1}】目录【${reqTemplDir}】下没有已markup的请求例子，请你先执行脚本gen_gitee_import_repo_req_template.sh以生成请求例子`
+const errMsg_1:string=`【错误】【退出代码${exitCode_1}】目录【${reqTemplDir}】下没有已markup的请求例子，请你先执行脚本script/gen_gitee_import_repo_req_template.sh以生成请求例子`
 const exitCode_2:number=22
 const errMsg_2:string=`【错误】【退出代码${exitCode_2}】命令用法为 me.js from_repoUrl goal_OrgName goal_repoName  goal_repoDesc`
 

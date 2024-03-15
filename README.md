@@ -37,7 +37,7 @@ const markupOrgName = "markup-organization-9473" ; //mirrr
 
 #### 4. 执行脚本生成gitee 导入仓库接口 的请求模板
 
-```bash -x gen_gitee_import_repo_req_template.sh```
+```bash -x script/gen_gitee_import_repo_req_template.sh```
 
 该脚本会启动chrome浏览器，
 
@@ -93,10 +93,10 @@ export enum TemplPlaceE {
 
 ```shell
 #导入github仓库到gitee
-export PATH=/fridaAnlzAp/github-gitee-gitea/gitee_api_fetch_ts:$PATH
+export PATH=/fridaAnlzAp/github-gitee-gitea/gitee_api_fetch_ts/script:$PATH
 
 #生成bash命令import_githubRepo_to_gitee.sh的提示
-source import_githubRepo_to_gitee--bash-complete.sh
+source script/bash-complete--import_githubRepo_to_gitee.sh
 
 import_githubRepo_to_gitee.sh --help
 
