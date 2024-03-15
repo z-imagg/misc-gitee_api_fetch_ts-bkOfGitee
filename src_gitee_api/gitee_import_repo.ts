@@ -104,7 +104,7 @@ switch (rqTpl.req.method){
 }
 
 //理论上 目标gitee完整仓库地址 应该从请求响应中解析，这里偷懒了，直接用常识 组装目的gitee完整仓库地址
-const goal_repo:string = `${siteBaseUrl}/${markup_project_namespace_path}${markup_project_path}.git`
+const goal_repo:string = `${siteBaseUrl}/${markup_project_namespace_path}/${markup_project_path}.git`
 //组装结果消息
 const ok_msg:string = `${options.from_repo}  --->   ${goal_repo}`
 const failed_msg:string = `${options.from_repo}  --->   xxx`
