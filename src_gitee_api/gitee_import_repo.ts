@@ -9,7 +9,7 @@ import * as DP from "devtools-protocol";
 import  RequestNS from "request";
 import assert from "assert";
 import {Command} from "commander"
-const program = new Command()
+const program = new Command("【导入github仓库到gitee（基于gitee页面导入url的请求标记例子）】gitee_import_repo.ts")
 const exitCode_1:number=21
 const errMsg_1:string=`【错误】【退出代码${exitCode_1}】目录【${reqTemplDir}】下没有已markup的请求例子，请你先执行脚本script/gen_gitee_import_repo_req_template.sh以生成请求例子`
 const exitCode_2:number=22
