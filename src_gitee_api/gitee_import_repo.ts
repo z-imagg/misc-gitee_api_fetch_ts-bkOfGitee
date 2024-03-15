@@ -37,7 +37,7 @@ const markup_project_path:string=options.goal_repoPath // 2
 const markup_project_name:string=options.goal_repoName // 3
 const markup_project_description:string=options.goal_repoDesc // 4
 
-// console.log(`${options},${markup_project_import_url}, ${markup_project_namespace_path}, ${markup_project_path}, ${markup_project_name}, ${markup_project_description}`)
+console.log(`【命令行参数打印】${options},${markup_project_import_url}, ${markup_project_namespace_path}, ${markup_project_path}, ${markup_project_name}, ${markup_project_description}`)
 
 const newFieldLs: MarkupFieldI[]=[
 <MarkupFieldI>{fldNm:"markup_project_import_url",fldVal:encodeURIComponent(markup_project_import_url) },
