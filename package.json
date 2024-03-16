@@ -38,6 +38,7 @@
   "author": "Jakub Synowiec <jsynowiec@users.noreply.github.com>",
   "license": "Apache-2.0",
   "dependencies": {
+    "axios": "^1.6.8",
     "chrome-launcher": "^1.1.0",
     "chrome-remote-interface": "^0.33.0",
     "commander": "^12.0.0",
