@@ -50,7 +50,7 @@ interface SimpleRespI{
   status:number
   text:string
 }
-function GiteeImportRepoF(markup_project_import_url:string,markup_project_namespace_path:string,markup_project_path:string,markup_project_name:string,markup_project_description:string):SimpleRespI{
+async function GiteeImportRepoF(markup_project_import_url:string,markup_project_namespace_path:string,markup_project_path:string,markup_project_name:string,markup_project_description:string):SimpleRespI{
   const reqTmplFNLs:string[]=readdirSync(`${reqTemplDir}`)
   if(reqTmplFNLs.length<=0){
     console.log(errMsg_1)
@@ -128,13 +128,18 @@ function GiteeImportRepoF(markup_project_import_url:string,markup_project_namesp
   if (resp.status == 200) {
     console.log(resp.data)
     console.log(`执行gitee导入仓库成功， http响应码【${resp.status}】 【${ok_msg}】`)
-    process.exit(0)
   }else{
     console.log(resp.data)
     console.log(`执行gitee导入仓库失败， http响应码【${resp.status}】 【${failed_msg}】`)
-    process.exit(5)
   }
 
+  return simpleResp;
+
+  }
+
+
+if (require.main==module){
+  MyMain();
 }
 const _end:boolean=true
 
