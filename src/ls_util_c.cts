@@ -14,3 +14,14 @@ export class LsUtilC{
     return (endIdx>=0)?chain[endIdx]:null;
   }
 }
+
+export class StrIncludeUtil{
+  static includeAny(longStr:string,shortLs:string[]):boolean{
+    for( const shortStr in shortLs){
+        if (longStr.includes(shortStr)){
+          return true;
+        }
+    }
+    return false;
+  }
+}

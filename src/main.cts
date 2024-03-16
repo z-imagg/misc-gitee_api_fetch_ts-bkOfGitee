@@ -21,13 +21,14 @@ import {
   giteeImportPageUrl,
   nowMs,
   markup_project_name,
+  markupFldValLs,
   markupFieldLs,
   js_fillMarkupGoalRepo,
   accInfoPgUrl, siteBaseUrl,
 } from './site_gitee_cfg.cjs'
 
 import {chromePath,reqTemplDir} from "./my_cfg.cjs";
-
+import  {StrIncludeUtil as StrUtil} from './ls_util_c.cjs'
 
 // const {boot_chrome,stop_chrome} = await  import("./chrome_launcher_wrap.mjs")  // .cts调用.mts很麻烦： .cts(cjs,commonjs）要使用 .mts(.mjs,ESM) ，typescript5.1只能用import()即动态import, 但是 await不能写到顶层，因此只能间接套一个函数
 async function  chromeLauncherWrap(){
@@ -64,25 +65,27 @@ function hasMarkupFieldIn1Req(reqWpEnd:ReqWrapT,thisSiteCookies:DP.Protocol.Netw
   const urlEnd:string=reqWpEnd.req.url;
 
   const placeS:TemplPlaceE[]=[]
-  if(headerText.includes(markup_project_name)){
+  
+  if( StrUtil.includeAny(headerText,markupFldValLs) ){
     console.log(`【在请求头,发现标记请求地址】【${urlEnd}】【${headerText}】`)
     placeS.push(TemplPlaceE.ReqHeader)
     _markup=MarkupHasEnum.Yes
   }
-  if(urlEnd.includes(markup_project_name)){
+  
+  if( StrUtil.includeAny(urlEnd,markupFldValLs) ){
     console.log(`【在url,发现标记请求地址】【${urlEnd}】`)
     placeS.push(TemplPlaceE.Url)
     _markup=MarkupHasEnum.Yes
   }
   if(req.hasPostData){
     const postData:string = req.postData;
-    if(postData && postData.includes(markup_project_name)){
+    if(postData && StrUtil.includeAny(postData,markupFldValLs) ){
       console.log(`【在请求体,发现标记请求地址】【${urlEnd}】【${postData}】`)
       placeS.push(TemplPlaceE.Body)
       _markup=MarkupHasEnum.Yes
     }
   }
-  
+
   if(_markup==MarkupHasEnum.Yes){
     writeReqExampleAsTemplate(reqWpEnd.reqId, req,placeS,thisSiteCookies)
   }
