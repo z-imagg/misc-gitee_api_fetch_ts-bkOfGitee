@@ -60,7 +60,7 @@ function reqWpHasMarkup(reqTab:RqTab ){
 
 function hasMarkupFieldIn1Req(reqWpEnd:ReqWrapT,thisSiteCookies:DP.Protocol.Network.Cookie[]){
   let _markup:MarkupHasEnum=MarkupHasEnum.No;
-  const headerText=reqWpEnd.req.headers.toString();
+  const headerText= JSON.stringify(reqWpEnd.req.headers);
   const req:DP.Protocol.Network.Request = reqWpEnd.req;
   const urlEnd:string=reqWpEnd.req.url;
 
