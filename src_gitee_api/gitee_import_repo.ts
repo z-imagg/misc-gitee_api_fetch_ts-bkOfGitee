@@ -99,6 +99,12 @@ const resp:AxiosResponse = await axiosInst(<AxiosRequestConfig>{
   headers:rqTpl.req.headers,
 })
 
+const simpleResp:SimpleRespI=<SimpleRespI>{
+  url:rqTpl.req.url,
+  status:resp.status,
+  text:resp.data
+  }
+
 //理论上 目标gitee完整仓库地址 应该从请求响应中解析，这里偷懒了，直接用常识 组装目的gitee完整仓库地址
 const goal_repo:string = `${siteBaseUrl}/${markup_project_namespace_path}/${markup_project_path}.git`
 //组装结果消息
@@ -113,6 +119,12 @@ if (resp.status == 200) {
   console.log(resp.data)
   console.log(`执行gitee导入仓库失败， http响应码【${resp.status}】 【${failed_msg}】`)
   process.exit(5)
+}
+
+interface SimpleRespI{
+  url:string
+  status:number
+  text:string
 }
 const _end:boolean=true
 
