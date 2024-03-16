@@ -62,32 +62,38 @@ function hasMarkupFieldIn1Req(reqWpEnd:ReqWrapT,thisSiteCookies:DP.Protocol.Netw
   const headerText=reqWpEnd.req.headers.toString();
   const req:DP.Protocol.Network.Request = reqWpEnd.req;
   const urlEnd:string=reqWpEnd.req.url;
+
+  const placeS:TemplPlaceE[]=[]
   if(headerText.includes(markup_project_name)){
     console.log(`【在请求头,发现标记请求地址】【${urlEnd}】【${headerText}】`)
-    writeReqExampleAsTemplate(reqWpEnd.reqId, req,TemplPlaceE.ReqHeader,thisSiteCookies)
+    placeS.push(TemplPlaceE.ReqHeader)
     _markup=MarkupHasEnum.Yes
   }
   if(urlEnd.includes(markup_project_name)){
     console.log(`【在url,发现标记请求地址】【${urlEnd}】`)
+    placeS.push(TemplPlaceE.Url)
     _markup=MarkupHasEnum.Yes
-    writeReqExampleAsTemplate(reqWpEnd.reqId, req,TemplPlaceE.Url,thisSiteCookies)
   }
   if(req.hasPostData){
     const postData:string = req.postData;
     if(postData && postData.includes(markup_project_name)){
       console.log(`【在请求体,发现标记请求地址】【${urlEnd}】【${postData}】`)
+      placeS.push(TemplPlaceE.Body)
       _markup=MarkupHasEnum.Yes
-      writeReqExampleAsTemplate(reqWpEnd.reqId, req,TemplPlaceE.Body,thisSiteCookies)
     }
+  }
+  
+  if(_markup==MarkupHasEnum.Yes){
+    writeReqExampleAsTemplate(reqWpEnd.reqId, req,placeS,thisSiteCookies)
   }
 
   return _markup;
 }
 
 // 写请求例子作为请求模板
-function writeReqExampleAsTemplate(reqId:DP.Protocol.Network.RequestId, req:DP.Protocol.Network.Request,templatePlace:TemplPlaceE,thisSiteCookies:DP.Protocol.Network.Cookie[]){
+function writeReqExampleAsTemplate(reqId:DP.Protocol.Network.RequestId, req:DP.Protocol.Network.Request,templatePlaceS:TemplPlaceE[],thisSiteCookies:DP.Protocol.Network.Cookie[]){
   const reqTemplText:string=JSON.stringify({
-    nowMs,reqId,req,templatePlace,markupFieldLs,thisSiteCookies
+    nowMs,reqId,req,templatePlaceS,markupFieldLs,thisSiteCookies
   } as ReqTemplateI)
   if(!existsSync(reqTemplDir)){
     mkdirSync(reqTemplDir)

@@ -24,7 +24,7 @@ export interface ReqTemplateI {
   thisSiteCookies:DP.Protocol.Network.Cookie[]
 
   //模板位置（标记字段在请求中的部位）
-  templatePlace: TemplPlaceE
+  templatePlaceS: TemplPlaceE[]
   //标记字段们
   markupFieldLs: MarkupFieldI[]
 }

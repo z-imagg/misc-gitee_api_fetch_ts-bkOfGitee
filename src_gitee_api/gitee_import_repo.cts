@@ -87,7 +87,8 @@ async function GiteeImportRepoF(markup_project_import_url:string,markup_project_
 
   rqTpl.markupFieldLs= rqTpl.markupFieldLs.map(k=> ({fldNm:k.fldNm,fldVal:encodeURIComponent(k.fldVal)} as MarkupFieldI))
 
-  switch (rqTpl.templatePlace){
+  rqTpl.templatePlaceS.forEach(templatePlace=>{
+  switch (templatePlace){
     case TemplPlaceE.Url:{
       // rqTpl.req.url
       MarkupFieldUtilC.assign_L2R(rqTpl.markupFieldLs,newFieldLs,rqTpl.req.url)
@@ -113,6 +114,8 @@ async function GiteeImportRepoF(markup_project_import_url:string,markup_project_
       break;
     }
   }
+  })
+
 
   const Cookie:string=Array.from(rqTpl.thisSiteCookies).map(ck=>`${ck.name}=${ck.value}`).join("; ")
   rqTpl.req.headers['Cookie']=Cookie
