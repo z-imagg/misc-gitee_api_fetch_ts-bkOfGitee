@@ -2,7 +2,6 @@ import {MarkupFieldI, ReqTemplateI, TemplPlaceE} from "../src/req_tmpl_t.cjs";
 import {reqTemplDir} from "../src/my_cfg.cjs";
 import {readdirSync, readFileSync, writeFileSync} from "fs";
 import {MarkupFieldUtilC} from "./MarkupFieldUtil.cjs";
-import {dpHeaders2map} from "./HttpHeadersUtil.cjs"
 
 
 import * as DP from "devtools-protocol";
@@ -53,7 +52,7 @@ async function MyMain(){
 interface SimpleRespI{
   url:string
   reqBody:string
-  reqHeaders:Map<string,string>
+  reqHeaders:string
   respStatus:number
   respBody:string
   respHeaders:string
@@ -128,7 +127,7 @@ async function GiteeImportRepoF(markup_project_import_url:string,markup_project_
   const simpleReqResp:SimpleRespI= {
     url:rqTpl.req.url,
     reqBody:rqTpl.req.postData,
-    reqHeaders:dpHeaders2map(rqTpl.req.headers),
+    reqHeaders:JSON.stringify(rqTpl.req.headers),
     respStatus:resp.status,
     respBody:resp.data,
     respHeaders:JSON.stringify(resp.headers)
