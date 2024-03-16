@@ -6,7 +6,7 @@ import {MarkupFieldUtilC} from "./MarkupFieldUtil.js";
 import readlineSync from 'readline-sync'
 
 import * as DP from "devtools-protocol";
-import axios,{AxiosResponse} from "axios";
+import {Axios,AxiosResponse} from "axios";
 
 import assert from "assert";
 import {Command} from "commander"
@@ -91,7 +91,7 @@ console.log(`rqTpl.req.postData【${rqTpl.req.postData}】`)
 
 switch (rqTpl.req.method){
   case "POST":{
-    const resp:AxiosResponse = await axios.post(rqTpl.req.url,rqTpl.req.postData,{headers:rqTpl.req.headers})
+    const resp:AxiosResponse = await Axios.prototype.post(rqTpl.req.url,rqTpl.req.postData,{headers:rqTpl.req.headers})
     if (resp.status == 200) {
       console.log(resp.data)
       console.log(`执行gitee导入仓库成功， http响应码【${resp.status}】 `)
