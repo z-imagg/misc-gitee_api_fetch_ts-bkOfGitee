@@ -6,7 +6,10 @@ import {MarkupFieldUtilC} from "./MarkupFieldUtil.js";
 import readlineSync from 'readline-sync'
 
 import * as DP from "devtools-protocol";
-import {Axios,AxiosResponse} from "axios";
+import axios,{ AxiosRequestConfig, AxiosResponse, AxiosStatic} from "axios";
+
+//变量axios的类型是AxiosStatic; axios这个名字普通了，换个名字叫axiosInst
+const axiosInst:AxiosStatic=axios;
 
 import assert from "assert";
 import {Command} from "commander"
@@ -89,25 +92,12 @@ const Cookie:string=Array.from(rqTpl.thisSiteCookies).map(ck=>`${ck.name}=${ck.v
 rqTpl.req.headers['Cookie']=Cookie
 console.log(`rqTpl.req.postData【${rqTpl.req.postData}】`)
 
-switch (rqTpl.req.method){
-  case "POST":{
-    const resp:AxiosResponse = await Axios.prototype.post(rqTpl.req.url,rqTpl.req.postData,{headers:rqTpl.req.headers})
-    if (resp.status == 200) {
-      console.log(resp.data)
-      console.log(`执行gitee导入仓库成功， http响应码【${resp.status}】 `)
-      process.exit(0)
-    }else{
-      console.log(resp.data)
-      console.log(`执行gitee导入仓库失败， http响应码【${resp.status}】 `)
-      process.exit(5)
-    }
-
-    break
-  }
-  case "GET":{
-    break
-  }
-}
+const resp:AxiosResponse = await axiosInst(<AxiosRequestConfig>{
+  url:rqTpl.req.url,
+  method:rqTpl.req.method,
+  data:rqTpl.req.postData,
+  headers:rqTpl.req.headers,
+})
 
 //理论上 目标gitee完整仓库地址 应该从请求响应中解析，这里偷懒了，直接用常识 组装目的gitee完整仓库地址
 const goal_repo:string = `${siteBaseUrl}/${markup_project_namespace_path}/${markup_project_path}.git`
@@ -115,5 +105,14 @@ const goal_repo:string = `${siteBaseUrl}/${markup_project_namespace_path}/${mark
 const ok_msg:string = `${options.from_repo}  --->   ${goal_repo}`
 const failed_msg:string = `${options.from_repo}  --->   xxx`
 
+if (resp.status == 200) {
+  console.log(resp.data)
+  console.log(`执行gitee导入仓库成功， http响应码【${resp.status}】 【${ok_msg}】`)
+  process.exit(0)
+}else{
+  console.log(resp.data)
+  console.log(`执行gitee导入仓库失败， http响应码【${resp.status}】 【${failed_msg}】`)
+  process.exit(5)
+}
 const _end:boolean=true
 
