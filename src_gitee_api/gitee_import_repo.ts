@@ -6,7 +6,8 @@ import {MarkupFieldUtilC} from "./MarkupFieldUtil.js";
 import readlineSync from 'readline-sync'
 
 import * as DP from "devtools-protocol";
-import  RequestNS from "request";
+import axios,{AxiosResponse} from "axios";
+
 import assert from "assert";
 import {Command} from "commander"
 import {siteBaseUrl} from "../src/site_gitee_cfg.js";
@@ -90,12 +91,17 @@ console.log(`rqTpl.req.postData【${rqTpl.req.postData}】`)
 
 switch (rqTpl.req.method){
   case "POST":{
-    RequestNS.post(
-      {url:rqTpl.req.url,
-        body:rqTpl.req.postData,
-        headers:rqTpl.req.headers
-      },
-      judgeResult)
+    const resp:AxiosResponse = await axios.post(rqTpl.req.url,rqTpl.req.postData,{headers:rqTpl.req.headers})
+    if (resp.status == 200) {
+      console.log(resp.data)
+      console.log(`执行gitee导入仓库成功， http响应码【${resp.status}】 `)
+      process.exit(0)
+    }else{
+      console.log(resp.data)
+      console.log(`执行gitee导入仓库失败， http响应码【${resp.status}】 `)
+      process.exit(5)
+    }
+
     break
   }
   case "GET":{
@@ -109,17 +115,5 @@ const goal_repo:string = `${siteBaseUrl}/${markup_project_namespace_path}/${mark
 const ok_msg:string = `${options.from_repo}  --->   ${goal_repo}`
 const failed_msg:string = `${options.from_repo}  --->   xxx`
 
-function judgeResult(error, response, body) {
-  if (!error && response.statusCode == 200) {
-    console.log(body)
-    console.log(`执行gitee导入仓库成功， http响应码【${response.statusCode}】【${ok_msg}】`)
-    process.exit(0)
-  }else{
-    console.log(body)
-    console.log(error)
-    console.log(`执行gitee导入仓库失败， http响应码【${response.statusCode}】【${failed_msg}】`)
-    process.exit(5)
-  }
-}
 const _end:boolean=true
 
