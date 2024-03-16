@@ -39,7 +39,7 @@ async function MyMain(){
     returnFp=`write_return.${Date.now()}.json`
   }
 
-  console.log(`【命令行参数打印】${options},${markup_project_import_url}, ${markup_project_namespace_path}, ${markup_project_path}, ${markup_project_name}, ${markup_project_description}`)
+  console.log(`【命令行参数打印】 ${markup_project_import_url}, ${markup_project_namespace_path}, ${markup_project_path}, ${markup_project_name}, ${markup_project_description}`)
 
 
   const simpleResp:SimpleRespI = await GiteeImportRepoF(markup_project_import_url,markup_project_namespace_path,markup_project_path,markup_project_name,markup_project_description)
@@ -91,7 +91,7 @@ async function GiteeImportRepoF(markup_project_import_url:string,markup_project_
   switch (templatePlace){
     case TemplPlaceE.Url:{
       // rqTpl.req.url
-      MarkupFieldUtilC.assign_L2R(rqTpl.markupFieldLs,newFieldLs,rqTpl.req.url)
+      rqTpl.req.url=MarkupFieldUtilC.assign_L2R(rqTpl.markupFieldLs,newFieldLs,rqTpl.req.url)
       break;
     }
     case TemplPlaceE.ReqHeader:{
