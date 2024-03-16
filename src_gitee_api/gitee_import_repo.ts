@@ -21,11 +21,7 @@ const errMsg_1:string=`【错误】【退出代码${exitCode_1}】目录【${req
 const exitCode_2:number=22
 const errMsg_2:string=`【错误】【退出代码${exitCode_2}】命令用法为 me.js from_repoUrl goal_OrgName goal_repoName  goal_repoDesc`
 
-const reqTmplFNLs:string[]=readdirSync(`${reqTemplDir}`)
-if(reqTmplFNLs.length<=0){
-  console.log(errMsg_1)
-  process.exit(exitCode_1)
-}
+
 
 program
   .requiredOption("-f --from_repo <from_repo>","【来源，仓库地址,常为github仓库地址】" )  //"https://github.com/request/request.git",  0 from_repo markup_project_import_url
@@ -44,7 +40,11 @@ interface SimpleRespI{
   text:string
 }
 function GiteeImportRepoF(markup_project_import_url:string,markup_project_namespace_path:string,markup_project_path:string,markup_project_name:string,markup_project_description:string):SimpleRespI{
-
+  const reqTmplFNLs:string[]=readdirSync(`${reqTemplDir}`)
+  if(reqTmplFNLs.length<=0){
+    console.log(errMsg_1)
+    process.exit(exitCode_1)
+  }
 
   // const markup_project_import_url:string=options.from_repo // 0
   // const markup_project_namespace_path:string=options.goal_org // 1
