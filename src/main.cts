@@ -80,9 +80,9 @@ function hasMarkupFieldIn1Req(reqWpEnd:ReqWrapT,thisSiteCookies:DP.Protocol.Netw
 
 // 写请求例子作为请求模板
 function writeReqExampleAsTemplate(reqId:DP.Protocol.Network.RequestId, req:DP.Protocol.Network.Request,templatePlace:TemplPlaceE,thisSiteCookies:DP.Protocol.Network.Cookie[]){
-  const reqTemplText:string=JSON.stringify(<ReqTemplateI>{
+  const reqTemplText:string=JSON.stringify({
     nowMs,reqId,req,templatePlace,markupFieldLs,thisSiteCookies
-  })
+  } as ReqTemplateI)
   if(!existsSync(reqTemplDir)){
     mkdirSync(reqTemplDir)
   }
@@ -146,9 +146,9 @@ function calcLoginEnumIn1Chain(reqChain:ReqWrapT[],  respChain:RespHdWrapT[]){
 }
 async function mainFunc( ) {
   try{
-    const client:CDP.Client = await CDP(<CDP.Options>{
+    const client:CDP.Client = await CDP( {
       port:0
-    });
+    } as CDP.Options);
     const {Network, Page,DOM,Runtime, Fetch} = client;
 
     // 记录精简响应（全部响应都有，但全部都只有响应头、无响应体）
@@ -223,9 +223,9 @@ async function mainFunc( ) {
     await Page.loadEventFired()
     await DOM.getDocument();//阻塞的DOMget2 被 nav2 吃掉
     //填写用户名、密码
-    await Runtime.evaluate(<DP.Protocol.Runtime.EvaluateRequest>{
+    await Runtime.evaluate( {
       expression:js_fillUserPass
-    })
+    } as DP.Protocol.Runtime.EvaluateRequest)
     console.log("在gitee登录页面，请填写各字段、填写可能的验证码, 点击'登录'按钮 。")
     await Page.loadEventFired()
     //用户在chroome浏览器进程上点击 '登录'按钮 , 引起页面新加载，将吃掉 nodejs进程中 阻塞的DOMget3
@@ -238,7 +238,7 @@ async function mainFunc( ) {
     }
 
     reqTab.thisSiteCookies=(
-      await client.Network.getCookies(<DP.Protocol.Network.GetCookiesRequest>{urls:[ siteBaseUrl]})  // siteBaseUrl  "https://gitee.com"
+      await client.Network.getCookies( {urls:[ siteBaseUrl]} as DP.Protocol.Network.GetCookiesRequest)  // siteBaseUrl  "https://gitee.com"
     ).cookies
 
 
@@ -248,9 +248,9 @@ async function mainFunc( ) {
     await Page.loadEventFired()
     await DOM.getDocument();//阻塞的DOMget4 被 nav4 吃掉
     //填写标记仓库
-    await Runtime.evaluate(<DP.Protocol.Runtime.EvaluateRequest>{
+    await Runtime.evaluate( {
       expression:js_fillMarkupGoalRepo  //此js脚本  点击了 '导入'按钮 , 引起页面新加载，将吃掉 nodejs进程中 阻塞的DOMget5
-    })
+    } as DP.Protocol.Runtime.EvaluateRequest)
     console.log("gitee导入URL页面，js脚本【js_fillMarkupGoalRepo】 将填写各字段, 并'导入'按钮，【请勿手动操作】")
     await Page.loadEventFired()
 
