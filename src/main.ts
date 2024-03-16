@@ -8,7 +8,6 @@ import {existsSync, mkdirSync, writeFileSync} from "fs";
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import assert from "assert";
-import {launch as CLlaunch,Options as CLOptions,Launcher as CLLauncher,LaunchedChrome as CLLaunchedChrome} from "chrome-launcher"
 
 import {ReqTemplateI, TemplPlaceE} from "./req_tmpl_t.js";
 import {ReqWrapT, RespHdWrapT} from "./rq_rp_wrap_t.js";
@@ -147,12 +146,8 @@ function calcLoginEnumIn1Chain(reqChain:ReqWrapT[],  respChain:RespHdWrapT[]){
 }
 async function mainFunc( ) {
   try{
-    const chrome:CLLaunchedChrome= await CLlaunch(<CLOptions>{
-      chromePath:chromePath, // "/app/chrome-linux/chrome"
-      chromeFlags:["--no-first-run","--disable-gpu"]
-    });
     const client:CDP.Client = await CDP(<CDP.Options>{
-      port:chrome.port
+      port:0
     });
     const {Network, Page,DOM,Runtime, Fetch} = client;
 
@@ -273,7 +268,7 @@ async function mainFunc( ) {
     }
 
     //结束此函数开头打开的chrome浏览器进程
-    chrome.kill()
+
 
     //退出nodejs进程
     process.exit(exitCode)
