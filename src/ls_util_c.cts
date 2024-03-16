@@ -20,11 +20,7 @@ export class StrIncludeUtil{
     if(longStr==null || longStr.length==0 || shortLs==null||shortLs.length==0){
       return false
     }
-    for( const shortStr in shortLs){
-        if (longStr.includes(shortStr)){
-          return true;
-        }
-    }
-    return false;
+    const has:boolean=shortLs.filter((shrtK,k)=>longStr.includes(shrtK)).length>0
+    return has
   }
 }
