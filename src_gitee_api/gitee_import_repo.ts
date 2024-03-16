@@ -37,94 +37,99 @@ program
 program.parse()
 const options = program.opts()
 
-const markup_project_import_url:string=options.from_repo // 0
-const markup_project_namespace_path:string=options.goal_org // 1
-const markup_project_path:string=options.goal_repoPath // 2
-const markup_project_name:string=options.goal_repoName // 3
-const markup_project_description:string=options.goal_repoDesc // 4
-
-console.log(`【命令行参数打印】${options},${markup_project_import_url}, ${markup_project_namespace_path}, ${markup_project_path}, ${markup_project_name}, ${markup_project_description}`)
-
-const newFieldLs: MarkupFieldI[]=[
-<MarkupFieldI>{fldNm:"markup_project_import_url",fldVal:encodeURIComponent(markup_project_import_url) },
-<MarkupFieldI>{fldNm:"markup_project_namespace_path",fldVal:encodeURIComponent(markup_project_namespace_path)},
-<MarkupFieldI>{fldNm:"markup_project_path",fldVal:encodeURIComponent(markup_project_path)},
-<MarkupFieldI>{fldNm:"markup_project_name",fldVal:encodeURIComponent(markup_project_name)},
-<MarkupFieldI>{fldNm:"markup_project_description",fldVal:encodeURIComponent(markup_project_description)}
-]
-
-
-const reqTmplFN:string=reqTmplFNLs[0]
-const reqTmplFP:string=`${reqTemplDir}/${reqTmplFN}`
-const reqTmplText:string= readFileSync(reqTmplFP).toString()
-const rqTpl:ReqTemplateI=JSON.parse(reqTmplText)
-
-rqTpl.markupFieldLs= rqTpl.markupFieldLs.map(k=><MarkupFieldI>{fldNm:k.fldNm,fldVal:encodeURIComponent(k.fldVal)})
-
-switch (rqTpl.templatePlace){
-  case TemplPlaceE.Url:{
-    // rqTpl.req.url
-    MarkupFieldUtilC.assign_L2R(rqTpl.markupFieldLs,newFieldLs,rqTpl.req.url)
-    break;
-  }
-  case TemplPlaceE.ReqHeader:{
-    const tupleLs:[string,string][]=Object.entries(rqTpl.req.headers).map(([key,val],idx)=>{
-      const newKey:string=MarkupFieldUtilC.assign_L2R(rqTpl.markupFieldLs,newFieldLs,key)
-      const newVal:string=MarkupFieldUtilC.assign_L2R(rqTpl.markupFieldLs,newFieldLs,val)
-      return [newKey,newVal]
-    })
-
-    //重新构造headers
-    rqTpl.req.headers=<DP.Protocol.Network.Headers>{}
-    tupleLs.forEach(([key,val],idx)=>{
-      rqTpl.req.headers[key]=val
-    })
-
-    break;
-  }
-  case TemplPlaceE.Body:{
-    rqTpl.req.postData=MarkupFieldUtilC.assign_L2R(rqTpl.markupFieldLs,newFieldLs,rqTpl.req.postData)
-    break;
-  }
-}
-
-const Cookie:string=Array.from(rqTpl.thisSiteCookies).map(ck=>`${ck.name}=${ck.value}`).join("; ")
-rqTpl.req.headers['Cookie']=Cookie
-console.log(`rqTpl.req.postData【${rqTpl.req.postData}】`)
-
-const resp:AxiosResponse = await axiosInst(<AxiosRequestConfig>{
-  url:rqTpl.req.url,
-  method:rqTpl.req.method,
-  data:rqTpl.req.postData,
-  headers:rqTpl.req.headers,
-})
-
-const simpleResp:SimpleRespI=<SimpleRespI>{
-  url:rqTpl.req.url,
-  status:resp.status,
-  text:resp.data
-  }
-
-//理论上 目标gitee完整仓库地址 应该从请求响应中解析，这里偷懒了，直接用常识 组装目的gitee完整仓库地址
-const goal_repo:string = `${siteBaseUrl}/${markup_project_namespace_path}/${markup_project_path}.git`
-//组装结果消息
-const ok_msg:string = `${options.from_repo}  --->   ${goal_repo}`
-const failed_msg:string = `${options.from_repo}  --->   xxx`
-
-if (resp.status == 200) {
-  console.log(resp.data)
-  console.log(`执行gitee导入仓库成功， http响应码【${resp.status}】 【${ok_msg}】`)
-  process.exit(0)
-}else{
-  console.log(resp.data)
-  console.log(`执行gitee导入仓库失败， http响应码【${resp.status}】 【${failed_msg}】`)
-  process.exit(5)
-}
 
 interface SimpleRespI{
   url:string
   status:number
   text:string
+}
+function GiteeImportRepoF(markup_project_import_url:string,markup_project_namespace_path:string,markup_project_path:string,markup_project_name:string,markup_project_description:string):SimpleRespI{
+
+
+  // const markup_project_import_url:string=options.from_repo // 0
+  // const markup_project_namespace_path:string=options.goal_org // 1
+  // const markup_project_path:string=options.goal_repoPath // 2
+  // const markup_project_name:string=options.goal_repoName // 3
+  // const markup_project_description:string=options.goal_repoDesc // 4
+
+  console.log(`【命令行参数打印】${options},${markup_project_import_url}, ${markup_project_namespace_path}, ${markup_project_path}, ${markup_project_name}, ${markup_project_description}`)
+
+  const newFieldLs: MarkupFieldI[]=[
+    <MarkupFieldI>{fldNm:"markup_project_import_url",fldVal:encodeURIComponent(markup_project_import_url) },
+    <MarkupFieldI>{fldNm:"markup_project_namespace_path",fldVal:encodeURIComponent(markup_project_namespace_path)},
+    <MarkupFieldI>{fldNm:"markup_project_path",fldVal:encodeURIComponent(markup_project_path)},
+    <MarkupFieldI>{fldNm:"markup_project_name",fldVal:encodeURIComponent(markup_project_name)},
+    <MarkupFieldI>{fldNm:"markup_project_description",fldVal:encodeURIComponent(markup_project_description)}
+  ]
+
+
+  const reqTmplFN:string=reqTmplFNLs[0]
+  const reqTmplFP:string=`${reqTemplDir}/${reqTmplFN}`
+  const reqTmplText:string= readFileSync(reqTmplFP).toString()
+  const rqTpl:ReqTemplateI=JSON.parse(reqTmplText)
+
+  rqTpl.markupFieldLs= rqTpl.markupFieldLs.map(k=><MarkupFieldI>{fldNm:k.fldNm,fldVal:encodeURIComponent(k.fldVal)})
+
+  switch (rqTpl.templatePlace){
+    case TemplPlaceE.Url:{
+      // rqTpl.req.url
+      MarkupFieldUtilC.assign_L2R(rqTpl.markupFieldLs,newFieldLs,rqTpl.req.url)
+      break;
+    }
+    case TemplPlaceE.ReqHeader:{
+      const tupleLs:[string,string][]=Object.entries(rqTpl.req.headers).map(([key,val],idx)=>{
+        const newKey:string=MarkupFieldUtilC.assign_L2R(rqTpl.markupFieldLs,newFieldLs,key)
+        const newVal:string=MarkupFieldUtilC.assign_L2R(rqTpl.markupFieldLs,newFieldLs,val)
+        return [newKey,newVal]
+      })
+
+      //重新构造headers
+      rqTpl.req.headers=<DP.Protocol.Network.Headers>{}
+      tupleLs.forEach(([key,val],idx)=>{
+        rqTpl.req.headers[key]=val
+      })
+
+      break;
+    }
+    case TemplPlaceE.Body:{
+      rqTpl.req.postData=MarkupFieldUtilC.assign_L2R(rqTpl.markupFieldLs,newFieldLs,rqTpl.req.postData)
+      break;
+    }
+  }
+
+  const Cookie:string=Array.from(rqTpl.thisSiteCookies).map(ck=>`${ck.name}=${ck.value}`).join("; ")
+  rqTpl.req.headers['Cookie']=Cookie
+  console.log(`rqTpl.req.postData【${rqTpl.req.postData}】`)
+
+  const resp:AxiosResponse = await axiosInst(<AxiosRequestConfig>{
+    url:rqTpl.req.url,
+    method:rqTpl.req.method,
+    data:rqTpl.req.postData,
+    headers:rqTpl.req.headers,
+  })
+
+  const simpleResp:SimpleRespI=<SimpleRespI>{
+    url:rqTpl.req.url,
+    status:resp.status,
+    text:resp.data
+  }
+
+//理论上 目标gitee完整仓库地址 应该从请求响应中解析，这里偷懒了，直接用常识 组装目的gitee完整仓库地址
+  const goal_repo:string = `${siteBaseUrl}/${markup_project_namespace_path}/${markup_project_path}.git`
+//组装结果消息
+  const ok_msg:string = `${options.from_repo}  --->   ${goal_repo}`
+  const failed_msg:string = `${options.from_repo}  --->   xxx`
+
+  if (resp.status == 200) {
+    console.log(resp.data)
+    console.log(`执行gitee导入仓库成功， http响应码【${resp.status}】 【${ok_msg}】`)
+    process.exit(0)
+  }else{
+    console.log(resp.data)
+    console.log(`执行gitee导入仓库失败， http响应码【${resp.status}】 【${failed_msg}】`)
+    process.exit(5)
+  }
+
 }
 const _end:boolean=true
 
