@@ -9,11 +9,12 @@ import axios,{ AxiosRequestConfig, AxiosResponse, AxiosStatic} from "axios";
 
 import {Command} from "commander"
 import {siteBaseUrl} from "../src/site_gitee_cfg.js";
+import {sync} from "rimraf";
 
 const exitCode_1:number=21
 const errMsg_1:string=`【错误】【退出代码${exitCode_1}】目录【${reqTemplDir}】下没有已markup的请求例子，请你先执行脚本script/gen_gitee_import_repo_req_template.sh以生成请求例子`
 
-function MyMain(){
+async function MyMain(){
 
   const program = new Command("【导入github仓库到gitee（基于gitee页面导入url的请求标记例子）】gitee_import_repo.ts")
 
@@ -35,6 +36,9 @@ function MyMain(){
 
   console.log(`【命令行参数打印】${options},${markup_project_import_url}, ${markup_project_namespace_path}, ${markup_project_path}, ${markup_project_name}, ${markup_project_description}`)
 
+
+  const simpleResp:SimpleRespI = await GiteeImportRepoF(markup_project_import_url,markup_project_namespace_path,markup_project_path,markup_project_name,markup_project_description)
+
 }
 
 
@@ -43,7 +47,7 @@ interface SimpleRespI{
   status:number
   text:string
 }
-export function GiteeImportRepoF(markup_project_import_url:string,markup_project_namespace_path:string,markup_project_path:string,markup_project_name:string,markup_project_description:string):SimpleRespI{
+export async function GiteeImportRepoF(markup_project_import_url:string,markup_project_namespace_path:string,markup_project_path:string,markup_project_name:string,markup_project_description:string):SimpleRespI{
 
 //变量axios的类型是AxiosStatic; axios这个名字普通了，换个名字叫axiosInst
   const axiosInst:AxiosStatic=axios;
