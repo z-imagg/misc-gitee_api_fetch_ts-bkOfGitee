@@ -49,11 +49,13 @@ async function MyMain(){
 
 }
 
-
 interface SimpleRespI{
   url:string
-  status:number
-  text:string
+  reqBody:string
+  reqHeaders:string
+  respStatus:number
+  respBody:string
+  respHeaders:string
 }
 async function GiteeImportRepoF(markup_project_import_url:string,markup_project_namespace_path:string,markup_project_path:string,markup_project_name:string,markup_project_description:string):Promise<SimpleRespI>{
   const exitCode_1:number=21
@@ -121,10 +123,13 @@ async function GiteeImportRepoF(markup_project_import_url:string,markup_project_
     headers:rqTpl.req.headers,
   } as AxiosRequestConfig)
 
-  const simpleResp:SimpleRespI= {
+  const simpleReqResp:SimpleRespI= {
     url:rqTpl.req.url,
-    status:resp.status,
-    text:resp.data
+    reqBody:rqTpl.req.postData,
+    reqHeaders:JSON.stringify(rqTpl.req.headers),
+    respStatus:resp.status,
+    respBody:resp.data,
+    respHeaders:JSON.stringify(resp.headers)
   } as SimpleRespI
 
 //理论上 目标gitee完整仓库地址 应该从请求响应中解析，这里偷懒了，直接用常识 组装目的gitee完整仓库地址
@@ -141,7 +146,7 @@ async function GiteeImportRepoF(markup_project_import_url:string,markup_project_
     console.log(`执行gitee导入仓库失败， http响应码【${resp.status}】 【${failed_msg}】`)
   }
 
-  return simpleResp;
+  return simpleReqResp;
 
 }
 

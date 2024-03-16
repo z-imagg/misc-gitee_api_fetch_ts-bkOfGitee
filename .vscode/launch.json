@@ -12,7 +12,7 @@
             "skipFiles": [
                 "<node_internals>/**"
             ],
-            "program": "${workspaceFolder}/build/src/main.js",
+            "program": "${workspaceFolder}/build/src/main.cjs",
         },
         {
             "console": "integratedTerminal", // nodejs的 控制台输入 【readline-sync/readlineSync.question】需要此种console
@@ -22,7 +22,7 @@
             "skipFiles": [
                 "<node_internals>/**"
             ],
-            "program": "${workspaceFolder}/build/src_gitee_api/gitee_import_repo.js",
+            "program": "${workspaceFolder}/build/src_gitee_api/gitee_import_repo.cjs",
             "args": ["--from_repo" ,"https://github.com/intel/mkl-dnn.git",  "--goal_org", "ruut", "--goal_repoPath", "intel--mkl-dnn", "--goal_repoName", "intel--mkl-dnn", "--goal_repoDesc", "镜像mkl-dnn"]
         }
     ]

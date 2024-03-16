@@ -32,3 +32,4 @@ nohup.out
 
 gitee_account.json
 reqTemplate/*.json
+write_return.*.json
