@@ -29,6 +29,12 @@ import {
 import {chromePath,reqTemplDir} from "./my_cfg.cjs";
 
 
+// const {boot_chrome,stop_chrome} = await  import("./chrome_launcher_wrap.mjs")  // .cts调用.mts很麻烦： .cts(cjs,commonjs）要使用 .mts(.mjs,ESM) ，typescript5.1只能用import()即动态import, 但是 await不能写到顶层，因此只能间接套一个函数
+async function  chromeLauncherWrap(){
+
+  const {boot_chrome,stop_chrome} = await  import("./chrome_launcher_wrap.mjs")
+  return {boot_chrome,stop_chrome}
+}
 const reqTab:RqTab=new RqTab(new Map())
 
 const respHdTab:RpHdTabC=new RpHdTabC(new Map())
@@ -146,8 +152,10 @@ function calcLoginEnumIn1Chain(reqChain:ReqWrapT[],  respChain:RespHdWrapT[]){
 }
 async function mainFunc( ) {
   try{
+    const {boot_chrome,stop_chrome} = await chromeLauncherWrap()
+    const chrome_port:number = await boot_chrome()
     const client:CDP.Client = await CDP( {
-      port:0
+      port:chrome_port
     } as CDP.Options);
     const {Network, Page,DOM,Runtime, Fetch} = client;
 
@@ -268,6 +276,7 @@ async function mainFunc( ) {
     }
 
     //结束此函数开头打开的chrome浏览器进程
+    stop_chrome()
 
 
     //退出nodejs进程
