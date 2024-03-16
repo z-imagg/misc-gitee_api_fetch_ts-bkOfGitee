@@ -3,7 +3,6 @@ import {reqTemplDir} from "../src/my_cfg.js";
 import {readdirSync, readFileSync} from "fs";
 import {MarkupFieldUtilC} from "./MarkupFieldUtil.js";
 
-import readlineSync from 'readline-sync'
 
 import * as DP from "devtools-protocol";
 import axios,{ AxiosRequestConfig, AxiosResponse, AxiosStatic} from "axios";
@@ -11,14 +10,11 @@ import axios,{ AxiosRequestConfig, AxiosResponse, AxiosStatic} from "axios";
 //变量axios的类型是AxiosStatic; axios这个名字普通了，换个名字叫axiosInst
 const axiosInst:AxiosStatic=axios;
 
-import assert from "assert";
 import {Command} from "commander"
 import {siteBaseUrl} from "../src/site_gitee_cfg.js";
 
 const exitCode_1:number=21
 const errMsg_1:string=`【错误】【退出代码${exitCode_1}】目录【${reqTemplDir}】下没有已markup的请求例子，请你先执行脚本script/gen_gitee_import_repo_req_template.sh以生成请求例子`
-const exitCode_2:number=22
-const errMsg_2:string=`【错误】【退出代码${exitCode_2}】命令用法为 me.js from_repoUrl goal_OrgName goal_repoName  goal_repoDesc`
 
 function MyMain(){
 
@@ -135,7 +131,7 @@ async function GiteeImportRepoF(markup_project_import_url:string,markup_project_
 
   return simpleResp;
 
-  }
+}
 
 
 if (require.main==module){
