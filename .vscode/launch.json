@@ -23,7 +23,7 @@
                 "<node_internals>/**"
             ],
             "program": "${workspaceFolder}/build/src_gitee_api/gitee_import_repo.js",
-            "args": ["--from_repo" ,"https://github.com/pytorch/pytorch.git",  "--goal_org", "ML88", "--goal_repoPath", "pytorch", "--goal_repoName", "pytorch", "--goal_repoDesc", "pytorch镜像"]
+            "args": ["--from_repo" ,"https://github.com/intel/mkl-dnn.git",  "--goal_org", "ruut", "--goal_repoPath", "intel--mkl-dnn", "--goal_repoName", "intel--mkl-dnn", "--goal_repoDesc", "镜像mkl-dnn"]
         }
     ]
 }
