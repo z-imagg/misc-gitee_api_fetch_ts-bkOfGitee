@@ -7,9 +7,6 @@ import {MarkupFieldUtilC} from "./MarkupFieldUtil.js";
 import * as DP from "devtools-protocol";
 import axios,{ AxiosRequestConfig, AxiosResponse, AxiosStatic} from "axios";
 
-//变量axios的类型是AxiosStatic; axios这个名字普通了，换个名字叫axiosInst
-const axiosInst:AxiosStatic=axios;
-
 import {Command} from "commander"
 import {siteBaseUrl} from "../src/site_gitee_cfg.js";
 
@@ -46,7 +43,11 @@ interface SimpleRespI{
   status:number
   text:string
 }
-async function GiteeImportRepoF(markup_project_import_url:string,markup_project_namespace_path:string,markup_project_path:string,markup_project_name:string,markup_project_description:string):SimpleRespI{
+export function GiteeImportRepoF(markup_project_import_url:string,markup_project_namespace_path:string,markup_project_path:string,markup_project_name:string,markup_project_description:string):SimpleRespI{
+
+//变量axios的类型是AxiosStatic; axios这个名字普通了，换个名字叫axiosInst
+  const axiosInst:AxiosStatic=axios;
+
   const reqTmplFNLs:string[]=readdirSync(`${reqTemplDir}`)
   if(reqTmplFNLs.length<=0){
     console.log(errMsg_1)
