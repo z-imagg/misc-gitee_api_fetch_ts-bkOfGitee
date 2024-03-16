@@ -9,10 +9,8 @@ import axios,{ AxiosRequestConfig, AxiosResponse, AxiosStatic} from "axios";
 
 import {Command} from "commander"
 import {siteBaseUrl} from "../src/site_gitee_cfg.js";
-import {sync} from "rimraf";
+import assert from "assert";
 
-const exitCode_1:number=21
-const errMsg_1:string=`【错误】【退出代码${exitCode_1}】目录【${reqTemplDir}】下没有已markup的请求例子，请你先执行脚本script/gen_gitee_import_repo_req_template.sh以生成请求例子`
 
 async function MyMain(){
 
@@ -48,15 +46,14 @@ interface SimpleRespI{
   text:string
 }
 export async function GiteeImportRepoF(markup_project_import_url:string,markup_project_namespace_path:string,markup_project_path:string,markup_project_name:string,markup_project_description:string):SimpleRespI{
+  const exitCode_1:number=21
+  const errMsg_1:string=`【错误】【退出代码${exitCode_1}】目录【${reqTemplDir}】下没有已markup的请求例子，请你先执行脚本script/gen_gitee_import_repo_req_template.sh以生成请求例子`
 
 //变量axios的类型是AxiosStatic; axios这个名字普通了，换个名字叫axiosInst
   const axiosInst:AxiosStatic=axios;
 
   const reqTmplFNLs:string[]=readdirSync(`${reqTemplDir}`)
-  if(reqTmplFNLs.length<=0){
-    console.log(errMsg_1)
-    process.exit(exitCode_1)
-  }
+  assert(reqTmplFNLs.length>0, `ASSERT00 ${errMsg_1}`)
 
 
 
