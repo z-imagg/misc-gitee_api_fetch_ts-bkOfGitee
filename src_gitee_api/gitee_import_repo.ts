@@ -1,6 +1,6 @@
 import {MarkupFieldI, ReqTemplateI, TemplPlaceE} from "../src/req_tmpl_t.js";
 import {reqTemplDir} from "../src/my_cfg.js";
-import {readdirSync, readFileSync} from "fs";
+import {readdirSync, readFileSync, writeFileSync} from "fs";
 import {MarkupFieldUtilC} from "./MarkupFieldUtil.js";
 
 
@@ -24,6 +24,7 @@ async function MyMain(){
     .requiredOption("-r, --goal_repoPath <goal_repoPath>","【目标，gitee仓库路径】")  //"repo01Path", 2 goal_repoPath markup_project_path
     .requiredOption("-n, --goal_repoName <goal_repoName>","【目标，gitee仓库名字】")  //"repo01Name", 3 goal_repoName markup_project_name
     .requiredOption("-d, --goal_repoDesc <goal_repoDesc>","【目标，gitee仓库描述】")  //"仓库描述", 4 goal_repoDesc markup_project_description
+    .option("-w, --write_return <write_return>","【函数返回结果写入该文件】")
 
   program.parse()
   const options = program.opts()
@@ -33,12 +34,17 @@ async function MyMain(){
   const markup_project_path:string=options.goal_repoPath // 2
   const markup_project_name:string=options.goal_repoName // 3
   const markup_project_description:string=options.goal_repoDesc // 4
+  let returnFp:string=options.write_return // 5
+  if(!returnFp){
+    returnFp=`write_return.${Date.now()}.json`
+  }
 
   console.log(`【命令行参数打印】${options},${markup_project_import_url}, ${markup_project_namespace_path}, ${markup_project_path}, ${markup_project_name}, ${markup_project_description}`)
 
 
   const simpleResp:SimpleRespI = await GiteeImportRepoF(markup_project_import_url,markup_project_namespace_path,markup_project_path,markup_project_name,markup_project_description)
 
+  writeFileSync(returnFp,JSON.stringify(simpleResp))
   return simpleResp;
 
 }
