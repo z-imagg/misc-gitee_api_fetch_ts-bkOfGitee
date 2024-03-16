@@ -1,10 +1,15 @@
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
 import CDP from 'chrome-remote-interface';
 import * as DP from "devtools-protocol";
 import readlineSync from 'readline-sync'
 
 import {existsSync, mkdirSync, writeFileSync} from "fs";
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
 import assert from "assert";
-import * as CL from 'chrome-launcher'
+import {launch as CLlaunch,Options as CLOptions,Launcher as CLLauncher,LaunchedChrome as CLLaunchedChrome} from "chrome-launcher"
+
 import {ReqTemplateI, TemplPlaceE} from "./req_tmpl_t.js";
 import {ReqWrapT, RespHdWrapT} from "./rq_rp_wrap_t.js";
 import {LoginEnum, MarkupHasEnum} from "./enums.js";
@@ -87,7 +92,7 @@ function writeReqExampleAsTemplate(reqId:DP.Protocol.Network.RequestId, req:DP.P
   console.log(`已写入请求例子（作为请求模板）文件 【${reqTmplFp}】`)
 }
 
-function calcLoginFlag(reqTab:RqTab ){
+function calcLoginFlag(reqTab:RqTab ):LoginEnum{
 
   let _LoginFlag:LoginEnum=LoginEnum.Other;
   const reqIdLs:string[]=Array.from(reqTab._rqDct.keys())
@@ -142,7 +147,7 @@ function calcLoginEnumIn1Chain(reqChain:ReqWrapT[],  respChain:RespHdWrapT[]){
 }
 async function mainFunc( ) {
   try{
-    const chrome:CL.LaunchedChrome= await CL.launch(<CL.Options>{
+    const chrome:CLLaunchedChrome= await CLlaunch(<CLOptions>{
       chromePath:chromePath, // "/app/chrome-linux/chrome"
       chromeFlags:["--no-first-run","--disable-gpu"]
     });
@@ -213,6 +218,8 @@ async function mainFunc( ) {
     assert(LoginFlag != LoginEnum.Other)
 
     //未登录
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
     if ( LoginFlag==LoginEnum.NotLogin){
     //打开gitee登录页面
     console.log(`打开gitee登录页面 ${giteeLoginPageUrl}`)

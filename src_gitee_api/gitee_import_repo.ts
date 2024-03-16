@@ -9,6 +9,8 @@ import axios,{ AxiosRequestConfig, AxiosResponse, AxiosStatic} from "axios";
 
 import {Command} from "commander"
 import {siteBaseUrl} from "../src/site_gitee_cfg.js";
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
 import assert from "assert";
 
 
