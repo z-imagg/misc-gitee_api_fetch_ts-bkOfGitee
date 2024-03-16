@@ -5,6 +5,21 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "name": "ts-node调试src_gitee_api/gitee_import_repo.ts",
+            "type": "node",
+            "request": "launch",
+            "args": [
+                "${workspaceFolder}/src_gitee_api/gitee_import_repo.ts",
+"--from_repo" ,"https://github.com/intel/mkl-dnn.git",  "--goal_org", "ruut", "--goal_repoPath", "intel--mkl-dnn", "--goal_repoName", "intel--mkl-dnn", "--goal_repoDesc", "镜像mkl-dnn"
+            ],
+            "runtimeArgs": [
+                "--nolazy",
+                "-r",
+                "ts-node/register"
+            ],
+            "console": "integratedTerminal"
+        },
+        {
             "console": "integratedTerminal", // nodejs的 控制台输入 【readline-sync/readlineSync.question】需要此种console
             "type": "node",
             "request": "launch",

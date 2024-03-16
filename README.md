@@ -173,3 +173,35 @@ webstorm打开本项目，可以直接调试js文件 ./build/src/main.js
 
 而且后来的python3.x(x是几？）已经废弃了python关键字async, 因此 不建议使用此包装
 
+
+6. ts-node运行.ts文件
+
+ts-node运行 ```src_gitee_api/gitee_import_repo.ts```并携带参数```--help```
+
+
+###### 局部安装ts-node为开发者依赖
+
+```npm install -D ts-node```  使用如下，
+
+```shell
+npx ts-node --version #v10.9.2
+
+#直接运行
+npx ts-node src_gitee_api/gitee_import_repo.ts --help
+
+#以下这条命令也是ts-node运行.ts脚本， 其用在vscode的launch.json中作为开发时调试.ts脚本用
+node --nolazy -r ts-node/register  src_gitee_api/gitee_import_repo.ts   --help
+```
+
+
+###### 全局安装ts-node
+
+```npm install -g ts-node```  使用如下，
+
+
+```shell
+ts-node --version #v10.9.2
+
+which ts-node #/app/nvm/versions/node/v18.19.1/bin/ts-node
+ts-node src_gitee_api/gitee_import_repo.ts --help
+```
