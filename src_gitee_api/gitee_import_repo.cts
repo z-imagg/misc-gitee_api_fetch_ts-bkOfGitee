@@ -1,14 +1,14 @@
-import {MarkupFieldI, ReqTemplateI, TemplPlaceE} from "../src/req_tmpl_t.js";
-import {reqTemplDir} from "../src/my_cfg.js";
+import {MarkupFieldI, ReqTemplateI, TemplPlaceE} from "../src/req_tmpl_t.cjs";
+import {reqTemplDir} from "../src/my_cfg.cjs";
 import {readdirSync, readFileSync, writeFileSync} from "fs";
-import {MarkupFieldUtilC} from "./MarkupFieldUtil.js";
+import {MarkupFieldUtilC} from "./MarkupFieldUtil.cjs";
 
 
 import * as DP from "devtools-protocol";
 import axios,{ AxiosRequestConfig, AxiosResponse, AxiosStatic} from "axios";
 
 import {Command} from "commander"
-import {siteBaseUrl} from "../src/site_gitee_cfg.js";
+import {siteBaseUrl} from "../src/site_gitee_cfg.cjs";
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import assert from "assert";
@@ -16,7 +16,7 @@ import assert from "assert";
 
 async function MyMain(){
 
-  const program = new Command("【导入github仓库到gitee（基于gitee页面导入url的请求标记例子）】gitee_import_repo.ts")
+  const program = new Command("【导入github仓库到gitee（基于gitee页面导入url的请求标记例子）】gitee_import_repo.cts")
 
   program
     .requiredOption("-f --from_repo <from_repo>","【来源，仓库地址,常为github仓库地址】" )  //"https://github.com/request/request.git",  0 from_repo markup_project_import_url
@@ -68,11 +68,11 @@ async function GiteeImportRepoF(markup_project_import_url:string,markup_project_
 
 
   const newFieldLs: MarkupFieldI[]=[
-    <MarkupFieldI>{fldNm:"markup_project_import_url",fldVal:encodeURIComponent(markup_project_import_url) },
-    <MarkupFieldI>{fldNm:"markup_project_namespace_path",fldVal:encodeURIComponent(markup_project_namespace_path)},
-    <MarkupFieldI>{fldNm:"markup_project_path",fldVal:encodeURIComponent(markup_project_path)},
-    <MarkupFieldI>{fldNm:"markup_project_name",fldVal:encodeURIComponent(markup_project_name)},
-    <MarkupFieldI>{fldNm:"markup_project_description",fldVal:encodeURIComponent(markup_project_description)}
+     {fldNm:"markup_project_import_url",fldVal:encodeURIComponent(markup_project_import_url) } as MarkupFieldI,
+     {fldNm:"markup_project_namespace_path",fldVal:encodeURIComponent(markup_project_namespace_path)} as MarkupFieldI,
+     {fldNm:"markup_project_path",fldVal:encodeURIComponent(markup_project_path)} as MarkupFieldI,
+     {fldNm:"markup_project_name",fldVal:encodeURIComponent(markup_project_name)} as MarkupFieldI,
+     {fldNm:"markup_project_description",fldVal:encodeURIComponent(markup_project_description)} as MarkupFieldI
   ]
 
 
@@ -81,7 +81,7 @@ async function GiteeImportRepoF(markup_project_import_url:string,markup_project_
   const reqTmplText:string= readFileSync(reqTmplFP).toString()
   const rqTpl:ReqTemplateI=JSON.parse(reqTmplText)
 
-  rqTpl.markupFieldLs= rqTpl.markupFieldLs.map(k=><MarkupFieldI>{fldNm:k.fldNm,fldVal:encodeURIComponent(k.fldVal)})
+  rqTpl.markupFieldLs= rqTpl.markupFieldLs.map(k=> ({fldNm:k.fldNm,fldVal:encodeURIComponent(k.fldVal)} as MarkupFieldI))
 
   switch (rqTpl.templatePlace){
     case TemplPlaceE.Url:{
@@ -97,7 +97,7 @@ async function GiteeImportRepoF(markup_project_import_url:string,markup_project_
       })
 
       //重新构造headers
-      rqTpl.req.headers=<DP.Protocol.Network.Headers>{}
+      rqTpl.req.headers= {} as DP.Protocol.Network.Headers
       tupleLs.forEach(([key,val],idx)=>{
         rqTpl.req.headers[key]=val
       })
@@ -114,18 +114,18 @@ async function GiteeImportRepoF(markup_project_import_url:string,markup_project_
   rqTpl.req.headers['Cookie']=Cookie
   console.log(`rqTpl.req.postData【${rqTpl.req.postData}】`)
 
-  const resp:AxiosResponse = await axiosInst(<AxiosRequestConfig>{
+  const resp:AxiosResponse = await axiosInst( {
     url:rqTpl.req.url,
     method:rqTpl.req.method,
     data:rqTpl.req.postData,
     headers:rqTpl.req.headers,
-  })
+  } as AxiosRequestConfig)
 
-  const simpleResp:SimpleRespI=<SimpleRespI>{
+  const simpleResp:SimpleRespI= {
     url:rqTpl.req.url,
     status:resp.status,
     text:resp.data
-  }
+  } as SimpleRespI
 
 //理论上 目标gitee完整仓库地址 应该从请求响应中解析，这里偷懒了，直接用常识 组装目的gitee完整仓库地址
   const goal_repo:string = `${siteBaseUrl}/${markup_project_namespace_path}/${markup_project_path}.git`

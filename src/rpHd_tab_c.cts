@@ -1,5 +1,5 @@
 import * as DP from "devtools-protocol";
-import {RespHdWrapT} from "./rq_rp_wrap_t.js";
+import {RespHdWrapT} from "./rq_rp_wrap_t.cjs";
 
 export class RpHdTabC {
   _rspHdDct: Map<DP.Protocol.Network.RequestId, RespHdWrapT[]>

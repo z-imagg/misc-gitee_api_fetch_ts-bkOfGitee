@@ -1,5 +1,5 @@
 import * as DP from "devtools-protocol";
-import {ReqWrapT} from "./rq_rp_wrap_t.js";
+import {ReqWrapT} from "./rq_rp_wrap_t.cjs";
 
 export class RqTab {
   _rqDct: Map<DP.Protocol.Network.RequestId, ReqWrapT[]>

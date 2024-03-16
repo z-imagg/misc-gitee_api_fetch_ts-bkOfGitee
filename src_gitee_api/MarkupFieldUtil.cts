@@ -1,4 +1,4 @@
-import {MarkupFieldI, MarkupFldNmTyp} from "../src/req_tmpl_t.js";
+import {MarkupFieldI, MarkupFldNmTyp} from "../src/req_tmpl_t.cjs";
 
 export class MarkupFieldUtilC{
 

@@ -1,11 +1,11 @@
-import fs from "fs";
-import {MarkupFieldI} from "./req_tmpl_t.js";
+import {readFileSync} from "fs";
+import {MarkupFieldI} from "./req_tmpl_t.cjs";
 
 // const urlList:string[]=[
 //   "https://gitee.com/tmpOrg/projects"
 // ];
 
-const giteeAccount=JSON.parse(fs.readFileSync("gitee_account.json","utf8"))
+const giteeAccount=JSON.parse(readFileSync("gitee_account.json","utf8"))
 const giteeUserName=giteeAccount["user"];
 const giteePwd=giteeAccount["pass"];
 
@@ -33,11 +33,11 @@ const markup_project_path = `markup_project_path----intel--ARM_NEON_2_x86_SSE__$
 const markup_project_description = `markup_project_description----intel--ARM_NEON_2_x86_SSE__${nowMs}`
 
 export const markupFieldLs:MarkupFieldI[]=[]
-markupFieldLs.push(<MarkupFieldI>{fldNm:"markup_project_import_url",fldVal:markup_project_import_url})
-markupFieldLs.push(<MarkupFieldI>{fldNm:"markup_project_name",fldVal:markup_project_name})
-markupFieldLs.push(<MarkupFieldI>{fldNm:"markup_project_namespace_path",fldVal:markup_project_namespace_path})
-markupFieldLs.push(<MarkupFieldI>{fldNm:"markup_project_path",fldVal:markup_project_path})
-markupFieldLs.push(<MarkupFieldI>{fldNm:"markup_project_description",fldVal:markup_project_description})
+markupFieldLs.push( {fldNm:"markup_project_import_url",fldVal:markup_project_import_url} as MarkupFieldI)
+markupFieldLs.push( {fldNm:"markup_project_name",fldVal:markup_project_name} as MarkupFieldI)
+markupFieldLs.push( {fldNm:"markup_project_namespace_path",fldVal:markup_project_namespace_path} as MarkupFieldI)
+markupFieldLs.push( {fldNm:"markup_project_path",fldVal:markup_project_path} as MarkupFieldI)
+markupFieldLs.push( {fldNm:"markup_project_description",fldVal:markup_project_description} as MarkupFieldI)
 
 
 const importPageMsg="【已填充标记字段】"

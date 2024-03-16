@@ -9,12 +9,12 @@ import {existsSync, mkdirSync, writeFileSync} from "fs";
 // @ts-ignore
 import assert from "assert";
 
-import {ReqTemplateI, TemplPlaceE} from "./req_tmpl_t.js";
-import {ReqWrapT, RespHdWrapT} from "./rq_rp_wrap_t.js";
-import {LoginEnum, MarkupHasEnum} from "./enums.js";
-import {RqTab} from "./rq_tab_c.js";
-import {RpHdTabC} from "./rpHd_tab_c.js";
-import {LsUtilC} from "./ls_util_c.js";
+import {ReqTemplateI, TemplPlaceE} from "./req_tmpl_t.cjs";
+import {ReqWrapT, RespHdWrapT} from "./rq_rp_wrap_t.cjs";
+import {LoginEnum, MarkupHasEnum} from "./enums.cjs";
+import {RqTab} from "./rq_tab_c.cjs";
+import {RpHdTabC} from "./rpHd_tab_c.cjs";
+import {LsUtilC} from "./ls_util_c.cjs";
 import {
   giteeLoginPageUrl,
   js_fillUserPass,
@@ -24,9 +24,9 @@ import {
   markupFieldLs,
   js_fillMarkupGoalRepo,
   accInfoPgUrl, siteBaseUrl,
-} from './site_gitee_cfg.js'
+} from './site_gitee_cfg.cjs'
 
-import {chromePath,reqTemplDir} from "./my_cfg.js";
+import {chromePath,reqTemplDir} from "./my_cfg.cjs";
 
 
 const reqTab:RqTab=new RqTab(new Map())
