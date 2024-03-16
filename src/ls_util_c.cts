@@ -17,6 +17,9 @@ export class LsUtilC{
 
 export class StrIncludeUtil{
   static includeAny(longStr:string,shortLs:string[]):boolean{
+    if(longStr==null || longStr.length==0 || shortLs==null||shortLs.length==0){
+      return false
+    }
     for( const shortStr in shortLs){
         if (longStr.includes(shortStr)){
           return true;
