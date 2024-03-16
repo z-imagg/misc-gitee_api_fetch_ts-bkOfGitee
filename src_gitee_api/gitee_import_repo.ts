@@ -39,6 +39,8 @@ async function MyMain(){
 
   const simpleResp:SimpleRespI = await GiteeImportRepoF(markup_project_import_url,markup_project_namespace_path,markup_project_path,markup_project_name,markup_project_description)
 
+  return simpleResp;
+
 }
 
 
@@ -47,7 +49,7 @@ interface SimpleRespI{
   status:number
   text:string
 }
-export async function GiteeImportRepoF(markup_project_import_url:string,markup_project_namespace_path:string,markup_project_path:string,markup_project_name:string,markup_project_description:string):SimpleRespI{
+async function GiteeImportRepoF(markup_project_import_url:string,markup_project_namespace_path:string,markup_project_path:string,markup_project_name:string,markup_project_description:string):Promise<SimpleRespI>{
   const exitCode_1:number=21
   const errMsg_1:string=`【错误】【退出代码${exitCode_1}】目录【${reqTemplDir}】下没有已markup的请求例子，请你先执行脚本script/gen_gitee_import_repo_req_template.sh以生成请求例子`
 
@@ -139,7 +141,14 @@ export async function GiteeImportRepoF(markup_project_import_url:string,markup_p
 
 
 if (require.main==module){
-  MyMain();
+  MyMain().then(
+    (simpleRespI:SimpleRespI)=>{
+    //调用成功打印
+    },
+    (_)=>{
+    // 调用失败打印
+    }
+  )
 }
 const _end:boolean=true
 
