@@ -31,7 +31,6 @@ export const markup_project_name = `markup_project_name----intel--ARM_NEON_2_x86
 export const markup_project_namespace_path = "markup-organization-9473" ; //mirrr
 export const markup_project_path = `markup_project_path----intel--ARM_NEON_2_x86_SSE__${nowMs}`
 export const markup_project_description = `markup_project_description----intel--ARM_NEON_2_x86_SSE__${nowMs}`
-export const markupFldValLs:string[]=[markup_project_name,markup_project_namespace_path,markup_project_path,markup_project_description]
 
 export const markupFieldLs:MarkupFieldI[]=[]
 markupFieldLs.push( {fldNm:"markup_project_import_url",fldVal:markup_project_import_url} as MarkupFieldI)

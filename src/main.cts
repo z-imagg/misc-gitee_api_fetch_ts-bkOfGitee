@@ -21,7 +21,7 @@ import {
   giteeImportPageUrl,
   nowMs,
   markup_project_name,
-  markupFldValLs,
+  markup_project_namespace_path,markup_project_path,markup_project_description,
   markupFieldLs,
   js_fillMarkupGoalRepo,
   accInfoPgUrl, siteBaseUrl,
@@ -59,15 +59,18 @@ function reqWpHasMarkup(reqTab:RqTab ){
 }
 
 function hasMarkupFieldIn1Req(reqWpEnd:ReqWrapT,thisSiteCookies:DP.Protocol.Network.Cookie[]){
+  const markupFldValLs:string[]=[markup_project_name,markup_project_namespace_path,markup_project_path,markup_project_description]
+
+
   let _markup:MarkupHasEnum=MarkupHasEnum.No;
-  const headerText= JSON.stringify(reqWpEnd.req.headers);
+  const headerJsonText= JSON.stringify(reqWpEnd.req.headers);
   const req:DP.Protocol.Network.Request = reqWpEnd.req;
   const urlEnd:string=reqWpEnd.req.url;
 
   const placeS:TemplPlaceE[]=[]
   
-  if( StrUtil.includeAny(headerText,markupFldValLs) ){
-    console.log(`【在请求头,发现标记请求地址】【${urlEnd}】【${headerText}】`)
+  if( StrUtil.includeAny(headerJsonText,markupFldValLs) ){
+    console.log(`【在请求头,发现标记请求地址】【${urlEnd}】【${headerJsonText}】`)
     placeS.push(TemplPlaceE.ReqHeader)
     _markup=MarkupHasEnum.Yes
   }
