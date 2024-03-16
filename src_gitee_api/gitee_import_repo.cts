@@ -56,6 +56,7 @@ interface SimpleRespI{
   respStatus:number
   respBody:string
   respHeaders:string
+  goal_repoUrl:string
 }
 
 async function GiteeImportRepoF(markup_project_import_url:string,markup_project_namespace_path:string,markup_project_path:string,markup_project_name:string,markup_project_description:string):Promise<SimpleRespI>{
@@ -124,19 +125,10 @@ async function GiteeImportRepoF(markup_project_import_url:string,markup_project_
     headers:rqTpl.req.headers,
   } as AxiosRequestConfig)
 
-  const simpleReqResp:SimpleRespI= {
-    url:rqTpl.req.url,
-    reqBody:rqTpl.req.postData,
-    reqHeaders:JSON.stringify(rqTpl.req.headers),
-    respStatus:resp.status,
-    respBody:resp.data,
-    respHeaders:JSON.stringify(resp.headers)
-  } as SimpleRespI
-
 //理论上 目标gitee完整仓库地址 应该从请求响应中解析，这里偷懒了，直接用常识 组装目的gitee完整仓库地址
-  const goal_repo:string = `${siteBaseUrl}/${markup_project_namespace_path}/${markup_project_path}.git`
+  const goal_repoUrl:string = `${siteBaseUrl}/${markup_project_namespace_path}/${markup_project_path}.git`
 //组装结果消息
-  const ok_msg:string = `${markup_project_import_url}  --->   ${goal_repo}`
+  const ok_msg:string = `${markup_project_import_url}  --->   ${goal_repoUrl}`
   const failed_msg:string = `${markup_project_import_url}  --->   xxx`
 
   if (resp.status == 200) {
@@ -146,6 +138,16 @@ async function GiteeImportRepoF(markup_project_import_url:string,markup_project_
     console.log(resp.data)
     console.log(`执行gitee导入仓库失败， http响应码【${resp.status}】 【${failed_msg}】`)
   }
+
+  const simpleReqResp:SimpleRespI= {
+    url:rqTpl.req.url,
+    reqBody:rqTpl.req.postData,
+    reqHeaders:JSON.stringify(rqTpl.req.headers),
+    respStatus:resp.status,
+    respBody:resp.data,
+    respHeaders:JSON.stringify(resp.headers),
+    goal_repoUrl:goal_repoUrl
+  } as SimpleRespI
 
   return simpleReqResp;
 
