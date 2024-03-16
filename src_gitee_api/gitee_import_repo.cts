@@ -2,6 +2,7 @@ import {MarkupFieldI, ReqTemplateI, TemplPlaceE} from "../src/req_tmpl_t.cjs";
 import {reqTemplDir} from "../src/my_cfg.cjs";
 import {readdirSync, readFileSync, writeFileSync} from "fs";
 import {MarkupFieldUtilC} from "./MarkupFieldUtil.cjs";
+import {dpHeaders2map} from "./HttpHeadersUtil.cjs"
 
 
 import * as DP from "devtools-protocol";
@@ -52,11 +53,12 @@ async function MyMain(){
 interface SimpleRespI{
   url:string
   reqBody:string
-  reqHeaders:string
+  reqHeaders:Map<string,string>
   respStatus:number
   respBody:string
   respHeaders:string
 }
+
 async function GiteeImportRepoF(markup_project_import_url:string,markup_project_namespace_path:string,markup_project_path:string,markup_project_name:string,markup_project_description:string):Promise<SimpleRespI>{
   const exitCode_1:number=21
   const errMsg_1:string=`【错误】【退出代码${exitCode_1}】目录【${reqTemplDir}】下没有已markup的请求例子，请你先执行脚本script/gen_gitee_import_repo_req_template.sh以生成请求例子`
@@ -126,7 +128,7 @@ async function GiteeImportRepoF(markup_project_import_url:string,markup_project_
   const simpleReqResp:SimpleRespI= {
     url:rqTpl.req.url,
     reqBody:rqTpl.req.postData,
-    reqHeaders:JSON.stringify(rqTpl.req.headers),
+    reqHeaders:dpHeaders2map(rqTpl.req.headers),
     respStatus:resp.status,
     respBody:resp.data,
     respHeaders:JSON.stringify(resp.headers)
