@@ -9,7 +9,7 @@ const giteeAccount=JSON.parse(readFileSync("gitee_account.json","utf8"))
 const giteeUserName=giteeAccount["user"];
 const giteePwd=giteeAccount["pass"];
 
-export const siteBaseUrl="https://gitee.com";
+export const siteBaseUrl="https://gitcode.com";
 //gitee登录页面url
 export const giteeLoginPageUrl=`${siteBaseUrl}`; // "https://gitee.com/login"
 //gitee登录页面中"登录"按钮的css选择器，  firefox开发者工具   人工获得
