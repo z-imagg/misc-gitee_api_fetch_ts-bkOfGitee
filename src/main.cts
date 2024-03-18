@@ -74,12 +74,12 @@ function hasMarkupFieldIn1Req(reqWpEnd:ReqWrapT,thisSiteCookies:DP.Protocol.Netw
     placeS.push(TemplPlaceE.ReqHeader)
     _markup=MarkupHasEnum.Yes
   }
-  
-  if( StrUtil.includeAny(urlEnd,markupFldValLs) ){
-    console.log(`【在url,发现标记请求地址】【${urlEnd}】`)
-    placeS.push(TemplPlaceE.Url)
-    _markup=MarkupHasEnum.Yes
-  }
+  // Url上的标记字段值不作为判断依据
+  // if( StrUtil.includeAny(urlEnd,markupFldValLs) ){
+  //   console.log(`【在url,发现标记请求地址】【${urlEnd}】`)
+  //   placeS.push(TemplPlaceE.Url)
+  //   _markup=MarkupHasEnum.Yes
+  // }
   if(req.hasPostData){
     const postData:string = req.postData;
     if(postData && StrUtil.includeAny(postData,markupFldValLs) ){
@@ -193,11 +193,9 @@ async function mainFunc( ) {
 
     //记录请求
     Network.on("requestWillBeSent", (params: DP.Protocol.Network.RequestWillBeSentEvent) => {
-      if(params.request.url.startsWith(siteBaseUrl)){//https://gitee.com/tmpOrg/projects
-        // 暂时不打印 普通 请求日志
+      //记录任何请求
         // console.log(`【请求】【reqId=${params.requestId}】 【${ (params.redirectResponse||{}).url } ----> ${params.request.url} 】`)
         reqTab.pushReq(params.redirectResponse, params.requestId,params.request )
-      }
       if(params.request.url.endsWith(".css")
         || params.request.url.indexOf(".js")>0
         || params.request.url.indexOf("images") > 0
@@ -270,6 +268,7 @@ async function mainFunc( ) {
       exitCode=1;
     }
 
+    readlineSync.question("退出：")
     //结束此函数开头打开的chrome浏览器进程
     stop_chrome()
 
