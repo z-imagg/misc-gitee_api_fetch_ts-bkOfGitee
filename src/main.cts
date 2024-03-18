@@ -174,7 +174,7 @@ async function mainFunc( ) {
     // 记录精简响应（全部响应都有，但全部都只有响应头、无响应体）
     Network.on("responseReceivedExtraInfo",(params: DP.Protocol.Network.ResponseReceivedExtraInfoEvent) =>{
 
-      if(reqTab.__reqLs_get_req_url_any_startWith(params.requestId,"https://gitee.com")){
+      if(reqTab.__reqLs_get_req_url_any_startWith(params.requestId,siteBaseUrl)){
         // 暂时不打印 普通 请求日志
         // console.log(`【响应ExtraInfo】【reqId=${params.requestId}】 【响应码=${params.statusCode}】  【reqUrl=${reqTab. __reqLs_get_req_urlLsJoin(params.requestId) }】`)
       }
@@ -183,7 +183,7 @@ async function mainFunc( ) {
     // 记录完整响应（不含302等无响应体的）
     //     参考 https://stackoverflow.com/questions/70926015/get-response-of-a-api-request-made-using-chrome-remote-interface/70926579#70926579
     Network.on("responseReceived",(params: DP.Protocol.Network.ResponseReceivedEvent) =>{
-      if(params.response.url.startsWith("https://gitee.com")){
+      if(params.response.url.startsWith(siteBaseUrl)){
         // 暂时不打印 普通 请求日志
         // console.log(`【响应】【reqId=${params.requestId}】【响应Url=${params.response.url}】 【响应码=${params.response.status}】  【请求Url=${ reqTab.__reqLs_get_req_urlLsJoin(params.requestId) }】`)
       }
@@ -193,18 +193,16 @@ async function mainFunc( ) {
 
     //记录请求
     Network.on("requestWillBeSent", (params: DP.Protocol.Network.RequestWillBeSentEvent) => {
-      if(params.request.url.startsWith("https://gitee.com")){//https://gitee.com/tmpOrg/projects
+      if(params.request.url.startsWith(siteBaseUrl)){//https://gitee.com/tmpOrg/projects
         // 暂时不打印 普通 请求日志
         // console.log(`【请求】【reqId=${params.requestId}】 【${ (params.redirectResponse||{}).url } ----> ${params.request.url} 】`)
         reqTab.pushReq(params.redirectResponse, params.requestId,params.request )
       }
       if(params.request.url.endsWith(".css")
         || params.request.url.indexOf(".js")>0
-        || params.request.url.indexOf("cn-assets.gitee.com") > 0
         || params.request.url.indexOf("images") > 0
         || params.request.url.indexOf(".gif") > 0
         || params.request.url.startsWith("data:") // data:application, data:image
-        || params.request.url.indexOf("gitee") < 0
       ){
         //调试用，暂时忽略可能的资源文件
         return;
