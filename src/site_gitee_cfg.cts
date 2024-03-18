@@ -11,7 +11,7 @@ const giteePwd=giteeAccount["pass"];
 
 export const siteBaseUrl="https://gitcode.com";
 //gitee登录页面url
-export const giteeLoginPageUrl=`${siteBaseUrl}`; // "https://gitee.com/login"
+export const giteeLoginPageUrl=`${siteBaseUrl}`; // https://gitcode.com
 //gitee登录页面中"登录"按钮的css选择器，  firefox开发者工具   人工获得
 // const loginBtnCssSelector="div.field:nth-child(4) > input:nth-child(1)";
 const loginPageMsg="【gitee登录页面】已填充用户名、密码， "
@@ -27,7 +27,7 @@ document.title="${loginPageMsg}"+document.title;
 
 
 //gitee导入页面url
-export const giteeImportPageUrl=`${siteBaseUrl}/projects/import/url`; // "https://gitee.com/projects/import/url";
+export const giteeImportPageUrl=`${siteBaseUrl}/create/import`; // "https://gitcode.com/create/import";
 export const markup_project_import_url = "https://github.com/intel/ARM_NEON_2_x86_SSE.git"
 export const nowMs:number = Date.now();
 export const markup_project_name = `markup_project_name----intel--ARM_NEON_2_x86_SSE__${nowMs}`
@@ -55,4 +55,4 @@ document.getElementById("project_description").value="${markup_project_descripti
 document.getElementById("submit-project-new").click();
 `
 //gitee账户页面url .  作为 登录判定依据 的 账户页面   的 url 故意且必须 和  正常进入 账户页面 不同 以 区分
-export const accInfoPgUrl=`${siteBaseUrl}/setting/account?different_to_normal=AvoidNoise`;
+export const accInfoPgUrl=`${siteBaseUrl}/setting/account?different_to_normal=AvoidNoise`;// https://gitcode.com/setting/account?different_to_normal=AvoidNoise
