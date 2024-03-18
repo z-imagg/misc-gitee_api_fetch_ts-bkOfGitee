@@ -215,7 +215,7 @@ async function mainFunc( ) {
     await DOM.enable();
     await Page.enable();
 
-    readlineSync.question("回调Network.on已经执行。 若测试已登录情形，请现在在此浏览器人工登录gitee，后回车继续。否则直接回车继续。")
+    readlineSync.question("开始：")
     //打开gitee账户页面
     console.log(`打开gitee账户页面 ${accInfoPgUrl}`)
     await Page.navigate( {url:accInfoPgUrl});//nav1 引起页面新加载
@@ -233,27 +233,15 @@ async function mainFunc( ) {
     //未登录
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
-    if ( LoginFlag==LoginEnum.NotLogin){
     //打开gitee登录页面
-    console.log(`打开gitee登录页面 ${giteeLoginPageUrl}`)
     await Page.navigate( {url:giteeLoginPageUrl});//nav2 引起页面新加载
     // types/chrome-remote-interface 说 没有此方法 loadEventFired，但是 官方例子 中有此方法， https://github.com/cyrus-and/chrome-remote-interface/wiki/Async-await-example
     await Page.loadEventFired()
     await DOM.getDocument();//阻塞的DOMget2 被 nav2 吃掉
-    //填写用户名、密码
-    await Runtime.evaluate( {
-      expression:js_fillUserPass
-    } as DP.Protocol.Runtime.EvaluateRequest)
-    console.log("在gitee登录页面，请填写各字段、填写可能的验证码, 点击'登录'按钮 。")
+    readlineSync.question("登录页：")
     await Page.loadEventFired()
     //用户在chroome浏览器进程上点击 '登录'按钮 , 引起页面新加载，将吃掉 nodejs进程中 阻塞的DOMget3
     await DOM.getDocument();//阻塞的DOMget3
-    }
-    //已登录
-    else if ( LoginFlag==LoginEnum.AlreadLogin){
-      //不用打开gitee登录页面
-      console.log(`已登录 不用打开gitee登录页面 `)
-    }
 
     reqTab.thisSiteCookies=(
       await client.Network.getCookies( {urls:[ siteBaseUrl]} as DP.Protocol.Network.GetCookiesRequest)  // siteBaseUrl  "https://gitee.com"
@@ -265,11 +253,8 @@ async function mainFunc( ) {
     await Page.navigate({url:giteeImportPageUrl})//nav4 引起页面新加载
     await Page.loadEventFired()
     await DOM.getDocument();//阻塞的DOMget4 被 nav4 吃掉
-    //填写标记仓库
-    await Runtime.evaluate( {
-      expression:js_fillMarkupGoalRepo  //此js脚本  点击了 '导入'按钮 , 引起页面新加载，将吃掉 nodejs进程中 阻塞的DOMget5
-    } as DP.Protocol.Runtime.EvaluateRequest)
-    console.log("gitee导入URL页面，js脚本【js_fillMarkupGoalRepo】 将填写各字段, 并'导入'按钮，【请勿手动操作】")
+    console.log("请填写src/site_gitee_cfg.cts中带有markup的字段值们")
+    readlineSync.question("导入页：")
     await Page.loadEventFired()
 
     await DOM.getDocument();//阻塞的DOMget5

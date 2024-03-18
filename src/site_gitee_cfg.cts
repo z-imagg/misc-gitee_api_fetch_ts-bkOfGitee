@@ -30,10 +30,10 @@ document.title="${loginPageMsg}"+document.title;
 export const giteeImportPageUrl=`${siteBaseUrl}/create/import`; // "https://gitcode.com/create/import";
 export const markup_project_import_url = "https://github.com/intel/ARM_NEON_2_x86_SSE.git"
 export const nowMs:number = Date.now();
-export const markup_project_name = `markup_project_name----intel--ARM_NEON_2_x86_SSE__${nowMs}`
+export const markup_project_name = `markup_project_name----intel--ARM_NEON_2_x86_SSE`
 export const markup_project_namespace_path = "markup-organization-9473" ; //mirrr
-export const markup_project_path = `markup_project_path----intel--ARM_NEON_2_x86_SSE__${nowMs}`
-export const markup_project_description = `markup_project_description----intel--ARM_NEON_2_x86_SSE__${nowMs}`
+export const markup_project_path = `markup_project_path----intel--ARM_NEON_2_x86_SSE`
+export const markup_project_description = `markup_project_description----intel--ARM_NEON_2_x86_SSE`
 
 export const markupFieldLs:MarkupFieldI[]=[]
 markupFieldLs.push( {fldNm:"markup_project_import_url",fldVal:markup_project_import_url} as MarkupFieldI)
