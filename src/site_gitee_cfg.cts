@@ -45,14 +45,17 @@ markupFieldLs.push( {fldNm:"markup_project_description",fldVal:markup_project_de
 
 const importPageMsg="【已填充标记字段】"
 export const js_fillMarkupGoalRepo=`
+var btnS=document.getElementsByClassName("devui-input__inner")
+
+btnS[0].value="${markup_project_import_url}"; //项目url
+btnS[1].value="${markup_project_name}"; //项目名称
+document.getElementsByClassName("devui-editable-select-input__inner")[0].value="${markup_project_namespace_path}";  //项目路径.组织名
+btnS[2].value="${markup_project_path}"; //项目路径.仓库名
+document.getElementsByClassName("devui-textarea")[0].value="${markup_project_description}"; //项目描述
+document.getElementsByClassName("devui-radio__label")[0].click(); // 公开按钮
+document.getElementById("devui-checkbox__label-text")[0].click(); // 公开项目需知
+// document.getElementById("button-content")[3].click(); // 导入 按钮
 document.title="${importPageMsg}"+document.title;
-document.getElementById("project_import_url").value="${markup_project_import_url}";
-document.getElementById("project_name").value="${markup_project_name}";
-//document.getElementById("project_namespace_path").value="${markup_project_namespace_path}"; ///页面中此输入框并不带入请求中，但是请求中字段名字确实是project[namespace_path]
-document.querySelector('.scrolling > div[data-value="${markup_project_namespace_path}"]').click() //点击下拉列表中具有给定组织名的元素
-document.getElementById("project_path").value="${markup_project_path}";
-document.getElementById("project_description").value="${markup_project_description}";
-document.getElementById("submit-project-new").click();
 `
 //gitee账户页面url .  作为 登录判定依据 的 账户页面   的 url 故意且必须 和  正常进入 账户页面 不同 以 区分
 export const accInfoPgUrl=`${siteBaseUrl}/setting/account?different_to_normal=AvoidNoise`;// https://gitcode.com/setting/account?different_to_normal=AvoidNoise
