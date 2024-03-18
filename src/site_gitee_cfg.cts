@@ -55,4 +55,4 @@ document.getElementById("project_description").value="${markup_project_descripti
 document.getElementById("submit-project-new").click();
 `
 //gitee账户页面url .  作为 登录判定依据 的 账户页面   的 url 故意且必须 和  正常进入 账户页面 不同 以 区分
-export const accInfoPgUrl="https://gitcode.com/setting/account?different_to_normal=AvoidNoise";
+export const accInfoPgUrl=`${siteBaseUrl}/setting/account?different_to_normal=AvoidNoise`;
