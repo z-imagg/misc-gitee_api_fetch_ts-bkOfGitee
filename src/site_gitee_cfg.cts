@@ -11,15 +11,18 @@ const giteePwd=giteeAccount["pass"];
 
 export const siteBaseUrl="https://gitee.com";
 //gitee登录页面url
-export const giteeLoginPageUrl=`${siteBaseUrl}/login`; // "https://gitee.com/login"
+export const giteeLoginPageUrl=`${siteBaseUrl}`; // "https://gitee.com/login"
 //gitee登录页面中"登录"按钮的css选择器，  firefox开发者工具   人工获得
 // const loginBtnCssSelector="div.field:nth-child(4) > input:nth-child(1)";
 const loginPageMsg="【gitee登录页面】已填充用户名、密码， "
 //gitee登录页面中填写用户名、填写密码的js语句，  firefox开发者工具   人工获得
 export const js_fillUserPass=`
-document.getElementById("user_login").value="${giteeUserName}";
-document.getElementById("user_password").value="${giteePwd}";
+document.getElementsByClassName("button-content")[0].click()
+var loginUi=document.getElementsByClassName("devui-input__inner");
+loginUi[0].value="${giteeUserName}"
+loginUi[1].value="${giteePwd}"
 document.title="${loginPageMsg}"+document.title;
+//document.getElementsByClassName("button-content")[5].click() ; //不用 js点击登录按钮，这里要求人工点击登录按钮
 `
 
 
