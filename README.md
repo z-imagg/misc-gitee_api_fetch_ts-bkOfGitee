@@ -1,4 +1,21 @@
 
+## 术语
+
+- 【文件】 标记字段值 == 字段值 是 足够长的、不容易跟该文件中其他字符串相同的
+
+- 【术语】 请求模板 == 一个正常请求， 其 业务字段值 是 标记字段值 ， 因此 只要 将 标记字段值 替换成 目标值， 该 请求文件 即成为 目标请求 了
+
+## 适用场景
+
+- 适用场景   ： 请求模板 方案 适用于 无 签名 的 请求
+
+- 不适用场景 ： 请求模板 方案 在 有签名时 失效 ， 具体：
+
+  
+       当 请求 中 有 签名字段 时， 
+       两个合法请求A、B  中 业务字段值 若 不同，   
+       则 A、B签名不同，  导致 即使 将A的业务字段替换为B的 也无法获得B的合法签名，
+       因此 此 请求模板 方案 在 有签名时 失效。
 
 ## 本仓库功能描述
 
@@ -90,6 +107,8 @@ ls -l reqTemplate/
 
 
 完整日志例子， http://giteaz:3000/misc/gitee_api_fetch_ts/src/branch/main/log.txt.d/gen_gitee_import_repo_req_template.sh-gitee-example.log
+
+gitee导入仓库的请求模板 例子  , http://giteaz:3000/misc/gitee_api_fetch_ts/src/branch/main/log.txt.d/gitee_reqTemplate_importRepo_9A65D9ABD4F7C28D9BE7FE027C3FDE39.json
 
 #### 5. 使用 请求模板（带有标记值字段的请求 即 请求模板）
 
