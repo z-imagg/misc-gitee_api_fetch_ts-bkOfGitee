@@ -134,7 +134,9 @@ export enum TemplPlaceE {
 3. 执行该请求 即可将目标github仓库导入进给定的gitee组织
 
 
-### 二、调用导入接口( 基于 以上 gitee导入给定url仓库 请求模板）
+### gitee_importRepo
+
+**二、调用导入接口( 基于 以上 gitee导入给定url仓库 请求模板）**
 
 ```shell
 #导入github仓库到gitee
