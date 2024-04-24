@@ -84,35 +84,51 @@ unzip chrome-linux.zip -d /app/
       
 ###### 6. 人工 观察 控制台 打印的 监控到的请求模板们 ,   找到 并 保留 gitee导入仓库的请求模板 ， 删除其余无用请求模板
 
-现在是西历2024年4月24日， gitee导入仓库的请求模板 特征如下 
+脚本 监控到的请求模板如下:
+   ```shell
+ls /app/github-gitee-GITEA/gitee_api_fetch_ts/reqTemplate/
+# 71331.424.json  71331.433.json  71331.447.json  71331.448.json  71331.454.json  71331.465.json  71331.548.json  71331.568.json  71331.569.json  71331.570.json  BEE38D21ED99027A39E662BF8FCBF028.json
 
-```
-【在url,发现标记请求地址】【https://gitee.com/markup-organization-9473/markup_project_path----intel--ARM_NEON_2_x86_SSE__1713933501288】
-已写入请求例子（作为请求模板）文件 【./reqTemplate/9A65D9ABD4F7C28D9BE7FE027C3FDE39.json】
-```   
+   ```
+
+假设 有字段markup_project_description的一定是 gitee导入仓库请求 ，据此 寻找该请求过程如下：
+   ```shell
+#复制一份请求们
+rm -frv /tmp/reqTemplate
+cp -rv    /app/github-gitee-GITEA/gitee_api_fetch_ts/reqTemplate /tmp/
+
+#删除干扰
+#  删除 每个请求文件中都有的 字段定义 markup_project_description
+find /tmp/reqTemplate/  -type f      | xargs -I% sed -i     's/"fldNm":"markup_project_description","fldVal":"markup_project_description----intel--ARM_NEON_2_x86_SSE__//g'  %
+# 观看是否实际执行了删除
+# diff /app/github-gitee-GITEA/gitee_api_fetch_ts/reqTemplate /tmp/reqTemplate
+
+#寻找有字段markup_project_description的请求
+grep -Hn  'markup_project_description----intel--ARM_NEON_2_x86_SSE__'  /tmp/reqTemplate/*
+# /tmp/reqTemplate/71331.433.json
+   ```
+即 gitee导入仓库请求 是 ```reqTemplate/71331.433.json```  ， 现在是西历2024年4月24日 
+
     
 ```shell
-#脚本 监控到的请求模板如下
-ls reqTemplate/
-# 21241.424.json	21241.429.json	21241.441.json	21241.442.json	21241.448.json	21241.459.json	21241.544.json	21241.561.json	21241.562.json	21241.563.json	9A65D9ABD4F7C28D9BE7FE027C3FDE39.json
+#确保目录reqTemplate下只有一个文件，因为接下时 只会从目录reqTemplate中读取第一个文件作为请求模板
+rm -v /app/github-gitee-GITEA/gitee_api_fetch_ts/reqTemplate/!(71331.433.json)
 
-#通过人工观察， 确认 并 保留 gitee导入仓库的请求模板 9A65D9ABD4F7C28D9BE7FE027C3FDE39.json
-rm reqTemplate/!(9A65D9ABD4F7C28D9BE7FE027C3FDE39.json)
 
 #确保目录reqTemplate下只有一个文件，因为接下时 只会从目录reqTemplate中读取第一个文件作为请求模板
-ls -l reqTemplate/
-#-rwxrwxrwx 1  5.5K    9A65D9ABD4F7C28D9BE7FE027C3FDE39.json
+ls -lh    /app/github-gitee-GITEA/gitee_api_fetch_ts/reqTemplate/71331.433.json
+# -rwxrwxrwx   7.2K  2024年4月24日 17:25 /app/github-gitee-GITEA/gitee_api_fetch_ts/reqTemplate/71331.433.json
 
 ```
 
 
 完整日志例子， [log.txt.d/gen_gitee_import_repo_req_template.sh-gitee-example.log](http://giteaz:3000/misc/gitee_api_fetch_ts/src/branch/main/log.txt.d/gen_gitee_import_repo_req_template.sh-gitee-example.log)
 
-gitee导入仓库的请求模板 例子 ， [doc/gitee_reqTemplate_importRepo_9A65D9](http://giteaz:3000/misc/gitee_api_fetch_ts/src/branch/main/doc/gitee_reqTemplate_importRepo_9A65D9ABD4F7C28D9BE7FE027C3FDE39.json)  ，  其中属性markupFieldLs是标记定义， 其余以开头的```markup```字符串 是 标记字段值 ,
+gitee导入仓库的请求模板 例子 ， [doc/gitee_reqTemplate_importRepo_71331.433.json](http://giteaz:3000/misc/gitee_api_fetch_ts/src/branch/main/doc/gitee_reqTemplate_importRepo_71331.433.json)  ，  其中属性markupFieldLs是标记定义， 其余以开头的```markup```字符串 是 标记字段值 ,
 
 #### 5. 代码中 使用 请求模板（带有标记值字段的请求 即 请求模板）
 
-[步骤4](giteaz:3000/msic/gitee_api_fetch_ts#4-执行脚本生成gitee-导入仓库接口-的请求模板) 产生的结果文件```./reqTemplate/x.json```举例: [doc/gitee_reqTemplate_importRepo_9A65D9](http://giteaz:3000/misc/gitee_api_fetch_ts/src/branch/main/doc/gitee_reqTemplate_importRepo_9A65D9ABD4F7C28D9BE7FE027C3FDE39.json)
+[步骤4](giteaz:3000/msic/gitee_api_fetch_ts#4-执行脚本生成gitee-导入仓库接口-的请求模板) 产生的结果文件```./reqTemplate/x.json```举例: [doc/gitee_reqTemplate_importRepo_71331.433.json](http://giteaz:3000/misc/gitee_api_fetch_ts/src/branch/main/doc/gitee_reqTemplate_importRepo_71331.433.json)
 
 ##### 5.1. 解释 请求模板
 该结果文件```./reqTemplate/x.json``` 即  带有标记markup值字段的请求 即 请求模板
