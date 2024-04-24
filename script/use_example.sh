@@ -2,6 +2,9 @@
 
 #【用法】 source use_example.sh
 
+source <(curl http://giteaz:3000/bal/bash-simplify/raw/branch/release/cdCurScriptDir.sh)
+cdCurScriptDir
+
 
 #导入github仓库到gitee
 export PATH=/fridaAnlzAp/github-gitee-GITEA/gitee_api_fetch_ts/script:$PATH
