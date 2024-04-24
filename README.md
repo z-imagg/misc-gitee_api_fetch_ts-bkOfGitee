@@ -47,7 +47,7 @@ unzip chrome-linux.zip -d /app/
 ```
 
 ##### 3.2 配置chromium路径
-修改 [src/my_cfg.cts](http://giteaz:3000/msic/gitee_api_fetch_ts/src/branch/main/src/my_cfg.ts) 中```chromePath```为 本机chrome可执行程序路径```/app/chrome-linux/chrome```
+修改 [src/my_cfg.cts](http://giteaz:3000/msic/gitee_api_fetch_ts/src/branch/main/src/my_cfg.cts) 中```chromePath```为 本机chrome可执行程序路径```/app/chrome-linux/chrome```
 
 
 #### 4. 执行脚本生成gitee 导入仓库接口 的请求模板
