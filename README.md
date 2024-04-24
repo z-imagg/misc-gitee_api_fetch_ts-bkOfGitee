@@ -18,7 +18,7 @@
 
 ## 使用手册
 
-### gen-req-template
+### gen-gitee_importRepo-ReqTemplate
 
 **一、生成请求模板(gitee导入给定url仓库 请求 模板）**
 
