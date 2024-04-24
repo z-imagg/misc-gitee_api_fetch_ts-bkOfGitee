@@ -138,18 +138,7 @@ export enum TemplPlaceE {
 
 **二、调用导入接口( 基于 以上 gitee导入给定url仓库 请求模板）**
 
-```shell
-#导入github仓库到gitee
-export PATH=/fridaAnlzAp/github-gitee-GITEA/gitee_api_fetch_ts/script:$PATH
-
-#生成bash命令import_githubRepo_to_gitee.sh的提示
-source script/bash-complete--import_githubRepo_to_gitee.sh
-
-import_githubRepo_to_gitee.sh --help
-
-import_githubRepo_to_gitee.sh --两次tab 即有命令提示
-
-```
+http://giteaz:3000/misc/gitee_api_fetch_ts/src/branch/main/script/use_example.sh
 
 
 ## 开发时候用的 
