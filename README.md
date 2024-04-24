@@ -83,8 +83,8 @@ ls reqTemplate/
 rm reqTemplate/!(9A65D9ABD4F7C28D9BE7FE027C3FDE39.json)
 
 #确保目录reqTemplate下只有一个文件，因为接下时 只会从目录reqTemplate中读取第一个文件作为请求模板
-ls reqTemplate/
-#9A65D9ABD4F7C28D9BE7FE027C3FDE39.json
+ls -l reqTemplate/
+#-rwxrwxrwx 1  5.5K    9A65D9ABD4F7C28D9BE7FE027C3FDE39.json
 
 ```
 
