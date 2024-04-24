@@ -39,8 +39,8 @@ err02_txt_reqTmpl_not_1="目录'$PrjHm/reqTemplate/'只能有1个请求模板文
 [[ -f $PrjHm/gitee_account.json ]] || { echo "$err02_txt_use_example" && exit $err02_code ;}
 
 reqTmplF_cnt=$(ls $PrjHm/reqTemplate/ | wc -l )
-[[ $reqTmplF_cnt -le 0 ]] ||  { echo "$err02_txt_reqTmpl_no" && exit $err02_code ;}
-[[ $reqTmplF_cnt -ne 1 ]] ||  { echo "$err02_txt_reqTmpl_not_1" && exit $err02_code ;}
+[[ $reqTmplF_cnt -le 0 ]] &&  { echo "$err02_txt_reqTmpl_no" && exit $err02_code ;}
+[[ $reqTmplF_cnt -ne 1 ]] &&  { echo "$err02_txt_reqTmpl_not_1" && exit $err02_code ;}
 
 err03_code=24
 err03_txt="错误03: '$PrjHm/src/my_cfg.cts'中指定的chromePath，该文件不存在， exit $err02_code "
