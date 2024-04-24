@@ -27,7 +27,7 @@
 
 ####  2. 填写gitee组织
 
-修改 [src/site_gitee_cfg.cts](http://giteaz:3000/msic/node-typescript-boilerplate/src/branch/main/src/site_gitee_cfg.cts) 中以下变量markupOrgName的值为你的gitee组织
+修改 [src/site_gitee_cfg.cts](http://giteaz:3000/msic/gitee_api_fetch_ts/src/branch/main/src/site_gitee_cfg.cts) 中以下变量markupOrgName的值为你的gitee组织
 ```javascript
 const markupOrgName = "markup-organization-9473" ; //mirrr
 //不要修改其他变量
@@ -47,7 +47,7 @@ unzip chrome-linux.zip -d /app/
 ```
 
 ##### 3.2 配置chromium路径
-修改 [src/my_cfg.cts](http://giteaz:3000/msic/node-typescript-boilerplate/src/branch/main/src/my_cfg.ts) 中```chromePath```为 本机chrome可执行程序路径```/app/chrome-linux/chrome```
+修改 [src/my_cfg.cts](http://giteaz:3000/msic/gitee_api_fetch_ts/src/branch/main/src/my_cfg.ts) 中```chromePath```为 本机chrome可执行程序路径```/app/chrome-linux/chrome```
 
 
 #### 4. 执行脚本生成gitee 导入仓库接口 的请求模板
@@ -90,11 +90,11 @@ ls reqTemplate/
 ```
 
 
-完整日志例子， http://giteaz:3000/misc/node-typescript-boilerplate/src/branch/main/log.txt.d/gen_gitee_import_repo_req_template.sh-gitee-example.log
+完整日志例子， http://giteaz:3000/misc/gitee_api_fetch_ts/src/branch/main/log.txt.d/gen_gitee_import_repo_req_template.sh-gitee-example.log
 
 #### 5. 使用 请求模板（带有标记值字段的请求 即 请求模板）
 
-[步骤4](giteaz:3000/msic/node-typescript-boilerplate#4-执行脚本生成gitee-导入仓库接口-的请求模板) 产生的结果文件```./reqTemplate/x.json```举例: [doc/example_pretty_json_for_human_read.json](http://giteaz:3000/msic/node-typescript-boilerplate/src/branch/main/doc/example_pretty_json_for_human_read.json)
+[步骤4](giteaz:3000/msic/gitee_api_fetch_ts#4-执行脚本生成gitee-导入仓库接口-的请求模板) 产生的结果文件```./reqTemplate/x.json```举例: [doc/example_pretty_json_for_human_read.json](http://giteaz:3000/msic/gitee_api_fetch_ts/src/branch/main/doc/example_pretty_json_for_human_read.json)
 
 ##### 5.1. 解释 请求模板
 该结果文件```./reqTemplate/x.json``` 即  带有标记markup值字段的请求 即 请求模板
@@ -112,11 +112,11 @@ ls reqTemplate/
 
 ##### 5.3. 解释 "templatePlace"、"markupFieldLs"
 
-字段"templatePlace"定义为 [req_tmpl_t.cts](giteaz:3000/msic/node-typescript-boilerplate/src/branch/main/src/req_tmpl_t.ts)下的枚举TemplPlaceE
+字段"templatePlace"定义为 [req_tmpl_t.cts](giteaz:3000/msic/gitee_api_fetch_ts/src/branch/main/src/req_tmpl_t.ts)下的枚举TemplPlaceE
 
 字段"templatePlace"描述了 "markupFieldLs"的标记值们 作用到哪
 ```js
-//来自  http://giteaz:3000/msic/node-typescript-boilerplate/src/branch/main/src/req_tmpl_t.cts
+//来自  http://giteaz:3000/msic/gitee_api_fetch_ts/src/branch/main/src/req_tmpl_t.cts
 export enum TemplPlaceE {
   ReqHeader = 0, // "markupFieldLs"的标记值 在 ./reqTemplate/x.json:/"req"/"headers"
   Url = 1, // "markupFieldLs"的标记值 在 ./reqTemplate/x.json:/"req"/"url"
