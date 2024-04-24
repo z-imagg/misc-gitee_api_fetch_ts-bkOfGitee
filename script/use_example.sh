@@ -28,7 +28,7 @@ chmod +x $SrcF && \
 #生成bash命令import_githubRepo_to_gitee.sh的提示
 source bash-complete--import_githubRepo_to_gitee.sh
 
-readlink -f `which import_githubRepo_to_gitee.sh`
+echo -n "import_githubRepo_to_gitee.sh:" && readlink -f `which import_githubRepo_to_gitee.sh`
 
 err02_code=24
 err02_txt="错误02: 请先准备好环境，再运行use_example.sh， exit $err02_code, 环境准备参考: http://giteaz:3000/github_tool/github-gitee-GITEA/src/branch/main/readme.md"
