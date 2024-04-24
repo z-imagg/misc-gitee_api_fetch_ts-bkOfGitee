@@ -37,8 +37,14 @@ const markupOrgName = "markup-organization-9473" ; //mirrr
 
 [chromium/1280425,2024-03-30/chrome-linux.zip](https://www.googleapis.com/download/storage/v1/b/chromium-browser-snapshots/o/Linux_x64%2F1280425%2Fchrome-linux.zip?generation=1711757130384856&alt=media)
 
+```shell
+unzip chrome-linux.zip -d /app/
+file /app/chrome-linux/chrome
+#ELF
+```
+
 ##### 3.2 配置chromium路径
-修改 [my_cfg.cts](http://giteaz:3000/msic/node-typescript-boilerplate/src/branch/main/src/my_cfg.ts) 中```chromePath```为 本机chrome可执行程序路径
+修改 [my_cfg.cts](http://giteaz:3000/msic/node-typescript-boilerplate/src/branch/main/src/my_cfg.ts) 中```chromePath```为 本机chrome可执行程序路径```/app/chrome-linux/chrome```
 
 
 #### 4. 执行脚本生成gitee 导入仓库接口 的请求模板
