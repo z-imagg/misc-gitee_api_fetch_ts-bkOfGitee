@@ -18,7 +18,9 @@
 
 ## 使用手册
 
-### 一、生成请求模板(gitee导入给定url仓库 请求 模板）
+### gen-req-template
+
+**一、生成请求模板(gitee导入给定url仓库 请求 模板）**
 
 ####  1. 填写gitee账户
 ```cp gitee_account.json.template  gitee_account.json```, 按照格式填写 你的gitee账户 到配置文件 gitee_account.json
