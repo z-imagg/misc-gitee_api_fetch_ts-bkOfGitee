@@ -138,7 +138,7 @@ export enum TemplPlaceE {
 
 **二、调用导入接口( 基于 以上 gitee导入给定url仓库 请求模板）**
 
-http://giteaz:3000/misc/gitee_api_fetch_ts/src/branch/main/script/use_example.sh
+以命令方式使用gitee导入仓库接口， http://giteaz:3000/misc/gitee_api_fetch_ts/src/branch/main/script/use_example.sh
 
 
 ## 开发时候用的 
