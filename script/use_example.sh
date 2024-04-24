@@ -23,7 +23,7 @@ echo $PATH | grep "/app/bin" >/dev/null || { echo "$err01_txt" && exit $err01_co
 local SrcF=/app/github-gitee-GITEA/gitee_api_fetch_ts/script/import_githubRepo_to_gitee.sh  && \
 local F=/app/bin/import_githubRepo_to_gitee.sh && \
 chmod +x $SrcF && \
-{ unlink $F 2>/dev/null || ln -s $SrcF $F ;} 
+{ unlink $F 2>/dev/null ; ln -s $SrcF $F ;} 
 
 #生成bash命令import_githubRepo_to_gitee.sh的提示
 source bash-complete--import_githubRepo_to_gitee.sh
