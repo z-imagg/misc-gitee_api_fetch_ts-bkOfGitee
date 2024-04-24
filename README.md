@@ -140,6 +140,9 @@ export enum TemplPlaceE {
 
 以命令方式使用gitee导入仓库接口， http://giteaz:3000/misc/gitee_api_fetch_ts/src/branch/main/script/use_example.sh
 
+```shell
+bash  /app/github-gitee-GITEA/gitee_api_fetch_ts/script/use_example.sh
+```
 
 ## 开发时候用的 
 
