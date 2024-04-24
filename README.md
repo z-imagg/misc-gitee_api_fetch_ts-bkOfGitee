@@ -52,15 +52,45 @@ unzip chrome-linux.zip -d /app/
 
 #### 4. 执行脚本生成gitee 导入仓库接口 的请求模板
 
-```bash -x script/gen_gitee_import_repo_req_template.sh```
+```bash -x script/gen_gitee_import_repo_req_template.sh``` 启动chrome浏览器， ```chrome-remote-interface```和人工操作混合 完成 获取请求模板
 
-该脚本会启动chrome浏览器，
 
-只有在gitee登录页面  需要人工点击 浏览器页面上的登录按钮，因为 点击登录按钮后可能有验证码识别，
+当需要人工操作时，按照该脚本在控制台打印的提示操作。具体过程如下：
 
-其余是动作是chrome-remote-interface直接驱动chrome或对chrome执行js脚本完成的，不需要人工操作浏览器
+###### 1. 脚本 以```chrome-remote-interface``` 打开chrome浏览器, 控制台提示等待按回车
+###### 2. 人工 在控制台按回车
+###### 3. 脚本 以```chrome-remote-interface``` 驱动chrome进入gitee.com登陆页面, 并填写好gitee用户名、密码, 控制台提示等待按回车
+###### 4. 人工 在chrome页面 点击 登陆按钮, 并人工完成可能出现的验证码识别
+###### 5. 人工 在控制台按回车
+###### 6. 脚本 以```chrome-remote-interface``` 进入gitee导入外部仓库页面, 对各字段填写标记值，执行导入，监控 url、请求、响应 ， 若监控到 标记值 则将该请求当成请求模板。 
+      
+       此时脚本已执行完成并已退出
+      
+###### 7. 人工 观察 控制台 打印的 监控到的请求模板们 ,   找到 并 保留 gitee导入仓库的请求模板 ， 删除其余无用请求模板
 
-假设 本步骤产生的结果文件 名为   ```./reqTemplate/x.json```
+现在是西历2024年4月24日， gitee导入仓库的请求模板 特征如下 
+
+```
+【在url,发现标记请求地址】【https://gitee.com/markup-organization-9473/markup_project_path----intel--ARM_NEON_2_x86_SSE__1713933501288】
+已写入请求例子（作为请求模板）文件 【./reqTemplate/9A65D9ABD4F7C28D9BE7FE027C3FDE39.json】
+```   
+    
+```shell
+#脚本 监控到的请求模板如下
+ls reqTemplate/
+# 21241.424.json	21241.429.json	21241.441.json	21241.442.json	21241.448.json	21241.459.json	21241.544.json	21241.561.json	21241.562.json	21241.563.json	9A65D9ABD4F7C28D9BE7FE027C3FDE39.json
+
+#通过人工观察， 确认 并 保留 gitee导入仓库的请求模板 9A65D9ABD4F7C28D9BE7FE027C3FDE39.json
+rm reqTemplate/!(9A65D9ABD4F7C28D9BE7FE027C3FDE39.json)
+
+#确保目录reqTemplate下只有一个文件，因为接下时 只会从目录reqTemplate中读取第一个文件作为请求模板
+ls reqTemplate/
+#9A65D9ABD4F7C28D9BE7FE027C3FDE39.json
+
+```
+
+
+完整日志例子， http://giteaz:3000/misc/node-typescript-boilerplate/src/branch/main/log.txt.d/gen_gitee_import_repo_req_template.sh-gitee-example.log
 
 #### 5. 使用 请求模板（带有标记值字段的请求 即 请求模板）
 
