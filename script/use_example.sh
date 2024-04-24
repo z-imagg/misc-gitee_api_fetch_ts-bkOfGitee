@@ -26,7 +26,7 @@ chmod +x $SrcF && \
 { unlink $F 2>/dev/null ; ln -s $SrcF $F ;} 
 
 #生成bash命令import_githubRepo_to_gitee.sh的提示
-source bash-complete--import_githubRepo_to_gitee.sh
+# source bash-complete--import_githubRepo_to_gitee.sh
 
 echo -n "import_githubRepo_to_gitee.sh:" && readlink -f `which import_githubRepo_to_gitee.sh`
 
@@ -52,7 +52,12 @@ chromePath=$(grep chromePath  $PrjHm/src/my_cfg.cts   | cut -d'"' -f 2)
 #若运行失败，则 安装依赖、编译 后 再运行
 import_githubRepo_to_gitee.sh --help || { ( cd  $PrjHm && npm install && npm run build ) && import_githubRepo_to_gitee.sh --help ;}
 
-echo '用法举例:import_githubRepo_to_gitee.sh --两次tab 即有命令提示'
+usage='\n
+用法举例:\n
+source bash-complete--import_githubRepo_to_gitee.sh \n
+import_githubRepo_to_gitee.sh --两次tab 即有命令提示 \n
+'
+echo -e $usage
 
 
 }
