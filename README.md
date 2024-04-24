@@ -27,7 +27,7 @@
 
 ####  2. 填写gitee组织
 
-修改 [site_gitee_cfg.cts](http://giteaz:3000/msic/node-typescript-boilerplate/src/branch/main/src/site_gitee_cfg.ts) 中以下变量markupOrgName的值为你的gitee组织
+修改 [site_gitee_cfg.cts](http://giteaz:3000/msic/node-typescript-boilerplate/src/branch/main/src/site_gitee_cfg.cts) 中以下变量markupOrgName的值为你的gitee组织
 ```javascript
 const markupOrgName = "markup-organization-9473" ; //mirrr
 ```
