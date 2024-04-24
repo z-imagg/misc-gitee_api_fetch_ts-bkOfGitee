@@ -32,6 +32,12 @@ const markupOrgName = "markup-organization-9473" ; //mirrr
 
 #### 3. 修改本机中chrome可执行程序路径
 
+##### 3.1 下载chromium
+[chromium/1280425,2024-03-30](https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Linux_x64/1280425/)
+
+[chromium/1280425,2024-03-30/chrome-linux.zip](https://www.googleapis.com/download/storage/v1/b/chromium-browser-snapshots/o/Linux_x64%2F1280425%2Fchrome-linux.zip?generation=1711757130384856&alt=media)
+
+##### 3.2 配置chromium路径
 修改 [my_cfg.cts](http://giteaz:3000/msic/node-typescript-boilerplate/src/branch/main/src/my_cfg.ts) 中```chromePath```为 本机chrome可执行程序路径
 
 
