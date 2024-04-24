@@ -18,21 +18,36 @@
 
 ## 使用手册
 
-### 一、生成请求模板(gitee导入给定url仓库 请求 模板）
+### gen-req-template
+
+**一、生成请求模板(gitee导入给定url仓库 请求 模板）**
 
 ####  1. 填写gitee账户
 ```cp gitee_account.json.template  gitee_account.json```, 按照格式填写 你的gitee账户 到配置文件 gitee_account.json
 
 ####  2. 填写gitee组织
 
-修改 [site_gitee_cfg.cts](http://giteaz:3000/msic/node-typescript-boilerplate/src/branch/main/src/site_gitee_cfg.ts) 中以下变量markupOrgName的值为你的gitee组织
+修改 [src/site_gitee_cfg.cts](http://giteaz:3000/msic/node-typescript-boilerplate/src/branch/main/src/site_gitee_cfg.cts) 中以下变量markupOrgName的值为你的gitee组织
 ```javascript
 const markupOrgName = "markup-organization-9473" ; //mirrr
+//不要修改其他变量
 ```
 
 #### 3. 修改本机中chrome可执行程序路径
 
-修改 [my_cfg.cts](http://giteaz:3000/msic/node-typescript-boilerplate/src/branch/main/src/my_cfg.ts) 中```chromePath```为 本机chrome可执行程序路径
+##### 3.1 下载chromium
+[chromium/1280425,2024-03-30](https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Linux_x64/1280425/)
+
+[chromium/1280425,2024-03-30/chrome-linux.zip](https://www.googleapis.com/download/storage/v1/b/chromium-browser-snapshots/o/Linux_x64%2F1280425%2Fchrome-linux.zip?generation=1711757130384856&alt=media)
+
+```shell
+unzip chrome-linux.zip -d /app/
+/app/chrome-linux/chrome --version
+# Chromium 125.0.6388.0 
+```
+
+##### 3.2 配置chromium路径
+修改 [src/my_cfg.cts](http://giteaz:3000/msic/node-typescript-boilerplate/src/branch/main/src/my_cfg.ts) 中```chromePath```为 本机chrome可执行程序路径```/app/chrome-linux/chrome```
 
 
 #### 4. 执行脚本生成gitee 导入仓库接口 的请求模板
