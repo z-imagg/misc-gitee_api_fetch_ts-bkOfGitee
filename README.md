@@ -62,6 +62,11 @@ unzip chrome-linux.zip -d /app/
 
 假设 本步骤产生的结果文件 名为   ```./reqTemplate/x.json```
 
+```
+【在url,发现标记请求地址】【https://gitee.com/markup-organization-9473/markup_project_path----intel--ARM_NEON_2_x86_SSE__1713933501288】
+已写入请求例子（作为请求模板）文件 【./reqTemplate/9A65D9ABD4F7C28D9BE7FE027C3FDE39.json】
+```
+
 #### 5. 使用 请求模板（带有标记值字段的请求 即 请求模板）
 
 [步骤4](giteaz:3000/msic/node-typescript-boilerplate#4-执行脚本生成gitee-导入仓库接口-的请求模板) 产生的结果文件```./reqTemplate/x.json```举例: [doc/example_pretty_json_for_human_read.json](http://giteaz:3000/msic/node-typescript-boilerplate/src/branch/main/doc/example_pretty_json_for_human_read.json)
