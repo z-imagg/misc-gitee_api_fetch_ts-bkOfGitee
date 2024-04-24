@@ -7,6 +7,8 @@ function use_example() {
 source <(curl --silent http://giteaz:3000/bal/bash-simplify/raw/branch/release/cdCurScriptDir.sh)
 cdCurScriptDir
 
+
+
 local err01_code=23
 local err01_txt="error : /app/bin/ not in \$PATH, exit $err01_code"
 
@@ -25,7 +27,8 @@ source bash-complete--import_githubRepo_to_gitee.sh
 
 readlink -f `which import_githubRepo_to_gitee.sh`
 
-import_githubRepo_to_gitee.sh --help
+#若运行失败，则 安装依赖、编译 后 再运行
+import_githubRepo_to_gitee.sh --help || { ( cd  .. && npm install && npm run build ) && import_githubRepo_to_gitee.sh --help ;}
 
 echo '用法举例:import_githubRepo_to_gitee.sh --两次tab 即有命令提示'
 
