@@ -42,8 +42,8 @@ const markupOrgName = "markup-organization-9473" ; //mirrr
 
 ```shell
 unzip chrome-linux.zip -d /app/
-file /app/chrome-linux/chrome
-#ELF
+/app/chrome-linux/chrome --version
+# Chromium 125.0.6388.0 
 ```
 
 ##### 3.2 配置chromium路径
