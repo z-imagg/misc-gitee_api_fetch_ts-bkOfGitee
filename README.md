@@ -106,13 +106,13 @@ ls -l reqTemplate/
 ```
 
 
-完整日志例子， [gen_gitee_import_repo_req_template.sh-gitee-example.log](http://giteaz:3000/misc/gitee_api_fetch_ts/src/branch/main/log.txt.d/gen_gitee_import_repo_req_template.sh-gitee-example.log)
+完整日志例子， [log.txt.d/gen_gitee_import_repo_req_template.sh-gitee-example.log](http://giteaz:3000/misc/gitee_api_fetch_ts/src/branch/main/log.txt.d/gen_gitee_import_repo_req_template.sh-gitee-example.log)
 
-gitee导入仓库的请求模板 例子 ， [gitee_reqTemplate_importRepo_9A65D9](http://giteaz:3000/misc/gitee_api_fetch_ts/src/branch/main/log.txt.d/gitee_reqTemplate_importRepo_9A65D9ABD4F7C28D9BE7FE027C3FDE39.json)  ，  其中属性markupFieldLs是标记定义， 其余以开头的```markup```字符串 是 标记字段值 ,
+gitee导入仓库的请求模板 例子 ， [doc/gitee_reqTemplate_importRepo_9A65D9](http://giteaz:3000/misc/gitee_api_fetch_ts/src/branch/main/doc/gitee_reqTemplate_importRepo_9A65D9ABD4F7C28D9BE7FE027C3FDE39.json)  ，  其中属性markupFieldLs是标记定义， 其余以开头的```markup```字符串 是 标记字段值 ,
 
-#### 5. 使用 请求模板（带有标记值字段的请求 即 请求模板）
+#### 5. 代码中 使用 请求模板（带有标记值字段的请求 即 请求模板）
 
-[步骤4](giteaz:3000/msic/gitee_api_fetch_ts#4-执行脚本生成gitee-导入仓库接口-的请求模板) 产生的结果文件```./reqTemplate/x.json```举例: [doc/example_pretty_json_for_human_read.json](http://giteaz:3000/msic/gitee_api_fetch_ts/src/branch/main/doc/example_pretty_json_for_human_read.json)
+[步骤4](giteaz:3000/msic/gitee_api_fetch_ts#4-执行脚本生成gitee-导入仓库接口-的请求模板) 产生的结果文件```./reqTemplate/x.json```举例: [doc/gitee_reqTemplate_importRepo_9A65D9](http://giteaz:3000/misc/gitee_api_fetch_ts/src/branch/main/doc/gitee_reqTemplate_importRepo_9A65D9ABD4F7C28D9BE7FE027C3FDE39.json)
 
 ##### 5.1. 解释 请求模板
 该结果文件```./reqTemplate/x.json``` 即  带有标记markup值字段的请求 即 请求模板
