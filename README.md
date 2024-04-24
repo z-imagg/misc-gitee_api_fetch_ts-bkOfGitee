@@ -30,6 +30,7 @@
 修改 [src/site_gitee_cfg.cts](http://giteaz:3000/msic/node-typescript-boilerplate/src/branch/main/src/site_gitee_cfg.cts) 中以下变量markupOrgName的值为你的gitee组织
 ```javascript
 const markupOrgName = "markup-organization-9473" ; //mirrr
+//不要修改其他变量
 ```
 
 #### 3. 修改本机中chrome可执行程序路径
