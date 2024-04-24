@@ -90,7 +90,7 @@ ls reqTemplate/
 ```
 
 
-
+完整日志例子， http://giteaz:3000/misc/node-typescript-boilerplate/src/branch/main/log.txt.d/gen_gitee_import_repo_req_template.sh-gitee-example.log
 
 #### 5. 使用 请求模板（带有标记值字段的请求 即 请求模板）
 
